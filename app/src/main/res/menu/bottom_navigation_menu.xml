@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_main"
+        android:icon="@drawable/ic_baseline_library_books_24px"
+        android:title="Главная" />
+
+    <item
+        android:id="@+id/navigation_group"
+        android:icon="@drawable/ic_baseline_group_24px"
+        android:title="Группы" />
+    <item
+        android:id="@+id/navigation_schedule"
+        android:icon="@drawable/ic_baseline_schedule_24px"
+        android:title="Расписание" />
+    <item
+        android:id="@+id/navigation_notifications"
+        android:icon="@drawable/ic_baseline_notifications_24px"
+        android:title="Уведомления" />
+    <item
+        android:id="@+id/navigation_info"
+        android:icon="@drawable/ic_baseline_menu_24px"
+        android:title="Профиль" />
+</menu>

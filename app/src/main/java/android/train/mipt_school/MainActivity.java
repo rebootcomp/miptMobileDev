@@ -113,4 +113,8 @@ public class MainActivity
         super.onSaveInstanceState(outState);
         outState.putInt(SAVED_TAB, bottomNavigationBar.getSelectedItemId());
     }
+
+    @Override
+    public void onBackPressed() {
+    }
 }

@@ -8,4 +8,7 @@
     <color name="veryLightGray">#FAFAFA</color>
     <color name="midGray">#F2F2F2</color>
     <color name="transparentGray">#80A9A9A9</color>
+    <color name="midBlue">#2196F3</color>
+    <color name="rippleGray">#E0E0E0</color>
+    <color name="rippleBlue">#64B5F6</color>
 </resources>

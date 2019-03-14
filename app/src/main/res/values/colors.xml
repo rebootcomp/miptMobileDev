@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#96261E</color>
+    <color name="colorPrimaryDark">#96261E</color>
+    <color name="colorAccent">#D81B60</color>
+    <color name="darkGray">#424242</color>
+    <color name="lightGray">#757575</color>
+    <color name="veryLightGray">#FAFAFA</color>
+    <color name="midGray">#F2F2F2</color>
+    <color name="transparentGray">#80A9A9A9</color>
+    <color name="midBlue">#2196F3</color>
+    <color name="rippleGray">#E0E0E0</color>
+    <color name="rippleBlue">#64B5F6</color>
+</resources>

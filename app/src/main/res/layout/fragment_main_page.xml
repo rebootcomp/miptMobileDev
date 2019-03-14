@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/veryLightGray"
+    android:orientation="vertical"
+    tools:context=".MainPageFragment">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/more_info_page"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:orientation="vertical"
+        app:behavior_peekHeight="86dp"
+        app:layout_behavior="@string/bottom_sheet_behavior">
+
+
+        <FrameLayout
+            android:id="@+id/main_page_expand_sign"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/transparent_circle"
+            android:elevation="8dp"
+            android:foreground="@drawable/ic_baseline_expand_less_24px"
+            android:foregroundTint="@color/lightGray"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/main_page_swipe_tip_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="38dp"
+            android:text="Подробнее о школе"
+            android:textAlignment="center"
+            android:textColor="@color/darkGray"
+            android:textSize="14sp"
+            app:layout_constraintTop_toBottomOf="@id/main_page_expand_sign" />
+
+
+        <!-- в этом scrollView будет страница с интересной информацией о школах -->
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/main_page_scroll_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:alpha="0"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent">
+            <include layout="@layout/school_info_main_page" />
+        </android.support.v4.widget.NestedScrollView>
+    </android.support.constraint.ConstraintLayout>
+
+</android.support.design.widget.CoordinatorLayout>

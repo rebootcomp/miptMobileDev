@@ -4,7 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.train.mipt_school.Items.ScheduleItem;
@@ -41,13 +40,13 @@ public class MainActivity
                 "Обед", "ЛК"));
 
         sch.add(new ScheduleItem(new Date(919181637), new Date(919182744),
-                "sDJDJN DJD DJEJ ", "ЛrК"));
+                "Контест", "Актовый зал МФТИ"));
         sch.add(new ScheduleItem(new Date(919181637), new Date(919182744),
-                "D DJD JD DJJ D ", "RHRHDhsh"));
+                "Завтрак", "Столовая МФТИ"));
         sch.add(new ScheduleItem(new Date(919181637), new Date(919182744),
-                "DKDKD djdje ", "did"));
+                "Заезд", "Фойе ЛК"));
         sch.add(new ScheduleItem(new Date(919181637), new Date(919191637),
-                "djdjjd jd dkdjdj", "ЛК"));
+                "Отъезд", "ЛК"));
         sch.add(new ScheduleItem(new Date(919181637), new Date(929182744),
                 "ddjdj", "ЛdscsК"));
         sch.add(new ScheduleItem(new Date(919181637), new Date(939182744),
@@ -68,7 +67,8 @@ public class MainActivity
                 "dieixjxj", "scЛК"));
         sch.add(new ScheduleItem(new Date(919181637), new Date(913182744),
                 "Обеtrthshsд", "Лijsak"));
-
+        sch.add(new ScheduleItem(new Date(919181637), null,
+                "Обеtrthshsд", "Лijsak"));
         ScheduleFragment.setData(sch);
 
         bottomNavigationBar.setSelectedItemId(R.id.navigation_main);
@@ -98,7 +98,10 @@ public class MainActivity
                 return loadFragment(ScheduleFragment.newInstance());
             case R.id.navigation_main:
                 return loadFragment(MainPageFragment.newInstance());
+            case R.id.navigation_info:
+                return loadFragment(RestInfoFragment.newInstance());
         }
+
         return true;
     }
 

@@ -38,8 +38,13 @@ public class ScheduleItem {
         this.name = name;
         this.place = place;
 
-        SimpleDateFormat date = new SimpleDateFormat("hh:mm");
-        eventHours = date.format(startDate) + " - " + date.format(endDate);
+        if (endDate != null) {
+            SimpleDateFormat date = new SimpleDateFormat("hh:mm");
+            eventHours = date.format(startDate) + " - " + date.format(endDate);
+        } else {
+            SimpleDateFormat date = new SimpleDateFormat("hh:mm");
+            eventHours = date.format(startDate);
+        }
     }
 
 }

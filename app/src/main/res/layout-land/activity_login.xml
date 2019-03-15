@@ -42,10 +42,12 @@
                 android:layout_marginEnd="100dp"
                 android:ems="10"
                 android:hint="Email"
+                android:imeOptions="flagNoExtractUi"
                 android:inputType="textEmailAddress"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/mipt_logo" />
+                app:layout_constraintTop_toBottomOf="@+id/mipt_logo"
+                app:layout_constraintWidth_max="400dp" />
 
 
             <EditText
@@ -57,18 +59,20 @@
                 android:layout_marginEnd="100dp"
                 android:ems="10"
                 android:hint="Пароль"
+                android:imeOptions="flagNoExtractUi"
                 android:inputType="textPassword"
                 android:maxWidth="100dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/login_field" />
+                app:layout_constraintTop_toBottomOf="@+id/login_field"
+                app:layout_constraintWidth_max="400dp" />
 
             <Button
                 android:id="@+id/log_in_button"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="100dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="100dp"
                 android:background="@drawable/login_button_ripple"
                 android:text="Войти"
@@ -77,7 +81,8 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/password_field" />
+                app:layout_constraintTop_toBottomOf="@+id/password_field"
+                app:layout_constraintWidth_max="400dp" />
 
             <android.support.design.button.MaterialButton
                 android:id="@+id/register_button"
@@ -85,7 +90,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="100dp"
-                android:layout_marginTop="48dp"
+                android:layout_marginTop="32dp"
                 android:layout_marginEnd="100dp"
                 android:text="Зарегистрироваться"
                 android:textAllCaps="false"
@@ -93,9 +98,10 @@
                 android:textSize="15sp"
                 app:backgroundTint="@android:color/transparent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintHorizontal_bias="0.5"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/log_in_button"
+                app:layout_constraintWidth_max="400dp"
                 app:rippleColor="@color/rippleGray" />
         </android.support.constraint.ConstraintLayout>
 

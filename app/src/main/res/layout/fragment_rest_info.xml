@@ -31,7 +31,10 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:layout_margin="16dp"
+                    android:layout_marginLeft="16dp"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginRight="16dp"
+                    android:layout_marginBottom="8dp"
                     android:orientation="horizontal">
 
                     <android.support.v7.widget.CardView
@@ -60,7 +63,6 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily=""
                             android:text="Вовлоов Карвоытов"
                             android:textColor="@android:color/black"
                             android:textSize="16sp" />
@@ -70,7 +72,8 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="5dp"
                             android:text="Перейти в профиль"
-                            android:textSize="12sp" />
+                            android:textColor="@color/secondaryGray"
+                            android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
             </FrameLayout>
@@ -85,7 +88,6 @@
                 android:id="@+id/button_contacts"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_marginTop="8dp"
                 android:orientation="vertical">
 
 
@@ -96,6 +98,13 @@
                     android:clickable="true"
                     android:orientation="horizontal"
                     android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/ic_baseline_contacts_24px"
+                        android:backgroundTint="@color/secondaryGray" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -115,6 +124,13 @@
                     android:orientation="horizontal"
                     android:padding="16dp">
 
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/ic_baseline_school_24px"
+                        android:backgroundTint="@color/secondaryGray" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -133,6 +149,13 @@
                     android:orientation="horizontal"
                     android:padding="16dp">
 
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/ic_baseline_bar_chart_24px"
+                        android:backgroundTint="@color/secondaryGray" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -149,6 +172,13 @@
                     android:clickable="true"
                     android:orientation="horizontal"
                     android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:layout_marginRight="18dp"
+                        android:background="@drawable/ic_quantum"
+                        android:backgroundTint="@color/secondaryGray" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -167,6 +197,13 @@
                     android:orientation="horizontal"
                     android:padding="16dp">
 
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/ic_baseline_map_24px"
+                        android:backgroundTint="@color/secondaryGray" />
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
@@ -183,6 +220,13 @@
                     android:clickable="true"
                     android:orientation="horizontal"
                     android:padding="16dp">
+
+                    <ImageView
+                        android:layout_width="22dp"
+                        android:layout_height="22dp"
+                        android:layout_marginRight="16dp"
+                        android:background="@drawable/ic_baseline_help_24px"
+                        android:backgroundTint="@color/secondaryGray" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -210,6 +254,13 @@
                 android:orientation="horizontal"
                 android:padding="16dp">
 
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/ic_baseline_record_voice_over_24px"
+                    android:backgroundTint="@color/secondaryGray" />
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -232,6 +283,13 @@
                 android:clickable="true"
                 android:orientation="horizontal"
                 android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="22dp"
+                    android:layout_height="22dp"
+                    android:layout_marginRight="16dp"
+                    android:background="@drawable/ic_baseline_bug_report_24px"
+                    android:backgroundTint="@color/secondaryGray" />
 
                 <TextView
                     android:layout_width="match_parent"

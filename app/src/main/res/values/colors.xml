@@ -12,4 +12,5 @@
     <color name="rippleGray">#E0E0E0</color>
     <color name="rippleBlue">#64B5F6</color>
     <color name="grayForBackGround">#F5F5F5</color>
+    <color name="secondaryGray">#9E9E9E</color>
 </resources>

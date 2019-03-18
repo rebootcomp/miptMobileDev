@@ -13,9 +13,6 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class MainPageFragment extends Fragment {
 
 

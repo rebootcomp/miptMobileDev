@@ -2,7 +2,11 @@
 <resources>
     <array name="preloaded_fonts" translatable="false">
         <item>@font/cutive_mono</item>
+        <item>@font/fira_sans</item>
+        <item>@font/lato</item>
         <item>@font/roboto_mono_medium</item>
+        <item>@font/rubik</item>
+        <item>@font/rubik_medium</item>
         <item>@font/ubuntu_mono_bold</item>
     </array>
 </resources>

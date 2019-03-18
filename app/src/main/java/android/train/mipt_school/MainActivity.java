@@ -4,9 +4,12 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.train.mipt_school.Items.ScheduleItem;
+import android.train.mipt_school.Tools.FragmentTransitionCallback;
 import android.view.MenuItem;
 
 import java.util.ArrayList;
@@ -18,6 +21,7 @@ public class MainActivity
 
     private final String SAVED_TAB = "selectedTab";
     private BottomNavigationView bottomNavigationBar;
+    private Toolbar toolbar;
     private ArrayList<ScheduleItem> sch;
 
     @Override
@@ -25,7 +29,11 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+        toolbar = findViewById(R.id.main_activity_toolbar);
         bottomNavigationBar = findViewById(R.id.bottom_bar);
+
+        setSupportActionBar(toolbar);
 
         bottomNavigationBar.setOnNavigationItemSelectedListener(this);
 
@@ -99,7 +107,13 @@ public class MainActivity
             case R.id.navigation_main:
                 return loadFragment(MainPageFragment.newInstance());
             case R.id.navigation_info:
-                return loadFragment(RestInfoFragment.newInstance());
+                return loadFragment(RestInfoFragment.newInstance(
+                        new FragmentTransitionCallback() {
+                            @Override
+                            public void onTransition(Fragment nextFragment) {
+                                loadFragment(nextFragment);
+                            }
+                        }));
         }
 
         return true;

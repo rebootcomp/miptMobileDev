@@ -15,9 +15,6 @@ import java.util.ArrayList;
 import java.util.Date;
 
 
-/**
- * A simple {@link Fragment} subclass.
- */
 public class ScheduleFragment extends Fragment {
 
 

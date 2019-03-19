@@ -2366,7 +2366,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="android.sdk.path" value="$USER_HOME$/Library/Android/sdk" />
-    <property name="device.picker.selection" value="Pixel_2_API_27" />
+    <property name="device.picker.selection" value="Pixel_2_XL_API_28" />
   </component>
   <component name="RunDashboard">
     <option name="ruleStates">

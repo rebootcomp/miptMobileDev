@@ -1,6 +1,7 @@
 package android.train.mipt_school;
 
 import android.content.Intent;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
@@ -26,6 +27,9 @@ public class LoginActivity extends AppCompatActivity {
     String firstname = "-1";
     String lastname = "-1";
     Integer id = -1;
+    String email = null;
+    String rating = null;
+    String country = null;
     ResponseCallback rc;
 
     public interface ResponseCallback {
@@ -86,7 +90,7 @@ public class LoginActivity extends AppCompatActivity {
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = loginField.getText().toString();
+                final String username = loginField.getText().toString();
                 String password = passwordField.getText().toString();
                 ans = er = firstname = lastname = "-1";
                 id = -1;
@@ -100,9 +104,18 @@ public class LoginActivity extends AppCompatActivity {
                             if (jsonObject.length() == 1)
                                 er = jsonObject.getString("bad_request");
                             else {
+                                SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app.db", MODE_PRIVATE, null);
                                 firstname = jsonObject.getString("firstname");
                                 lastname = jsonObject.getString("lastname");
                                 id = jsonObject.getInt("id");
+
+                                //если что закоменть просто
+                                db.execSQL("INSERT INTO users VALUES ('" + username+ "','" + id + "', '" +firstname + "','" + lastname + "','" + email + "','" + rating + "','" + country + "');'");
+                                //возможен баг
+                                //так как поля равны null
+                                // к тому же не могу проверить так как нет пароля
+
+
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();

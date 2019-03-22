@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.design.button.MaterialButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.train.mipt_school.DataHolders.User;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,6 +29,7 @@ public class LoginActivity extends AppCompatActivity {
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                User.getInstance().logIn("abc", "qwerty12345");
                 startActivity(new Intent(getApplicationContext(), MainActivity.class));
             }
         });

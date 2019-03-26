@@ -1,24 +1,28 @@
 package android.train.mipt_school;
 
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
+import android.train.mipt_school.Tools.SceneFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 
 
-public class MainPageFragment extends Fragment {
+public class MainPageFragment extends Fragment implements SceneFragment {
 
+
+    private String title;
+    private View moreInfoPage;
 
     public static MainPageFragment newInstance() {
 
+
         MainPageFragment fragment = new MainPageFragment();
+
         return fragment;
     }
 
@@ -27,7 +31,7 @@ public class MainPageFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_page, container, false);
 
-        View moreInfoPage = view.findViewById(R.id.more_info_page);
+        moreInfoPage = view.findViewById(R.id.more_info_page);
 
         final View scrollView = view.findViewById(R.id.main_page_scroll_view);
         final View arrow = view.findViewById(R.id.main_page_expand_sign);
@@ -38,15 +42,7 @@ public class MainPageFragment extends Fragment {
         bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
             @Override
             public void onStateChanged(@NonNull View view, int i) {
-                /*if (i == bottomSheetBehavior.STATE_EXPANDED) {
-                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                    params.addRule(RelativeLayout.BELOW, R.id.main_page_expand_sign);
-                    scrollView.setLayoutParams(params);
-                }*/
-                /*if (i == bottomSheetBehavior.STATE_DRAGGING) {
-                    arrow.setVisibility(View.VISIBLE);
-                    swipeTipText.setVisibility(View.VISIBLE);
-                }*/
+
             }
 
             @Override
@@ -78,7 +74,23 @@ public class MainPageFragment extends Fragment {
                 }
             }
         });
+
         return view;
     }
 
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        title = context.getString(R.string.main_page_title);
+    }
+
+    @Override
+    public void onBackButtonPressed() {
+
+    }
+
+    @Override
+    public String getTitle() {
+        return title;
+    }
 }

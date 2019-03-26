@@ -51,7 +51,7 @@
 
         <TextView
             android:id="@+id/schedule_event_place"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:fontFamily="@font/rubik"
@@ -59,6 +59,7 @@
             android:textAllCaps="false"
             android:textColor="@color/lightGray"
             android:textSize="14sp"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toRightOf="@id/schedule_event_time"
             app:layout_constraintStart_toStartOf="@+id/schedule_event_name"
             app:layout_constraintTop_toBottomOf="@id/schedule_event_name" />

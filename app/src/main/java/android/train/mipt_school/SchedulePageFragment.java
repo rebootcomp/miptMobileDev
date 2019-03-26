@@ -38,6 +38,9 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
+
+        // setting up actionbar
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
         scheduleList = view.findViewById(R.id.schedule_view);
 
 
@@ -55,7 +58,7 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
 
     @Override
     public void onBackButtonPressed() {
-        ((MainActivity) getActivity()).loadFragment(MainPageFragment.newInstance(), true);
+        ((MainActivity) getActivity()).loadFragment(MainPageFragment.newInstance());
     }
 
     @Override

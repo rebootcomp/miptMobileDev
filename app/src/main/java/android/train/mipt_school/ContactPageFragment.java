@@ -25,24 +25,24 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
         return fragment;
     }
 
-    private ContactPageFragment getInstance() {
-        return this;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_contacts_page, container, false);
         setHasOptionsMenu(true);
+
+
+        // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
         ContactAdapter adapter = new ContactAdapter();
         adapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
             @Override
             public void onItemClick(View itemView) {
                 ((MainActivity) getActivity()).loadFragment(ProfilePageFragment
-                        .newInstance(getInstance()), false);
+                        .newInstance());
             }
         });
         contactList = view.findViewById(R.id.contacts_view);
@@ -58,7 +58,7 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                ((MainActivity) getActivity()).loadFragment(RestInfoPageFragment.newInstance(), true);
+                getActivity().getSupportFragmentManager().popBackStack();
                 return true;
         }
         return false;
@@ -72,7 +72,7 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
 
     @Override
     public void onBackButtonPressed() {
-        ((MainActivity) getActivity()).loadFragment(RestInfoPageFragment.newInstance(), true);
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     @Override

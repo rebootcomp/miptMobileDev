@@ -15,6 +15,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -27,14 +29,11 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
 
 
     private View rootView;
-    private Fragment previousFragment;
 
-    public static ProfilePageFragment newInstance(Fragment previousFragment) {
+    public static ProfilePageFragment newInstance() {
         ProfilePageFragment fragment = new ProfilePageFragment();
-        fragment.setPreviousFragment(previousFragment);
         return fragment;
     }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -47,7 +46,6 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
 
         setHasOptionsMenu(true);
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
 
         rootView = view;
         return view;
@@ -63,7 +61,7 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                ((MainActivity) getActivity()).loadFragment(previousFragment, true);
+                getActivity().getSupportFragmentManager().popBackStack();
                 return true;
         }
         return false;
@@ -77,15 +75,11 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
 
     @Override
     public void onBackButtonPressed() {
-        ((MainActivity) getActivity()).loadFragment(previousFragment, true);
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     @Override
     public String getTitle() {
         return title;
-    }
-
-    public void setPreviousFragment(Fragment previousFragment) {
-        this.previousFragment = previousFragment;
     }
 }

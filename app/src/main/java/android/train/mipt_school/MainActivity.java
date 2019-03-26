@@ -20,6 +20,7 @@ import android.train.mipt_school.Tools.SceneFragment;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.GridView;
 
 import java.util.ArrayList;
 
@@ -30,8 +31,7 @@ public class MainActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private final String BUNDLE_TITLE_NAME = "ACTIONBAR_TITLE";
-    private final long TRANSITION_DURATION = 250;
-    private final long FAST_TRANSITITON_DURATION = 200;
+    private final long TRANSITITON_DURATION = 200;
     private BottomNavigationView bottomNavigationBar;
     private Toolbar toolbar;
 
@@ -52,74 +52,54 @@ public class MainActivity
         }
     }
 
-    public boolean loadFragment(Fragment fragment, boolean backPressed, View... sharedElements) {
-        if (fragment != null) {
+    public boolean loadFragment(Fragment fragment, View... sharedElements) {
+        if (fragment == null) return false;
 
-            getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
 
-            Fragment currentSceneFragment = getSupportFragmentManager()
-                    .findFragmentById(R.id.fragment_container);
+        Fragment currentSceneFragment = getSupportFragmentManager()
+                .findFragmentById(R.id.fragment_container);
 
-            if (currentSceneFragment == null || !currentSceneFragment
-                    .getClass()
-                    .isInstance(fragment)) {
+        if (currentSceneFragment == null || !currentSceneFragment
+                .getClass()
+                .isInstance(fragment)) {
 
-                if (backPressed) {
-                    if (currentSceneFragment != null) {
-                        TransitionSet slideRight = new TransitionSet()
-                                .addTransition(new Slide(Gravity.RIGHT)
-                                        .setDuration(FAST_TRANSITITON_DURATION))
-                                .addTransition(new Fade(Fade.MODE_OUT)
-                                        .setDuration(FAST_TRANSITITON_DURATION))
-                                .setOrdering(ORDERING_TOGETHER);
-
-                        currentSceneFragment.setExitTransition(slideRight);
-                    }
-                    fragment.setEnterTransition(new AutoTransition()
-                            .setDuration(TRANSITION_DURATION));
-                } else {
-                    if (currentSceneFragment != null) {
-                        currentSceneFragment.setExitTransition(new Fade()
-                                .setDuration(FAST_TRANSITITON_DURATION));
-                    }
-                    fragment.setEnterTransition(new Slide(Gravity.RIGHT));
-                }
+            if (currentSceneFragment != null) {
+                currentSceneFragment.setExitTransition(new Fade()
+                        .setDuration(TRANSITITON_DURATION));
             }
 
 
-            fragment.setSharedElementEnterTransition(new AutoTransition());
-
-            for (View shared : sharedElements) {
-                ft.addSharedElement(shared, shared.getTransitionName());
-            }
-
-            ft.replace(R.id.fragment_container, fragment).commit();
-
-            getSupportFragmentManager().executePendingTransactions();
-
-            if (fragment instanceof SceneFragment) {
-                getSupportActionBar().setTitle(((SceneFragment) fragment).getTitle());
-            }
-
-            return true;
+            fragment.setEnterTransition(new Slide(Gravity.RIGHT)
+                    .setDuration(TRANSITITON_DURATION)); // TODO: починить transitions при перевороте экрана
         }
-        return false;
+
+        fragment.setSharedElementEnterTransition(new AutoTransition());
+
+        for (View shared : sharedElements) {
+            ft.addSharedElement(shared, shared.getTransitionName());
+        }
+
+        ft.addToBackStack(null);
+        ft.replace(R.id.fragment_container, fragment).commit();
+
+        getSupportFragmentManager().executePendingTransactions();
+
+        return true;
     }
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
-        //getSupportActionBar().setTitle(item.getTitle());
-
         switch (item.getItemId()) {
             case R.id.navigation_schedule:
-                return loadFragment(SchedulePageFragment.newInstance(), false);
+                return loadFragment(SchedulePageFragment.newInstance());
             case R.id.navigation_main:
-                return loadFragment(MainPageFragment.newInstance(), false);
+                return loadFragment(MainPageFragment.newInstance());
             case R.id.navigation_info:
-                return loadFragment(RestInfoPageFragment.newInstance(), false);
+                return loadFragment(RestInfoPageFragment.newInstance());
         }
 
         return true;

@@ -32,6 +32,8 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
         View view = inflater.inflate(R.layout.fragment_contacts_page, container, false);
         setHasOptionsMenu(true);
 
+        contactList = view.findViewById(R.id.contacts_view);
+
 
         // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -45,7 +47,6 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
                         .newInstance());
             }
         });
-        contactList = view.findViewById(R.id.contacts_view);
         contactList.setAdapter(adapter);
 
         contactList.setLayoutManager(new LinearLayoutManager(this.getContext()));

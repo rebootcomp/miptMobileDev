@@ -12,6 +12,7 @@ import android.support.transition.Transition;
 import android.support.transition.TransitionSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -20,6 +21,7 @@ import android.train.mipt_school.Tools.SceneFragment;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.GridView;
 
 import java.util.ArrayList;
@@ -66,15 +68,17 @@ public class MainActivity
                 .getClass()
                 .isInstance(fragment)) {
 
-            if (currentSceneFragment != null) {
-                currentSceneFragment.setExitTransition(new Fade()
-                        .setDuration(TRANSITITON_DURATION));
-            }
-
-
             fragment.setEnterTransition(new Slide(Gravity.RIGHT)
-                    .setDuration(TRANSITITON_DURATION)); // TODO: починить transitions при перевороте экрана
+                    .setDuration(TRANSITITON_DURATION)
+                    .setInterpolator(new LinearOutSlowInInterpolator())); // TODO: починить transitions при перевороте экрана
+
+
+            ft.setReorderingAllowed(true);
+            //ft.setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out);
+            //ft.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right);
+            //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
         }
+
 
         fragment.setSharedElementEnterTransition(new AutoTransition());
 

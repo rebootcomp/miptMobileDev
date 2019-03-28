@@ -8,7 +8,10 @@ import java.util.Date;
 
 public class User {
     private String firstName;
-    private String secondName;
+    private String lastName;
+    private String thirdName; // отчетство
+    private String userName;
+    private String email;
     private String password;
 
     private long userId; // идентификатор пользователя
@@ -20,10 +23,15 @@ public class User {
 
     private static volatile User instance;
 
-    public void logIn(String userName, String password) {
+    public void logIn(String firstName, String lastName, String thirdName, String email, String userName, long userId, long groupId) {
 
-        firstName = "Алексей";
-        secondName = "Селиверстов";
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.thirdName = thirdName;
+        this.email = email;
+        this.userName = userName;
+        this.userId = userId;
+        this.groupId = groupId;
 
         contacts = new ArrayList<>();
         schedule = new ArrayList<>();
@@ -106,12 +114,28 @@ public class User {
         return localInstance;
     }
 
-    public String getSecondName() {
-        return secondName;
-    }
-
     public String getFirstName() {
         return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public String getThirdName() {
+        return thirdName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public long getUserId() {
+        return userId;
     }
 
     public ArrayList<ContactItem> getContacts() {

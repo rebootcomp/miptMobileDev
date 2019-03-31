@@ -94,40 +94,42 @@ public class LoginActivity extends AppCompatActivity {
                 String password = passwordField.getText().toString();
                 ans = er = firstname = lastname = "-1";
                 id = -1;
-                userRequest(username, password);
-                Handler handler = new Handler();
-                handler.postDelayed(new Runnable() {
-                    public void run() {
-                        //Toast.makeText(LoginActivity.this, ans, Toast.LENGTH_LONG).show();
-                        try {
-                            JSONObject jsonObject = new JSONObject(ans);
-                            if (jsonObject.length() == 1)
-                                er = jsonObject.getString("bad_request");
-                            else {
-                                SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app.db", MODE_PRIVATE, null);
-                                firstname = jsonObject.getString("firstname");
-                                lastname = jsonObject.getString("lastname");
-                                id = jsonObject.getInt("id");
+                if (false) {
+                    userRequest(username, password);
+                    Handler handler = new Handler();
+                    handler.postDelayed(new Runnable() {
+                        public void run() {
+                            Toast.makeText(LoginActivity.this, ans, Toast.LENGTH_LONG).show();
+                            try {
+                                JSONObject jsonObject = new JSONObject(ans);
+                                if (jsonObject.length() == 1)
+                                    er = jsonObject.getString("bad_request");
+                                else {
+                                    SQLiteDatabase db = getBaseContext().openOrCreateDatabase("app.db", MODE_PRIVATE, null);
+                                    firstname = jsonObject.getString("firstname");
+                                    lastname = jsonObject.getString("lastname");
+                                    id = jsonObject.getInt("id");
 
-                                //если что закоменть просто
-                                db.execSQL("INSERT INTO users VALUES ('" + username+ "','" + id + "', '" +firstname + "','" + lastname + "','" + email + "','" + rating + "','" + country + "');'");
-                                //возможен баг
-                                //так как поля равны null
-                                // к тому же не могу проверить так как нет пароля
+                                    //если что закоменть просто
+                                    db.execSQL("INSERT INTO users VALUES ('" + username+ "','" + id + "', '" +firstname + "','" + lastname + "','" + email + "','" + rating + "','" + country + "');'");
+                                    //возможен баг
+                                    //так как поля равны null
+                                    // к тому же не могу проверить так как нет пароля
 
 
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
+                            if (id != -1)
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            else
+                                Toast.makeText(LoginActivity.this, er, Toast.LENGTH_LONG).show();
                         }
-                        if (id != -1)
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        else
-                            Toast.makeText(LoginActivity.this, er, Toast.LENGTH_LONG).show();
-                    }
-                }, 1000);
+                    }, 1000);
 //                Toast.makeText(LoginActivity.this, id.toString(), Toast.LENGTH_LONG).show();
-
+                }
+                startActivity(new Intent(getApplicationContext(), MainActivity.class));
             }
         });
     }

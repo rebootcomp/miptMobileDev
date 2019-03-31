@@ -2,6 +2,7 @@ package android.train.mipt_school.Adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.R;
 import android.view.LayoutInflater;
@@ -12,9 +13,6 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleHolder> {
-
-    private ArrayList<ScheduleItem> data;
-
 
     @NonNull
     @Override
@@ -29,21 +27,13 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
 
     @Override
     public void onBindViewHolder(@NonNull ScheduleHolder scheduleHolder, int i) {
-        ScheduleItem item = data.get(i);
+        ScheduleItem item = User.getInstance().getSchedule().get(i);
         scheduleHolder.bind(item);
     }
 
     @Override
     public int getItemCount() {
-        return data.size();
-    }
-
-    public void setData(ArrayList<ScheduleItem> data) {
-        this.data = data;
-    }
-
-    public ArrayList<ScheduleItem> getData() {
-        return data;
+        return User.getInstance().getSchedule().size();
     }
 
     class ScheduleHolder extends RecyclerView.ViewHolder {

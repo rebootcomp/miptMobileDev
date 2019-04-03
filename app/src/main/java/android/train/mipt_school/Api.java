@@ -15,4 +15,8 @@ public interface Api {
             @Field("username") String username,
             @Field("password") String password
     );
+
+    @FormUrlEncoded
+    @POST("allevents")
+    Call<ResponseBody> allevents();
 }

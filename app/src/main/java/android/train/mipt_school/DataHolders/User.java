@@ -24,7 +24,6 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-import static android.support.v4.content.ContextCompat.startActivity;
 
 public class User {
     private String firstName;
@@ -36,10 +35,6 @@ public class User {
     private String token;
 
 
-    private String returnedString = null;
-    private ResponseCallback rc = null;
-    private String error = null;
-
     private long userId; // идентификатор пользователя
     private long groupId; // отряд, в котором находится пользователь
 
@@ -50,10 +45,9 @@ public class User {
 
     public interface ResponseCallback {
         void call(String s);
-        void tkn(String s);
     }
 
-    public void userRequest(String username, String password) {
+    private void userRequest(String username, String password, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
@@ -79,6 +73,40 @@ public class User {
                 rc.call(s);
             }
         });
+    }
+
+    public void updateToken(final ResponseCallback responseCallback) {
+        ResponseCallback rc = new ResponseCallback() {
+            @Override
+            public void call(String s) {
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+                    String error;
+                    if (jsonObject.has("bad_request"))
+                        error = jsonObject.getString("bad_request");
+                    else {
+                        String tmpToken = jsonObject.getString("token");
+                        token = tmpToken;
+                        JSONObject data = new JSONObject(JWTUtils.decoded(tmpToken));
+                        JSONObject userData = data.getJSONObject("user_data");
+                        firstName = userData.getString("firstname");
+                        lastName = userData.getString("lastname");
+                        thirdName = userData.getString("thirdname");
+                        email = userData.getString("email");
+                        userId = userData.getLong("id");
+                        //groupId = data.getLong("groudid"); не добавлено еще
+                        groupId = 0;
+                        error = "success";
+                    }
+                    responseCallback.call(error);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        userRequest(userName, password, rc);
     }
 
     public void init() {
@@ -152,55 +180,17 @@ public class User {
     public void logIn(String userName, String password, final LoginActivity.ResponseCallback responseCallback) {
         this.userName = userName;
         this.password = password;
-        error = null;
-        rc = new ResponseCallback() {
+        ResponseCallback updateCallback = new ResponseCallback() {
             @Override
             public void call(String s) {
-                returnedString = s;
-            }
-            @Override
-            public void tkn(String s) {
-                token = s;
-            }
-        };
-        userRequest(userName, password);
-        Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
-            public void run() {
-                try {
-                    if (returnedString == null) {
-                        error = "Проверьте соединение с интернетом";
-                    } else {
-                        JSONObject jsonObject = new JSONObject(returnedString);
-                        if (jsonObject.has("bad_request"))
-                            error = jsonObject.getString("bad_request");
-                        else {
-                            String token = jsonObject.getString("token");
-                            rc.tkn(token);
-                            JSONObject data = new JSONObject(JWTUtils.decoded(token));
-                            JSONObject userData = data.getJSONObject("user_data");
-                            firstName = userData.getString("firstname");
-                            lastName = userData.getString("lastname");
-                            thirdName = userData.getString("thirdname");
-                            email = userData.getString("email");
-                            userId = userData.getLong("id");
-                            //groupId = data.getLong("groudid"); не добавлено еще
-                            groupId = 0;
-                        }
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                if (error != null) {
-                    responseCallback.call(error);
+                if (s != null) {
+                    responseCallback.call(s);
                 } else {
-                    init();
                     responseCallback.call("success");
                 }
             }
-        }, 1000);
+        };
+        updateToken(updateCallback);
     }
 
     public static User getInstance() {

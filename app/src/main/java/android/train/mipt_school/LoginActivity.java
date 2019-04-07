@@ -55,9 +55,10 @@ public class LoginActivity extends AppCompatActivity {
                 responseCallback = new ResponseCallback() {
                     @Override
                     public void call(String s) {
-                        if (s.equals("success"))
+                        if (s.equals("success")) {
+                            User.getInstance().init();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        else
+                        } else
                             Toast.makeText(LoginActivity.this, s, Toast.LENGTH_LONG).show();
                     }
                 };

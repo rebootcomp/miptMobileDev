@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.google.gson.JsonObject;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -40,6 +41,7 @@ public class User {
 
     private ArrayList<ContactItem> contacts; // контакаты пользователя
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
+    private ArrayList<OtherUsers> allUsers; // все пользователи
 
     private static volatile User instance;
 
@@ -52,6 +54,34 @@ public class User {
                 .getInstance()
                 .getApi()
                 .getmdluser(username, password);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200 || response.code() == 201) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"bad_request\":\"Ошибка сервера\"}";
+                rc.call(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                rc.call(s);
+            }
+        });
+    }
+
+    private void allUsersRequest(final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .userallinfo();
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -107,6 +137,36 @@ public class User {
             }
         };
         userRequest(userName, password, rc);
+    }
+
+    public void updateAllUsers(final ResponseCallback responseCallback) {
+        allUsers = new ArrayList<>();
+        ResponseCallback rc = new ResponseCallback() {
+            @Override
+            public void call(String s) {
+                try {
+                    JSONObject jsonObject = new JSONObject(s);
+                    String error;
+                    if (jsonObject.has("bad_request"))
+                        error = jsonObject.getString("bad_request");
+                    else {
+                        JSONArray data = jsonObject.getJSONArray("data");
+                        int len = data.length();
+                        for (int i = 0; i < len; i++) {
+                            JSONObject tmp = data.getJSONObject(i);
+                            allUsers.add(new OtherUsers(tmp.getString("firstname"), tmp.getString("lastname"), tmp.getString("thirdname"), tmp.getString("username"), tmp.getString("email"), tmp.getLong("id")));
+                        }
+                        error = "success";
+                    }
+                    responseCallback.call(error);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        };
+        allUsersRequest(rc);
     }
 
     public void init() {

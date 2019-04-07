@@ -106,7 +106,7 @@ public class QuestionPageFragment extends Fragment implements SceneFragment {
                 ResponseCallback rc = new ResponseCallback() {
                     @Override
                     public void call(String s) {
-                        if (s.equals("success"))
+                        if (s.equals("Отправлено успешно"))
                             questionText.setText("");
                         Toast.makeText((MainActivity)getActivity(), s, Toast.LENGTH_LONG).show();
                     }

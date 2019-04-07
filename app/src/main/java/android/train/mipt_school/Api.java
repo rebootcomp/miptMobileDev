@@ -21,6 +21,10 @@ public interface Api {
     Call<ResponseBody> allevents();
 
     @FormUrlEncoded
+    @POST("userallinfo")
+    Call<ResponseBody> userallinfo();
+
+    @FormUrlEncoded
     @POST("email/os")
     Call<ResponseBody> sendQuestion(
             @Field("user_id") long userId,

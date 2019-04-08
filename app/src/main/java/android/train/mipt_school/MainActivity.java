@@ -67,7 +67,6 @@ public class MainActivity
         if (currentSceneFragment == null || !currentSceneFragment
                 .getClass()
                 .isInstance(fragment)) {
-
             fragment.setEnterTransition(new Slide(Gravity.RIGHT)
                     .setDuration(TRANSITITON_DURATION)
                     .setInterpolator(new LinearOutSlowInInterpolator())); // TODO: починить transitions при перевороте экрана

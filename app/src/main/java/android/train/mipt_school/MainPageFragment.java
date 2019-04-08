@@ -31,6 +31,9 @@ public class MainPageFragment extends Fragment implements SceneFragment {
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_main_page, container, false);
 
+        // setting up actionbar
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
+
         moreInfoPage = view.findViewById(R.id.more_info_page);
 
         final View scrollView = view.findViewById(R.id.main_page_scroll_view);

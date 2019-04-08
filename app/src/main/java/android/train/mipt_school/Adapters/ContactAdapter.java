@@ -51,17 +51,22 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
         private ImageView userImage;
         private TextView userName;
 
-        private View rootView;
         private View profileButton;
         private long userId;
 
-        public ContactHolder(@NonNull View itemView) {
+        public ContactHolder(@NonNull final View itemView) {
             super(itemView);
 
-            rootView = itemView;
-            userImage = rootView.findViewById(R.id.contact_profile_image);
-            userName = rootView.findViewById(R.id.contact_profile_name);
-            profileButton = rootView.findViewById(R.id.contact_button_profile);
+            userImage = itemView.findViewById(R.id.contact_profile_image);
+            userName = itemView.findViewById(R.id.contact_profile_name);
+            profileButton = itemView.findViewById(R.id.contact_button_profile);
+
+            profileButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    listener.onItemClick(itemView);
+                }
+            });
         }
 
         public void bind(ContactItem item) {
@@ -71,13 +76,6 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
             }
             userId = item.getUserId();
             userName.setText(item.getName());
-
-            profileButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    listener.onItemClick(rootView);
-                }
-            });
         }
 
     }

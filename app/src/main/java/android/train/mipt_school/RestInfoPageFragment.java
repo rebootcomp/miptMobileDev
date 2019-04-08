@@ -5,6 +5,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.transition.Slide;
 import android.support.v4.app.Fragment;
+import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -28,15 +29,16 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         return fragment;
     }
 
-    private RestInfoPageFragment getInstance() {
-        return this;
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_rest_info, container, false);
+
+
+        // setting up actionbar
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
         questionButton = view.findViewById(R.id.button_question);
         profileButton = view.findViewById(R.id.button_profile);
@@ -48,7 +50,7 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         questionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).loadFragment(QuestionPageFragment.newInstance(), false);
+                ((MainActivity) getActivity()).loadFragment(QuestionPageFragment.newInstance());
             }
         });
 
@@ -56,18 +58,17 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).loadFragment(ProfilePageFragment
-                                .newInstance(getInstance()),
-                        false,
-                        view.findViewById(R.id.profile_image),
+                                .newInstance()
+                        /*view.findViewById(R.id.profile_image),
                         view.findViewById(R.id.profile_image_card),
-                        view.findViewById(R.id.profile_card));
+                        view.findViewById(R.id.profile_card)*/);
             }
         });
 
         contactsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).loadFragment(ContactPageFragment.newInstance(), false);
+                ((MainActivity) getActivity()).loadFragment(ContactPageFragment.newInstance());
             }
         });
 
@@ -82,7 +83,7 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
 
     @Override
     public void onBackButtonPressed() {
-        ((MainActivity) getActivity()).loadFragment(MainPageFragment.newInstance(), true);
+        ((MainActivity) getActivity()).loadFragment(MainPageFragment.newInstance());
     }
 
     @Override

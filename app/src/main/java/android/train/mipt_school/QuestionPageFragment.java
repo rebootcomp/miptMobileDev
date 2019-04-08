@@ -73,7 +73,10 @@ public class QuestionPageFragment extends Fragment implements SceneFragment {
                              Bundle savedInstanceState) {
 
         setHasOptionsMenu(true);
+
+        // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
         View view = inflater.inflate(R.layout.fragment_question_page, container, false);
 
@@ -99,7 +102,7 @@ public class QuestionPageFragment extends Fragment implements SceneFragment {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                ((MainActivity) getActivity()).loadFragment(RestInfoPageFragment.newInstance(), true);
+                getActivity().getSupportFragmentManager().popBackStack();
                 return true;
             case R.id.send_message:
                 title = dropdownTopic.getSelectedItem().toString();
@@ -126,7 +129,7 @@ public class QuestionPageFragment extends Fragment implements SceneFragment {
 
     @Override
     public void onBackButtonPressed() {
-        ((MainActivity) getActivity()).loadFragment(RestInfoPageFragment.newInstance(), true);
+        getActivity().getSupportFragmentManager().popBackStack();
     }
 
     @Override

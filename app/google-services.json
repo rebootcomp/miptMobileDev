@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "855943836626",
+    "firebase_url": "https://miptmobiledev.firebaseio.com",
+    "project_id": "miptmobiledev",
+    "storage_bucket": "miptmobiledev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:855943836626:android:cc461e4fde950a41",
+        "android_client_info": {
+          "package_name": "android.train.mipt_school"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "855943836626-3a6vt3aa7l2mc0cvettbubktpalp0ckg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "android.train.mipt_school",
+            "certificate_hash": "4a1221776406eea388383b4b2cfb85b4cf2abf2b"
+          }
+        },
+        {
+          "client_id": "855943836626-t8op3q3lrobd02i7r00tqt7eioml5q7d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDhc0f7gIlB7K6tHzsGxBLDh6t6v2HvxLY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "855943836626-t8op3q3lrobd02i7r00tqt7eioml5q7d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

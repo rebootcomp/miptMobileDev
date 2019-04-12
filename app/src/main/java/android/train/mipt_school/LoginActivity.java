@@ -50,19 +50,7 @@ public class LoginActivity extends AppCompatActivity {
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userName = loginField.getText().toString();
-                password = passwordField.getText().toString();
-                responseCallback = new ResponseCallback() {
-                    @Override
-                    public void call(String s) {
-                        if (s.equals("success")) {
-                            User.getInstance().init();
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        } else
-                            Toast.makeText(LoginActivity.this, s, Toast.LENGTH_LONG).show();
-                    }
-                };
-                User.getInstance().logIn(userName, password, responseCallback);
+
             }
         });
     }

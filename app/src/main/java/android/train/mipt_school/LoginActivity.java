@@ -1,7 +1,9 @@
 package android.train.mipt_school;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.button.MaterialButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -63,6 +65,18 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 };
                 User.getInstance().logIn(userName, password, responseCallback);
+            }
+        });
+
+        registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                CustomTabsIntent intent = new CustomTabsIntent.Builder().build();
+
+                intent.intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                final String url = "https://it-edu.com/el/login/signup.php";
+                intent.launchUrl(getApplicationContext(), Uri.parse(url));
             }
         });
     }

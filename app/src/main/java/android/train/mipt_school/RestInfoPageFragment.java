@@ -3,11 +3,8 @@ package android.train.mipt_school;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.transition.Slide;
 import android.support.v4.app.Fragment;
-import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Tools.SceneFragment;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +16,8 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
     private View questionButton;
     private View profileButton;
     private View contactsButton;
+    private View mapsButton;
+
     private ImageView profileImage;
     private TextView profileName;
 
@@ -43,6 +42,7 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         questionButton = view.findViewById(R.id.button_question);
         profileButton = view.findViewById(R.id.button_profile);
         contactsButton = view.findViewById(R.id.button_contacts);
+        mapsButton = view.findViewById(R.id.button_maps);
 
         profileImage = view.findViewById(R.id.profile_image);
         profileName = view.findViewById(R.id.profile_name);
@@ -72,6 +72,13 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
             }
         });
 
+        mapsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).loadFragment(MapsPageFragment.newInstance());
+            }
+        });
+
         return view;
     }
 
@@ -79,6 +86,14 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         title = context.getString(R.string.rest_info_title);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
     }
 
     @Override

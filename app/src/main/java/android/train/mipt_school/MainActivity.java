@@ -11,6 +11,7 @@ import android.support.transition.Slide;
 import android.support.transition.Transition;
 import android.support.transition.TransitionSet;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
@@ -52,12 +53,29 @@ public class MainActivity
         if (savedInstanceState == null) {
             bottomNavigationBar.setSelectedItemId(R.id.navigation_main);
         }
+
+        getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
+            @Override
+            public void onBackStackChanged() {
+                FragmentManager manager = getSupportFragmentManager();
+
+                if (manager != null) {
+                    Fragment currentSceneFragment = getSupportFragmentManager()
+                            .findFragmentById(R.id.fragment_container);
+                    currentSceneFragment.onResume();
+                }
+            }
+        });
     }
 
     public boolean loadFragment(Fragment fragment, View... sharedElements) {
         if (fragment == null) return false;
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        getSupportActionBar().setDisplayShowCustomEnabled(false);
+        getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
 
 
@@ -110,7 +128,9 @@ public class MainActivity
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        outState.putString(BUNDLE_TITLE_NAME, getSupportActionBar().getTitle().toString());
+        if (getSupportActionBar().getTitle() != null) {
+            outState.putString(BUNDLE_TITLE_NAME, getSupportActionBar().getTitle().toString());
+        }
         super.onSaveInstanceState(outState);
     }
 

@@ -18,6 +18,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactHolder> {
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -25,6 +27,12 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
     }
 
     private OnItemClickListener listener;
+
+    public void setData(ArrayList<ContactItem> data) {
+        this.data = data;
+    }
+
+    private ArrayList<ContactItem> data;
 
     @NonNull
     @Override
@@ -37,13 +45,13 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
 
     @Override
     public void onBindViewHolder(@NonNull ContactHolder contactHolder, int i) {
-        ContactItem currentItem = User.getInstance().getContacts().get(i);
+        ContactItem currentItem = data.get(i);
         contactHolder.bind(currentItem);
     }
 
     @Override
     public int getItemCount() {
-        return User.getInstance().getContacts().size();
+        return data.size();
     }
 
     class ContactHolder extends RecyclerView.ViewHolder {

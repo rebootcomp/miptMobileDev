@@ -42,14 +42,13 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
         View view = inflater.inflate(R.layout.fragment_profile_page, container, false);
 
         // setting up actionbar
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
         profileImage = view.findViewById(R.id.fragment_profile_image);
         profileName = view.findViewById(R.id.fragment_profile_name);
 
         setHasOptionsMenu(true);
-        ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         rootView = view;
         return view;

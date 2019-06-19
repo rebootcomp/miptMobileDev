@@ -3,17 +3,13 @@ package android.train.mipt_school;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.design.widget.TextInputEditText;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.train.mipt_school.Adapters.ContactAdapter;
-import android.train.mipt_school.Adapters.ScheduleAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ContactItem;
 import android.train.mipt_school.Tools.SceneFragment;
@@ -24,16 +20,18 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
-import java.lang.reflect.Array;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
 
 
-public class ContactPageFragment extends Fragment implements SceneFragment {
+public class AllUsersPageFragment extends Fragment implements SceneFragment {
 
     private String title;
     private RecyclerView contactList;
@@ -43,14 +41,21 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
     private ProgressBar progressBar;
     private ContactAdapter contactAdapter;
     private TextView noDataMessage;
+    ArrayList<ContactItem> foundData;
 
-    public static ContactPageFragment newInstance() {
-        ContactPageFragment fragment = new ContactPageFragment();
+    public interface ResponseCallback {
+        void call(String s);
+    }
+
+    public ResponseCallback responseCallback;
+
+    public static AllUsersPageFragment newInstance() {
+        AllUsersPageFragment fragment = new AllUsersPageFragment();
         return fragment;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(LayoutInflater inflater, final ViewGroup container,
                              Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_contacts_page, container, false);
@@ -59,6 +64,7 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
         contactList = view.findViewById(R.id.contacts_view);
         progressBar = view.findViewById(R.id.progressbar);
         noDataMessage = view.findViewById(R.id.no_data_found_message);
+        foundData = User.getInstance().getAllUsers();
 
 
         /*DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(),
@@ -111,7 +117,8 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
                 clearSearch.setVisibility(View.VISIBLE);
                 if (s.toString().length() == 0) {
                     clearSearch.setVisibility(View.INVISIBLE);
-                    contactAdapter.setData(User.getInstance().getContacts());
+                    contactAdapter.setData(User.getInstance().getAllUsers());
+                    foundData = User.getInstance().getAllUsers();
                 }
             }
         });
@@ -132,13 +139,44 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
             public void run() {
                 contactAdapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
                     @Override
-                    public void onItemClick(View itemView) {
-                        ((MainActivity) getActivity()).loadFragment(ProfilePageFragment
-                                .newInstance());
+                    public void onItemClick(View itemView, int position) {
+                        responseCallback = new ResponseCallback() {
+                            @Override
+                            public void call(String s) {
+                                Toast.makeText(getContext(), s, Toast.LENGTH_LONG).show();
+                                try {
+                                    JSONObject jsonObject = new JSONObject(s);
+                                    if (jsonObject.has("bad_request"))
+                                        Toast.makeText(getContext(), jsonObject.getString("bad_request"), Toast.LENGTH_LONG).show();
+                                    else {
+                                        JSONObject data = jsonObject.getJSONObject("data");
+                                        String lastname = data.getString("lastname");
+                                        String firstname = data.getString("firstname");
+                                        String email = data.getString("email");
+                                        long id = data.getLong("id");
+                                        ProfilePageFragment pf = ProfilePageFragment.newInstance();
+                                        pf.setFirtsname(firstname);
+                                        pf.setLastname(lastname);
+                                        pf.setId(id);
+                                        pf.setEmail(email);
+                                        ((MainActivity) getActivity()).loadFragment(pf);
+                                    }
+                                } catch (JSONException e) {
+                                    e.printStackTrace();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        };
+                        Integer itmid = position;
+                        ContactItem ci = foundData.get(itmid);
+                        Long userid = ci.getUserId();
+                        Toast.makeText(getContext(), userid.toString() + " " + itmid.toString(), Toast.LENGTH_LONG).show();
+                        User.getInstance().userInfoRequest(ci.getUserId(), responseCallback);
                     }
                 });
 
-                contactAdapter.setData(User.getInstance().getContacts());
+                contactAdapter.setData(User.getInstance().getAllUsers());
 
                 contactList.setAdapter(contactAdapter);
 
@@ -194,7 +232,7 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
                 contactList.setVisibility(View.INVISIBLE);
                 progressBar.setVisibility(View.VISIBLE);
 
-                ArrayList<ContactItem> foundData = new ArrayList<>();
+                foundData = new ArrayList<>();
 
                 String[] words = text.split(" ");
 
@@ -202,7 +240,7 @@ public class ContactPageFragment extends Fragment implements SceneFragment {
                     words[i] = words[i].toLowerCase();
                 }
 
-                for (ContactItem item : User.getInstance().getContacts()) {
+                for (ContactItem item : User.getInstance().getAllUsers()) {
                     String[] name = item.getName().split(" ");
                     boolean hasKeyWords = false;
 

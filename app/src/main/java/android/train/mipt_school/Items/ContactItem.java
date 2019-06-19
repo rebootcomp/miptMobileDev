@@ -21,6 +21,11 @@ public class ContactItem {
         this.image = image;
     }
 
+    public ContactItem(long userId, String name) {
+        this.userId = userId;
+        this.name = name;
+    }
+
     public Bitmap getImage() {
         return image;
     }

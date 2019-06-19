@@ -14,6 +14,7 @@
     <string name="rest_info_title">Профиль</string>
     <string name="main_page_title">Главная</string>
     <string name="schedule_page_title">Расписание</string>
+    <string name="cult_page_title">Культурные мероприятия</string>
     <string name="groups_page_title">Группы</string>
     <string name="notifications_page_title">Уведомления</string>
     <string name="question_page_title">Вопрос</string>

@@ -72,7 +72,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
             profileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(itemView);
+                    listener.onItemClick(itemView, getAdapterPosition());
                 }
             });
         }
@@ -89,6 +89,7 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View itemView);
+        void onItemClick(View itemView, int position);
     }
+
 }

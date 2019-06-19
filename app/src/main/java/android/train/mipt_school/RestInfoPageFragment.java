@@ -17,6 +17,7 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
     private View profileButton;
     private View contactsButton;
     private View mapsButton;
+    private View cultButton;
 
     private ImageView profileImage;
     private TextView profileName;
@@ -43,6 +44,8 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         profileButton = view.findViewById(R.id.button_profile);
         contactsButton = view.findViewById(R.id.button_contacts);
         mapsButton = view.findViewById(R.id.button_maps);
+        cultButton = view.findViewById(R.id.button_cultural_events);
+
 
         profileImage = view.findViewById(R.id.profile_image);
         profileName = view.findViewById(R.id.profile_name);
@@ -68,7 +71,7 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         contactsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).loadFragment(ContactPageFragment.newInstance());
+                ((MainActivity) getActivity()).loadFragment(AllUsersPageFragment.newInstance());
             }
         });
 
@@ -76,6 +79,13 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
             @Override
             public void onClick(View v) {
                 ((MainActivity) getActivity()).loadFragment(MapsPageFragment.newInstance());
+            }
+        });
+
+        cultButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).loadFragment(CulturalPageFragment.newInstance());
             }
         });
 

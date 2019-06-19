@@ -11,6 +11,8 @@ public class ScheduleItem {
     private String name;
     private String place;
     private String eventHours;
+    private String comment;
+    private Long day;
 
     public Date getStartDate() {
         return startDate;
@@ -18,6 +20,10 @@ public class ScheduleItem {
 
     public Date getEndDate() {
         return endDate;
+    }
+
+    public String getComment() {
+        return comment;
     }
 
     public String getName() {
@@ -45,6 +51,17 @@ public class ScheduleItem {
         } else {
             eventHours = date.format(startDate);
         }
+    }
+
+    public ScheduleItem(Long startDate, Long endDate, String name, String place, String comment) {
+        this.name = name;
+        this.place = place;
+        this.comment = comment;
+//        if (endDate != null) {
+//            eventHours = startDate.substring(11, 16) + " - " + endDate.substring(11, 16);
+//        } else {
+//            eventHours = startDate.substring(11, 16);
+//        }
     }
 
 }

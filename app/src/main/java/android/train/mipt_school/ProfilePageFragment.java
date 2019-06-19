@@ -26,7 +26,44 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
     private String title;
     private ImageView profileImage;
     private TextView profileName;
+    private TextView emailField;
 
+    private String lastname;
+    private String firtsname;
+    private String email;
+    private long userId;
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getFirtsname() {
+        return firtsname;
+    }
+
+    public void setFirtsname(String firtsname) {
+        this.firtsname = firtsname;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setId(long userId) {
+        this.userId = userId;
+    }
 
     private View rootView;
 
@@ -47,6 +84,10 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
 
         profileImage = view.findViewById(R.id.fragment_profile_image);
         profileName = view.findViewById(R.id.fragment_profile_name);
+        emailField = view.findViewById(R.id.mail_field);
+
+        profileName.setText(firtsname + " " + lastname);
+        emailField.setText(email);
 
         setHasOptionsMenu(true);
 

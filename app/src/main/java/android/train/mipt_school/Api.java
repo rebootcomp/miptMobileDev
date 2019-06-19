@@ -48,7 +48,8 @@ public interface Api {
 
     @POST("usergroups/{id}")
     Call<ResponseBody> userInfo(
-            @Path("id") Long id
+            @Path("id") Long id,
+            @Header("Authorization") String auth
     );
 
 }

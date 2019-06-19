@@ -98,7 +98,7 @@ public class User {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .userInfo(id);
+                .userInfo(id, "Bearer " + token);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -145,7 +145,6 @@ public class User {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                String s = "{\"bad_request\":\"" + t.toString() + "\"}";
                 String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
                 rc.call(s);
             }

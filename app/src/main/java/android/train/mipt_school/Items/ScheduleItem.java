@@ -38,7 +38,7 @@ public class ScheduleItem {
         return eventHours;
     }
 
-    public ScheduleItem(Date startDate, Date endDate, String name, String place) {
+    /*public ScheduleItem(Date startDate, Date endDate, String name, String place) {
         this.startDate = startDate;
         this.endDate = endDate;
         this.name = name;
@@ -51,12 +51,14 @@ public class ScheduleItem {
         } else {
             eventHours = date.format(startDate);
         }
-    }
+    }*/
 
     public ScheduleItem(Long startDate, Long endDate, String name, String place, String comment) {
         this.name = name;
         this.place = place;
         this.comment = comment;
+        this.startDate = new Date(startDate*1000l);
+        this.endDate = new Date(endDate*1000l);
 //        if (endDate != null) {
 //            eventHours = startDate.substring(11, 16) + " - " + endDate.substring(11, 16);
 //        } else {

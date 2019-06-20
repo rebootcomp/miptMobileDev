@@ -13,7 +13,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleHolder> {
@@ -34,7 +37,10 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
     @Override
     public void onBindViewHolder(@NonNull ScheduleHolder scheduleHolder, int i) {
         ScheduleItem item = User.getInstance().getSchedule().get(i);
-        if (date.equals(item.getStartDate())) {
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+        String dateText1 = dateFormat.format(item.getStartDate());
+        String dateText2 = dateFormat.format(date);
+        if (dateText1.equals(dateText2)) {
             scheduleHolder.bind(item);
         }
     }
@@ -44,7 +50,11 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
         int size = 0;
         for (int i = 0; i < User.getInstance().getSchedule().size(); i++) {
             ScheduleItem item = User.getInstance().getSchedule().get(i);
-            if (date.equals(item.getStartDate())) {
+            // Форматирование времени как "день.месяц.год"
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+            String dateText1 = dateFormat.format(item.getStartDate());
+            String dateText2 = dateFormat.format(date);
+            if (dateText1.equals(dateText2)) {
                 size++;
             }
         }

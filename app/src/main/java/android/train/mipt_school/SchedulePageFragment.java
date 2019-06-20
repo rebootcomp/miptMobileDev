@@ -3,14 +3,11 @@ package android.train.mipt_school;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.support.transition.Slide;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.train.mipt_school.Adapters.ScheduleAdapter;
 import android.train.mipt_school.Tools.SceneFragment;
-import android.util.Log;
-import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,7 +55,6 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         scheduleList.setAdapter(new ScheduleAdapter());
         scheduleList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-        onLeftSwipe();
 
         return view;
     }
@@ -66,7 +62,7 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        title = context.getString(R.string.schedule_page_title) + " на " + dateText;
+        title = "Расписание на " + dateText;
     }
 
     @Override
@@ -90,8 +86,19 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         date = new Date(date.getTime() - 24*3600*1000l);
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
         String dateText = dateFormat.format(date);
-        Log.i("Date",dateText);
+        title = "Расписание на " + dateText;
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
+
     }
 
     //на 1 день вперёд
+    //TODO: анимация при переходе
+    public void onRightSwipe() {
+        date = new Date(date.getTime() - 24*3600*1000l);
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+        String dateText = dateFormat.format(date);
+        title = "Расписание на " + dateText;
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
+
+    }
 }

@@ -5,14 +5,20 @@ import android.support.v7.widget.RecyclerView;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.R;
+import android.train.mipt_school.SchedulePageFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+
+import java.util.Date;
+
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleHolder> {
+
+    Date date = SchedulePageFragment.getDate();
 
     @NonNull
     @Override
@@ -28,12 +34,22 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
     @Override
     public void onBindViewHolder(@NonNull ScheduleHolder scheduleHolder, int i) {
         ScheduleItem item = User.getInstance().getSchedule().get(i);
-        scheduleHolder.bind(item);
+        if (date.equals(item.getStartDate())) {
+            scheduleHolder.bind(item);
+        }
     }
 
     @Override
     public int getItemCount() {
-        return User.getInstance().getSchedule().size();
+        int size = 0;
+        for (int i = 0; i < User.getInstance().getSchedule().size(); i++) {
+            ScheduleItem item = User.getInstance().getSchedule().get(i);
+            if (date.equals(item.getStartDate())) {
+                size++;
+            }
+        }
+        Log.i("Size", size + "");
+        return size;
     }
 
     class ScheduleHolder extends RecyclerView.ViewHolder {

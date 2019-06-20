@@ -9,10 +9,16 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.train.mipt_school.Adapters.ScheduleAdapter;
 import android.train.mipt_school.Tools.SceneFragment;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 
 public class SchedulePageFragment extends Fragment implements SceneFragment {
@@ -20,6 +26,11 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
 
     private RecyclerView scheduleList;
     private String title;
+    // Текущее время
+    private static Date date = new Date();
+    // Форматирование времени как "день.месяц.год"
+    private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+    private String dateText = dateFormat.format(date);
 
 
     public static SchedulePageFragment newInstance() {
@@ -47,13 +58,15 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         scheduleList.setAdapter(new ScheduleAdapter());
         scheduleList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
+        onLeftSwipe();
+
         return view;
     }
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-        title = context.getString(R.string.schedule_page_title);
+        title = context.getString(R.string.schedule_page_title) + " на " + dateText;
     }
 
     @Override
@@ -65,4 +78,20 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
     public String getTitle() {
         return title;
     }
+
+
+    public static Date getDate(){
+        return date;
+    }
+
+    //на 1 день назад
+    //TODO: анимация при переходе
+    public void onLeftSwipe() {
+        date = new Date(date.getTime() - 24*3600*1000l);
+        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+        String dateText = dateFormat.format(date);
+        Log.i("Date",dateText);
+    }
+
+    //на 1 день вперёд
 }

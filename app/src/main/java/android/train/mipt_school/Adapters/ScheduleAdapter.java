@@ -5,14 +5,27 @@ import android.support.v7.widget.RecyclerView;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.R;
+import android.train.mipt_school.SchedulePageFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.util.ArrayList;
+
+import java.util.Date;
+import java.util.List;
+
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleHolder> {
+
+    Date date = SchedulePageFragment.getDate();
+
+    private List<ScheduleItem> listItems;
+
+    public ScheduleAdapter(List<ScheduleItem> listItems) {
+        this.listItems = listItems;
+    }
 
     @NonNull
     @Override
@@ -27,13 +40,25 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
 
     @Override
     public void onBindViewHolder(@NonNull ScheduleHolder scheduleHolder, int i) {
-        ScheduleItem item = User.getInstance().getSchedule().get(i);
+        ScheduleItem item = listItems.get(i);
         scheduleHolder.bind(item);
     }
 
     @Override
     public int getItemCount() {
-        return User.getInstance().getSchedule().size();
+        /*int size = 0;
+        for (int i = 0; i < User.getInstance().getSchedule().size(); i++) {
+            ScheduleItem item = User.getInstance().getSchedule().get(i);
+            // Форматирование времени как "день.месяц.год"
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+            String dateText1 = dateFormat.format(item.getStartDate());
+            String dateText2 = dateFormat.format(date);
+            if (dateText1.equals(dateText2)) {
+                size++;
+            }
+        }
+        Log.i("Size", size + "");*/
+        return listItems.size();
     }
 
     class ScheduleHolder extends RecyclerView.ViewHolder {

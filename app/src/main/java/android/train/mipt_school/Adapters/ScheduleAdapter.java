@@ -13,15 +13,19 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
+import java.util.List;
 
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleHolder> {
 
     Date date = SchedulePageFragment.getDate();
+
+    private List<ScheduleItem> listItems;
+
+    public ScheduleAdapter(List<ScheduleItem> listItems) {
+        this.listItems = listItems;
+    }
 
     @NonNull
     @Override
@@ -36,18 +40,13 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
 
     @Override
     public void onBindViewHolder(@NonNull ScheduleHolder scheduleHolder, int i) {
-        ScheduleItem item = User.getInstance().getSchedule().get(i);
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-        String dateText1 = dateFormat.format(item.getStartDate());
-        String dateText2 = dateFormat.format(date);
-        if (dateText1.equals(dateText2)) {
-            scheduleHolder.bind(item);
-        }
+        ScheduleItem item = listItems.get(i);
+        scheduleHolder.bind(item);
     }
 
     @Override
     public int getItemCount() {
-        int size = 0;
+        /*int size = 0;
         for (int i = 0; i < User.getInstance().getSchedule().size(); i++) {
             ScheduleItem item = User.getInstance().getSchedule().get(i);
             // Форматирование времени как "день.месяц.год"
@@ -58,8 +57,8 @@ public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.Schedu
                 size++;
             }
         }
-        Log.i("Size", size + "");
-        return size;
+        Log.i("Size", size + "");*/
+        return listItems.size();
     }
 
     class ScheduleHolder extends RecyclerView.ViewHolder {

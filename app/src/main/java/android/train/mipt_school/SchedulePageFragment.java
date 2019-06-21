@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.train.mipt_school.Adapters.ScheduleAdapter;
+import android.train.mipt_school.DataHolders.User;
+import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +16,9 @@ import android.view.ViewGroup;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -52,7 +56,18 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         scheduleList = view.findViewById(R.id.schedule_view);
 
 
-        scheduleList.setAdapter(new ScheduleAdapter());
+        List<ScheduleItem> listItems = new ArrayList<ScheduleItem>();
+        for (int i = 0; i < User.getInstance().getSchedule().size(); i++) {
+            ScheduleItem item = User.getInstance().getSchedule().get(i);
+            // Форматирование времени как "день.месяц.год"
+            DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+            String dateText1 = dateFormat.format(item.getStartDate());
+            String dateText2 = dateFormat.format(date);
+            if (dateText1.equals(dateText2)) {
+                listItems.add(item);
+            }
+        }
+        scheduleList.setAdapter(new ScheduleAdapter(listItems));
         scheduleList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
 

@@ -92,7 +92,7 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         scheduleList = getView().findViewById(R.id.schedule_view);
         scheduleList.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
             @Override
-            public void onSwipeRight(){
+            public void onSwipeLeft(){
                 date = new Date(date.getTime() + 24*3600*1000l);
                 DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
                 String dateText = dateFormat.format(date);
@@ -111,7 +111,7 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
                 scheduleList.setLayoutManager(new LinearLayoutManager(getContext()));
             }
             @Override
-            public void onSwipeLeft(){
+            public void onSwipeRight(){
                 date = new Date(date.getTime() - 24*3600*1000l);
                 DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
                 String dateText = dateFormat.format(date);

@@ -1,6 +1,7 @@
 package android.train.mipt_school;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -9,10 +10,12 @@ import android.support.v7.widget.RecyclerView;
 import android.train.mipt_school.Adapters.ScheduleAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ScheduleItem;
+import android.train.mipt_school.Tools.OnSwipeTouchListener;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -26,6 +29,7 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
 
 
     private RecyclerView scheduleList;
+    private LinearLayout swipe;
     private String title;
     // Текущее время
     private static Date date = new Date();
@@ -80,6 +84,54 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         title = "Расписание на " + dateText;
     }
 
+    @SuppressLint("ClickableViewAccessibility")
+    @Override
+    public void onStart() {
+        super.onStart();
+        swipe = getView().findViewById(R.id.swipe);
+        scheduleList = getView().findViewById(R.id.schedule_view);
+        scheduleList.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
+            @Override
+            public void onSwipeRight(){
+                date = new Date(date.getTime() + 24*3600*1000l);
+                DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+                String dateText = dateFormat.format(date);
+                title = "Расписание на " + dateText;
+                ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
+                List<ScheduleItem> listItems = new ArrayList<ScheduleItem>();
+                for (int i = 0; i < User.getInstance().getSchedule().size(); i++) {
+                    ScheduleItem item = User.getInstance().getSchedule().get(i);
+                    String dateText1 = dateFormat.format(item.getStartDate());
+                    String dateText2 = dateFormat.format(date);
+                    if (dateText1.equals(dateText2)) {
+                        listItems.add(item);
+                    }
+                }
+                scheduleList.setAdapter(new ScheduleAdapter(listItems));
+                scheduleList.setLayoutManager(new LinearLayoutManager(getContext()));
+            }
+            @Override
+            public void onSwipeLeft(){
+                date = new Date(date.getTime() - 24*3600*1000l);
+                DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
+                String dateText = dateFormat.format(date);
+                title = "Расписание на " + dateText;
+                ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
+                List<ScheduleItem> listItems = new ArrayList<ScheduleItem>();
+                for (int i = 0; i < User.getInstance().getSchedule().size(); i++) {
+                    ScheduleItem item = User.getInstance().getSchedule().get(i);
+                    String dateText1 = dateFormat.format(item.getStartDate());
+                    String dateText2 = dateFormat.format(date);
+                    if (dateText1.equals(dateText2)) {
+                        listItems.add(item);
+                    }
+                }
+                scheduleList.setAdapter(new ScheduleAdapter(listItems));
+                scheduleList.setLayoutManager(new LinearLayoutManager(getContext()));
+            }
+        });
+    }
+
     @Override
     public void onBackButtonPressed() {
         ((MainActivity) getActivity()).loadFragment(MainPageFragment.newInstance());
@@ -98,22 +150,12 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
     //на 1 день назад
     //TODO: анимация при переходе
     public void onLeftSwipe() {
-        date = new Date(date.getTime() - 24*3600*1000l);
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-        String dateText = dateFormat.format(date);
-        title = "Расписание на " + dateText;
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
     }
 
     //на 1 день вперёд
     //TODO: анимация при переходе
     public void onRightSwipe() {
-        date = new Date(date.getTime() - 24*3600*1000l);
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-        String dateText = dateFormat.format(date);
-        title = "Расписание на " + dateText;
-        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
     }
 }

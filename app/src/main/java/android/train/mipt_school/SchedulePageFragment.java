@@ -57,14 +57,19 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
         scheduleList = view.findViewById(R.id.schedule_view);
-        List<ScheduleItem> listItems = new ArrayList<ScheduleItem>();
-        for (int i = 0; i < User.getInstance().getSchedule().size(); i++) {
-            ScheduleItem item = User.getInstance().getSchedule().get(i);
-            String dateText1 = dateFormat.format(item.getStartDate());
-            String dateText2 = dateFormat.format(date);
-            if (dateText1.equals(dateText2)) {
-                listItems.add(item);
+        List<ScheduleItem> listItems = check();
+        //открываем ближайший день на который есть расписание
+        boolean isScheduleForMonthIsAvailable = false;
+        for (int i = 0; i < 30; i++) {
+            if (listItems.size() != 0) {
+                isScheduleForMonthIsAvailable = true;
+                break;
             }
+            date = new Date(date.getTime() + 24 * 3600 * 1000L);
+            listItems = check();
+        }
+        if (!isScheduleForMonthIsAvailable) {
+            date = new Date();
         }
         scheduleList.setAdapter(new ScheduleAdapter(listItems));
         scheduleList.setLayoutManager(new LinearLayoutManager(this.getContext()));
@@ -121,12 +126,20 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
 
     //Обновляем расписание на выбранный день
     public void scheduleForDate() {
-        List<ScheduleItem> listItems = new ArrayList<ScheduleItem>();
+        List<ScheduleItem> listItems = check();
 
         String dateText = dateFormat.format(date);
         title = "Расписание на " + dateText;
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
+        scheduleList = getView().findViewById(R.id.schedule_view);
+        scheduleList.setAdapter(new ScheduleAdapter(listItems));
+        scheduleList.setLayoutManager(new LinearLayoutManager(getContext()));
+    }
+
+    //Создаёт массив нужных ScheduleItem
+    public List<ScheduleItem> check() {
+        List<ScheduleItem> listItems = new ArrayList<ScheduleItem>();
         for (int i = 0; i < User.getInstance().getSchedule().size(); i++) {
             ScheduleItem item = User.getInstance().getSchedule().get(i);
             String dateText1 = dateFormat.format(item.getStartDate());
@@ -135,9 +148,6 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
                 listItems.add(item);
             }
         }
-
-        scheduleList = getView().findViewById(R.id.schedule_view);
-        scheduleList.setAdapter(new ScheduleAdapter(listItems));
-        scheduleList.setLayoutManager(new LinearLayoutManager(getContext()));
+        return listItems;
     }
 }

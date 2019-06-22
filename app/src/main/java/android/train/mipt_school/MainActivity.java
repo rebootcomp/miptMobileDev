@@ -1,5 +1,7 @@
 package android.train.mipt_school;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.transition.AutoTransition;
@@ -32,7 +34,7 @@ import static android.support.transition.TransitionSet.ORDERING_TOGETHER;
 public class MainActivity
         extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
-
+    SharedPreferences mSP;
     private final String BUNDLE_TITLE_NAME = "ACTIONBAR_TITLE";
     private final long TRANSITITON_DURATION = 200;
     private BottomNavigationView bottomNavigationBar;
@@ -49,7 +51,10 @@ public class MainActivity
         setSupportActionBar(toolbar);
 
         bottomNavigationBar.setOnNavigationItemSelectedListener(this);
-
+        mSP = getSharedPreferences("settings", Context.MODE_PRIVATE);
+        SharedPreferences.Editor ed = mSP.edit();
+        ed.putString("signed", "true");
+        ed.commit();
         if (savedInstanceState == null) {
             bottomNavigationBar.setSelectedItemId(R.id.navigation_main);
         }
@@ -151,3 +156,4 @@ public class MainActivity
         }
     }
 }
+

@@ -9,6 +9,7 @@ import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.JWTUtils;
 import android.train.mipt_school.LoginActivity;
 import android.train.mipt_school.MainActivity;
+import android.train.mipt_school.ResponseCallback;
 import android.train.mipt_school.RetrofitClient;
 import android.util.Log;
 import android.widget.Toast;
@@ -42,18 +43,15 @@ public class User {
 
     private long userId; // идентификатор пользователя
     private long groupId; // отряд, в котором находится пользователь
-    private long adm = 0;
+
+    private long approle = 0;
 
     private ArrayList<ContactItem> allusers; // пользователи
+
     private ArrayList<ContactItem> friends; // контакаты пользователя
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
-
     public String getPassword() {
         return password;
-    }
-
-    public long getAdm() {
-        return adm;
     }
 
     public ArrayList<ContactItem> getAllUsers() {
@@ -61,10 +59,6 @@ public class User {
     }
 
     private static volatile User instance;
-
-    public interface ResponseCallback {
-        void call(String s);
-    }
 
     private void userRequest(String username, String password, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
@@ -75,7 +69,7 @@ public class User {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String s = null;
-                if (response.code() == 200 || response.code() == 201) {
+                if (response.code() == 200) {
                     try {
                         s = response.body().string();
                     } catch (IOException e) {
@@ -83,18 +77,18 @@ public class User {
                     }
                 } else
                     s = "{\"bad_request\":\"Ошибка сервера\"}";
-                rc.call(s);
+                rc.onResponse(s);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
-                rc.call(s);
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
             }
         });
     }
 
-    public void userInfoRequest(Long id, final AllUsersPageFragment.ResponseCallback rc) {
+    public void userInfoRequest(Long id, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
@@ -103,7 +97,7 @@ public class User {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String s = null;
-                if (response.code() == 200 || response.code() == 201) {
+                if (response.code() == 200) {
                     try {
                         s = response.body().string();
                     } catch (IOException e) {
@@ -111,19 +105,18 @@ public class User {
                     }
                 } else
                     s = "{\"bad_request\":\"Ошибка сервера\"}";
-                rc.call(s);
+                rc.onResponse(s);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-//                String s = "{\"bad_request\":\"" + t.toString() + "\"}";
-                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
-                rc.call(s);
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
             }
         });
     }
 
-    private void allUsersRequest(final ResponseCallback rc) {
+    public void allUsersRequest(final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
@@ -132,7 +125,7 @@ public class User {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String s = null;
-                if (response.code() == 200 || response.code() == 201) {
+                if (response.code() == 200) {
                     try {
                         s = response.body().string();
                     } catch (IOException e) {
@@ -140,18 +133,18 @@ public class User {
                     }
                 } else
                     s = "{\"bad_request\":\"Ошибка сервера\"}";
-                rc.call(s);
+                rc.onResponse(s);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
-                rc.call(s);
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
             }
         });
     }
 
-    private void sheduleRequest(final ResponseCallback rc) {
+    public void scheduleRequest(final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
@@ -160,7 +153,7 @@ public class User {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String s = null;
-                if (response.code() == 200 || response.code() == 201) {
+                if (response.code() == 200) {
                     try {
                         s = response.body().string();
                     } catch (IOException e) {
@@ -168,163 +161,114 @@ public class User {
                     }
                 } else
                     s = "{\"bad_request\":\"Ошибка сервера\"}";
-                rc.call(s);
+                rc.onResponse(s);
             }
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
                 String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
-                rc.call(s);
+                rc.onFailure(s);
             }
         });
     }
 
-    public void updateToken(final ResponseCallback responseCallback) {
-        ResponseCallback rc = new ResponseCallback() {
-            @Override
-            public void call(String s) {
-                try {
-                    JSONObject jsonObject = new JSONObject(s);
-                    String error;
-                    if (jsonObject.has("bad_request"))
-                        error = jsonObject.getString("bad_request");
-                    else {
-                        String tmpToken = jsonObject.getString("token");
-                        token = tmpToken;
-                        JSONObject data = new JSONObject(JWTUtils.decoded(tmpToken));
-                        JSONObject userData = data.getJSONObject("user_data");
-                        firstName = userData.getString("firstname");
-                        lastName = userData.getString("lastname");
-                        thirdName = userData.getString("thirdname");
-                        email = userData.getString("email");
-                        userId = userData.getLong("id");
-                        //groupId = data.getLong("groudid"); не добавлено еще
-                        groupId = 0;
-                        String approle = userData.getString("approle");
-                        if (approle.equals("user"))
-                            adm = 0;
-                        else
-                            adm = 1;
-                        error = "success";
-                    }
-                    responseCallback.call(error);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+    public boolean updateToken(String data) {
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            if (!jsonObject.has("bad_request") && !jsonObject.has("new_token")) {
+                String tmpToken = jsonObject.getString("token");
+                token = tmpToken;
+                JSONObject userData = new JSONObject(JWTUtils.decoded(tmpToken)).getJSONObject("user_data");
+                firstName = userData.getString("firstname");
+                lastName = userData.getString("lastname");
+                thirdName = userData.getString("thirdname");
+                email = userData.getString("email");
+                userId = userData.getLong("id");
+                //groupId = data.getLong("groudid"); не добавлено еще
+                groupId = 0;
+                String ar = userData.getString("approle");
+                if (ar.equals("user"))
+                    approle = 0;
+                else
+                    approle = 1;
+                return true;
             }
-        };
-        userRequest(userName, password, rc);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public void updateAllUsers(final LoginActivity.ResponseCallback responseCallback) {
+    public boolean updateAllUsers(String data) {
         allusers = new ArrayList<>();
-        ResponseCallback rc = new ResponseCallback() {
-            @Override
-            public void call(String s) {
-                try {
-                    JSONObject jsonObject = new JSONObject(s);
-                    String error;
-                    if (jsonObject.has("bad_request"))
-                        error = jsonObject.getString("bad_request");
-                    else {
-                        JSONArray data = jsonObject.getJSONArray("data");
-                        int len = data.length();
-                        for (int i = 0; i < len; i++) {
-                            JSONObject tmp = data.getJSONObject(i);
-                            allusers.add(new ContactItem(tmp.getLong("id"), tmp.getString("firstname") + " " + tmp.getString("lastname")));
-                        }
-                        error = "success";
-                        Collections.sort(allusers, new Comparator<ContactItem>() {
-                            @Override
-                            public int compare(ContactItem lhs, ContactItem rhs) {
-                                return lhs.getName().compareTo(rhs.getName());
-                            }
-                        });
-                    }
-                    responseCallback.call(error);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                } catch (Exception e) {
-                    e.printStackTrace();
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            if (!jsonObject.has("bad_request") && !jsonObject.has("new_token")) {
+                JSONArray allUsersData = jsonObject.getJSONArray("data");
+                int len = allUsersData.length();
+                for (int i = 0; i < len; i++) {
+                    JSONObject tmp = allUsersData.getJSONObject(i);
+                    allusers.add(new ContactItem(tmp.getLong("id"), tmp.getString("firstname") + " " + tmp.getString("lastname")));
                 }
+                Collections.sort(allusers, new Comparator<ContactItem>() {
+                    @Override
+                    public int compare(ContactItem lhs, ContactItem rhs) {
+                        return lhs.getName().compareTo(rhs.getName());
+                    }
+                });
+                return true;
             }
-        };
-        allUsersRequest(rc);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public void init(final LoginActivity.ResponseCallback responseCallback) {
-
-        allusers = new ArrayList<>();
-        schedule = new ArrayList<>();
-
-//        contacts.add(new ContactItem(123, "Василий Иванов", null));
-//        contacts.add(new ContactItem(123, "Константин Смирнов", null));
-//        contacts.add(new ContactItem(123, "Алексей Михайлов", null));
-//        contacts.add(new ContactItem(123, "Никита Лебедев", null));
-//        contacts.add(new ContactItem(123, "Владислав Морозов", null));
-//        contacts.add(new ContactItem(123, "Антон Павлов", null));
-//        contacts.add(new ContactItem(123, "Роман Орлов", null));
-//        contacts.add(new ContactItem(123, "Николай Макаров", null));
-//        contacts.add(new ContactItem(123, "Виктор Зайцев", null));
-//        contacts.add(new ContactItem(123, "Павел Яковлев", null));
-//        contacts.add(new ContactItem(123, "Семен Григорьев", null));
-//        contacts.add(new ContactItem(123, "Леонид Киселев", null));
-//        contacts.add(new ContactItem(123, "Михаил Сорокин", null));
-
-        ResponseCallback rc = new ResponseCallback() {
-            @Override
-            public void call(String s) {
-                try {
-                    JSONObject jsonObject = new JSONObject(s);
-                    String error;
-                    if (jsonObject.has("bad_request"))
-                        error = jsonObject.getString("bad_request");
-                    else {
-                        JSONArray data = jsonObject.getJSONArray("data");
-                        int len = data.length();
-                        for (int i = 0; i < len; i++) {
-                            JSONObject tmp = data.getJSONObject(i);
-                            Long start = tmp.getLong("start");
-                            Long end = tmp.getLong("end");
-                            String group = tmp.getString("group");
-                            String room = tmp.getString("room");
-                            String name = tmp.getString("title");
-                            String comment = tmp.getString("comment");
-                            //responseCallback.call(comment);
-                            schedule.add(new ScheduleItem(start, end, name, room, comment));
-                        }
-                        error = "success";
-                    }
-                    responseCallback.call(error);
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-                catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        };
-
-        sheduleRequest(rc);
+    public ArrayList<ContactItem> getAllusers() {
+        return allusers;
     }
 
-    public void logIn(String userName, String password, final LoginActivity.ResponseCallback responseCallback) {
+    public ArrayList<ContactItem> getFriends() {
+        return friends;
+    }
+
+    public boolean init(String data) {
+        try {
+            allusers = new ArrayList<>();
+            schedule = new ArrayList<>();
+            JSONObject jsonObject = new JSONObject(data);
+            if (jsonObject.has("data")) {
+                JSONArray scheduleData = jsonObject.getJSONArray("data");
+                int len = scheduleData.length();
+                for (int i = 0; i < len; i++) {
+                    JSONObject tmp = scheduleData.getJSONObject(i);
+                    Long start = tmp.getLong("start");
+                    Long end = tmp.getLong("end");
+                    String group = tmp.getString("group");
+                    String room = tmp.getString("room");
+                    String name = tmp.getString("title");
+                    String comment = tmp.getString("comment");
+                    schedule.add(new ScheduleItem(start, end, name, room, comment));
+                }
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public void logIn(String userName, String password, final ResponseCallback responseCallback) {
         this.userName = userName;
         this.password = password;
-        ResponseCallback updateCallback = new ResponseCallback() {
-            @Override
-            public void call(String s) {
-                if (s != null) {
-                    responseCallback.call(s);
-                } else {
-                    responseCallback.call("success");
-                }
-            }
-        };
-        updateToken(updateCallback);
-//        responseCallback.call("success");
+        userRequest(userName, password, responseCallback);
     }
 
     public static User getInstance() {
@@ -346,6 +290,10 @@ public class User {
 
     public String getLastName() {
         return lastName;
+    }
+
+    public long getApprole() {
+        return approle;
     }
 
     public String getThirdName() {

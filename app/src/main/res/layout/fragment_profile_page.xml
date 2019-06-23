@@ -242,6 +242,7 @@
                 <!--TODO: Придумать куда лучше эту кнопоку поместить -->
                 <TextView
                     android:layout_width="match_parent"
+                    android:id="@+id/add_to_contacts"
                     android:layout_height="wrap_content"
                     android:text="Добавить в контакты"
                     android:textColor="@android:color/black"

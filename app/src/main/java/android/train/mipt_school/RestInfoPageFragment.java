@@ -4,6 +4,7 @@ package android.train.mipt_school;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -50,6 +51,8 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         profileImage = view.findViewById(R.id.profile_image);
         profileName = view.findViewById(R.id.profile_name);
 
+        profileName.setText(User.getInstance().getFirstName() + " " + User.getInstance().getLastName());
+
         questionButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -60,11 +63,9 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).loadFragment(ProfilePageFragment
-                                .newInstance()
-                        /*view.findViewById(R.id.profile_image),
-                        view.findViewById(R.id.profile_image_card),
-                        view.findViewById(R.id.profile_card)*/);
+                ProfilePageFragment pf = ProfilePageFragment.newInstance();
+                pf.loadUser(User.getInstance());
+                ((MainActivity) getActivity()).loadFragment(pf);
             }
         });
 

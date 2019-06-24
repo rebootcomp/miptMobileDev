@@ -4,13 +4,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Handler;
 import android.train.mipt_school.AllUsersPageFragment;
+import android.train.mipt_school.DailyScheduleFragment;
 import android.train.mipt_school.Items.ContactItem;
+import android.train.mipt_school.Items.DailyScheduleItem;
 import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.JWTUtils;
 import android.train.mipt_school.LoginActivity;
 import android.train.mipt_school.MainActivity;
 import android.train.mipt_school.ResponseCallback;
 import android.train.mipt_school.RetrofitClient;
+import android.train.mipt_school.Tools.DateFormatter;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -50,13 +54,10 @@ public class User {
 
     private ArrayList<ContactItem> friends; // контакаты пользователя
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
-    public String getPassword() {
-        return password;
-    }
 
-    public ArrayList<ContactItem> getAllUsers() {
-        return allusers;
-    }
+
+    private ArrayList<DailyScheduleItem> dailySchedule; // расписание по дням
+
 
     private static volatile User instance;
 
@@ -254,12 +255,12 @@ public class User {
                     String comment = tmp.getString("comment");
                     schedule.add(new ScheduleItem(start, end, name, room, comment));
                 }
+                prepareSchedule();
                 return true;
             }
         } catch (JSONException e) {
             e.printStackTrace();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return false;
@@ -282,6 +283,39 @@ public class User {
             }
         }
         return localInstance;
+    }
+
+    private void prepareSchedule() {
+        dailySchedule = new ArrayList<>();
+
+        if (User.getInstance().getSchedule().size() == 0) {
+            return;
+        }
+
+
+        ArrayList<ScheduleItem> buffer = new ArrayList<>();
+        String currentDate =
+                DateFormatter.dayMonthFormat(User.getInstance().getSchedule().get(0).getStartDate());
+
+        for (ScheduleItem item : User.getInstance().getSchedule()) {
+            String eventDate = DateFormatter.dayMonthFormat(item.getStartDate());
+            if (eventDate.equals(currentDate)) {
+                buffer.add(item);
+            } else {
+                dailySchedule.add(new DailyScheduleItem(
+                        currentDate,
+                        (ArrayList<ScheduleItem>) buffer.clone()));
+
+                buffer.clear();
+                buffer.add(item);
+                currentDate = eventDate;
+            }
+        }
+        if (!buffer.isEmpty()) {
+            dailySchedule.add(new DailyScheduleItem(
+                    currentDate,
+                    (ArrayList<ScheduleItem>) buffer.clone()));
+        }
     }
 
     public String getFirstName() {
@@ -322,5 +356,17 @@ public class User {
 
     public long getGroupId() {
         return groupId;
+    }
+
+    public ArrayList<DailyScheduleItem> getDailySchedule() {
+        return dailySchedule;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public ArrayList<ContactItem> getAllUsers() {
+        return allusers;
     }
 }

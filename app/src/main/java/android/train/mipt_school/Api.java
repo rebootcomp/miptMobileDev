@@ -52,4 +52,9 @@ public interface Api {
             @Header("Authorization") String auth
     );
 
+    @POST("groups/{id}")
+    Call<ResponseBody> groupInfo(
+            @Path("id") Long id,
+            @Header("Authorization") String auth
+    );
 }

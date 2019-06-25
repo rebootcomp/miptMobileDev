@@ -44,6 +44,12 @@ public class User {
     private String email;
     private String password;
     private String token;
+    private String VK;
+    private String phoneNumber;
+    //Для отображения профиля
+    private boolean isEmailAvailable = true;
+    private boolean isPhoneNumberAvailable = true;
+    private boolean isVKAvailable = true;
 
     private long userId; // идентификатор пользователя
     private long groupId; // отряд, в котором находится пользователь
@@ -54,7 +60,6 @@ public class User {
 
     private ArrayList<ContactItem> friends; // контакаты пользователя
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
-
 
     private ArrayList<DailyScheduleItem> dailySchedule; // расписание по дням
 
@@ -185,6 +190,8 @@ public class User {
                 thirdName = userData.getString("thirdname");
                 email = userData.getString("email");
                 userId = userData.getLong("id");
+                VK = userData.getString("vk_id");
+                phoneNumber = userData.getString("phone");
                 //groupId = data.getLong("groudid"); не добавлено еще
                 groupId = 0;
                 String ar = userData.getString("approle");
@@ -322,6 +329,15 @@ public class User {
         return firstName;
     }
 
+    public String getVK() {
+        return VK;
+    }
+
+    public String getPhoneNumber(){
+        Log.i("PhoneNumber", phoneNumber);
+        return phoneNumber;
+    }
+
     public String getLastName() {
         return lastName;
     }
@@ -357,7 +373,7 @@ public class User {
     public long getGroupId() {
         return groupId;
     }
-
+  
     public ArrayList<DailyScheduleItem> getDailySchedule() {
         return dailySchedule;
     }
@@ -369,4 +385,15 @@ public class User {
     public ArrayList<ContactItem> getAllUsers() {
         return allusers;
     }
+  
+    public boolean getVKAccess(){
+        return isVKAvailable;
+    }
+
+    public boolean getEmailAccess(){
+        return isEmailAvailable;
+    }
+
+    public boolean getPhoneNumberAccess(){
+        return isPhoneNumberAvailable;
 }

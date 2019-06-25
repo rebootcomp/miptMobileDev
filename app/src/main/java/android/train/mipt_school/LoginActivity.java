@@ -60,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
                             User.getInstance().allUsersRequest(allusersCallback);
                         else
                             Toast.makeText(LoginActivity.this,
-                                    "Что-то пошло не так1", Toast.LENGTH_LONG).show();
+                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
                     }
 
                     @Override

@@ -4,11 +4,18 @@ package android.train.mipt_school;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.train.mipt_school.Adapters.ScheduleAdapter;
+import android.train.mipt_school.Adapters.ScheduleTabsAdapter;
 import android.train.mipt_school.DataHolders.User;
+import android.train.mipt_school.Items.DailyScheduleItem;
 import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.Tools.OnSwipeTouchListener;
 import android.train.mipt_school.Tools.SceneFragment;
@@ -27,17 +34,14 @@ import java.util.Locale;
 public class SchedulePageFragment extends Fragment implements SceneFragment {
 
 
-    private RecyclerView scheduleList;
     private String title;
-    // Текущее время
+    private static ArrayList<DailyScheduleFragment> schedule;
     private static Date date = new Date();
-    // Форматирование времени как "день.месяц.год"
-    private DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.getDefault());
-    private String dateText = dateFormat.format(date);
 
 
     public static SchedulePageFragment newInstance() {
         SchedulePageFragment fragment = new SchedulePageFragment();
+        //fragment.setRetainInstance(true);
         return fragment;
     }
 
@@ -56,51 +60,43 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
-        scheduleList = view.findViewById(R.id.schedule_view);
-        List<ScheduleItem> listItems = check();
-        //открываем ближайший день на который есть расписание
-        boolean isScheduleForMonthIsAvailable = false;
-        for (int i = 0; i < 30; i++) {
-            if (listItems.size() != 0) {
-                isScheduleForMonthIsAvailable = true;
-                break;
-            }
-            date = new Date(date.getTime() + 24 * 3600 * 1000L);
-            listItems = check();
-        }
-        if (!isScheduleForMonthIsAvailable) {
-            date = new Date();
-        }
-        scheduleList.setAdapter(new ScheduleAdapter(listItems));
-        scheduleList.setLayoutManager(new LinearLayoutManager(this.getContext()));
-
 
         return view;
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        title = "Расписание на " + dateText;
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        ((MainActivity) getActivity()).loadingScreen(true);
+
+        schedule = new ArrayList<>();
+
+        // инициализация расписания на каждый день
+
+        ((MainActivity) getActivity()).loadingScreen(true);
+
+        for (int i = 0; i < User.getInstance().getDailySchedule().size(); i++) {
+            DailyScheduleItem item = User.getInstance().getDailySchedule().get(i);
+            schedule.add(DailyScheduleFragment.newInstance(item.getDate(), i));
+        }
+
+
+        ViewPager viewPager = view.findViewById(R.id.schedule_pager);
+        PagerAdapter pagerAdapter =
+                new ScheduleTabsAdapter(getChildFragmentManager(), schedule);
+        viewPager.setAdapter(pagerAdapter);
+        viewPager.setOffscreenPageLimit(3);
+        TabLayout tabLayout = view.findViewById(R.id.schedule_tablayout);
+
+        tabLayout.setupWithViewPager(viewPager);
+
+        ((MainActivity) getActivity()).loadingScreen(false);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     @Override
-    public void onStart() {
-        super.onStart();
-        scheduleList = getView().findViewById(R.id.schedule_view);
-        scheduleList.setOnTouchListener(new OnSwipeTouchListener(getContext()) {
-            @Override
-            public void onSwipeLeft(){
-                date = new Date(date.getTime() + 24 * 3600 * 1000L);
-                scheduleForDate();
-            }
-            @Override
-            public void onSwipeRight(){
-                date = new Date(date.getTime() - 24 * 3600 * 1000L);
-                scheduleForDate();
-            }
-        });
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        title = context.getString(R.string.schedule_page_title);
     }
 
     @Override
@@ -114,12 +110,12 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
     }
 
 
-    public static Date getDate(){
+    public static Date getDate() {
         return date;
     }
 
     //Возварщает к сегодняшнему дню
-    public void today(){
+    /*public void today() {
         date = new Date();
         scheduleForDate();
     }
@@ -135,10 +131,10 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         scheduleList = getView().findViewById(R.id.schedule_view);
         scheduleList.setAdapter(new ScheduleAdapter(listItems));
         scheduleList.setLayoutManager(new LinearLayoutManager(getContext()));
-    }
+    }*/
 
     //Создаёт массив нужных ScheduleItem
-    public List<ScheduleItem> check() {
+    /*public List<ScheduleItem> check() {
         List<ScheduleItem> listItems = new ArrayList<ScheduleItem>();
         for (int i = 0; i < User.getInstance().getSchedule().size(); i++) {
             ScheduleItem item = User.getInstance().getSchedule().get(i);
@@ -149,5 +145,5 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
             }
         }
         return listItems;
-    }
+    }*/
 }

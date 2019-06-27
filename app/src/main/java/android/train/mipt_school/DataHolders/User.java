@@ -44,6 +44,12 @@ public class User {
     private String email;
     private String password;
     private String token;
+    private String VK;
+    private String phoneNumber;
+    //Для отображения профиля
+    private boolean isEmailAvailable = true;
+    private boolean isPhoneNumberAvailable = true;
+    private boolean isVKAvailable = true;
 
     private long userId; // идентификатор пользователя
     private long groupId; // отряд, в котором находится пользователь
@@ -54,7 +60,6 @@ public class User {
 
     private ArrayList<ContactItem> friends; // контакаты пользователя
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
-
 
     private ArrayList<DailyScheduleItem> dailySchedule; // расписание по дням
 
@@ -185,6 +190,8 @@ public class User {
                 thirdName = userData.getString("thirdname");
                 email = userData.getString("email");
                 userId = userData.getLong("id");
+                VK = userData.getString("vk_id");
+                phoneNumber = userData.getString("phone");
                 //groupId = data.getLong("groudid"); не добавлено еще
                 groupId = 0;
                 String ar = userData.getString("approle");
@@ -249,7 +256,7 @@ public class User {
                     JSONObject tmp = scheduleData.getJSONObject(i);
                     Long start = tmp.getLong("start");
                     Long end = tmp.getLong("end");
-                    //String group = tmp.getString("group");
+                    String group = tmp.getString("group");
                     String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
@@ -292,19 +299,11 @@ public class User {
             return;
         }
 
-        // сортировка событий расписания по времени
-        Collections.sort(User.getInstance().getSchedule(), new Comparator<ScheduleItem>() {
-            @Override
-            public int compare(ScheduleItem o1, ScheduleItem o2) {
-                return o1.getStartDate().compareTo(o2.getStartDate());
-            }
-        });
 
         ArrayList<ScheduleItem> buffer = new ArrayList<>();
         String currentDate =
                 DateFormatter.dayMonthFormat(User.getInstance().getSchedule().get(0).getStartDate());
 
-        // разделение событий расписания по дням
         for (ScheduleItem item : User.getInstance().getSchedule()) {
             String eventDate = DateFormatter.dayMonthFormat(item.getStartDate());
             if (eventDate.equals(currentDate)) {
@@ -328,6 +327,15 @@ public class User {
 
     public String getFirstName() {
         return firstName;
+    }
+
+    public String getVK() {
+        return VK;
+    }
+
+    public String getPhoneNumber(){
+        Log.i("PhoneNumber", phoneNumber);
+        return phoneNumber;
     }
 
     public String getLastName() {
@@ -377,4 +385,15 @@ public class User {
     public ArrayList<ContactItem> getAllUsers() {
         return allusers;
     }
-}
+
+    public boolean getVKAccess(){
+        return isVKAvailable;
+    }
+
+    public boolean getEmailAccess(){
+        return isEmailAvailable;
+    }
+
+    public boolean getPhoneNumberAccess(){
+        return isPhoneNumberAvailable;
+    }

@@ -33,6 +33,8 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
     private ImageView profileImage;
     private TextView profileName;
     private TextView emailField;
+    private TextView phoneField;
+    private TextView VKField;
     private TextView userStatus;
 
     private String lastname;
@@ -41,6 +43,8 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
     private int vis;
     private String status;
     private long userId;
+    private String phoneNumber;
+    private String VK;
 
     private Button addToContacts;
 
@@ -85,13 +89,29 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
         this.setFirtsname(user.getFirstName());
         this.setLastname(user.getLastName());
         this.setId(id);
-        this.setEmail(user.getEmail());
-        vis = View.INVISIBLE;
-        this.setEmail(email);
+        vis = View.VISIBLE;
+        if (user.getEmailAccess()) {
+            this.setEmail(user.getEmail());
+        }
+        else {
+            this.setEmail("Email не доступен");
+        }
         if (user.getApprole() == 1)
             this.status = "Администратор";
         else
             this.status = "Ученик";
+        if (user.getPhoneNumberAccess()) {
+            this.phoneNumber = user.getPhoneNumber();
+        }
+        else {
+            this.phoneNumber = "Номер телефона не досупен";
+        }
+        if (user.getVKAccess()) {
+            this.VK = user.getVK();
+        }
+        else {
+            this.VK = "Страница во ВКонтакте не доступна";
+        }
     }
 
     public void setLastname(String lastname) {
@@ -139,6 +159,8 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
+        phoneField = view.findViewById(R.id.telephone_field);
+        VKField = view.findViewById(R.id.vk_field);
         profileImage = view.findViewById(R.id.fragment_profile_image);
         profileName = view.findViewById(R.id.fragment_profile_name);
         emailField = view.findViewById(R.id.mail_field);
@@ -157,6 +179,8 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
 
         profileName.setText(firtsname + " " + lastname);
         emailField.setText(email);
+        phoneField.setText(phoneNumber);
+        VKField.setText(VK);
 
         setHasOptionsMenu(true);
 

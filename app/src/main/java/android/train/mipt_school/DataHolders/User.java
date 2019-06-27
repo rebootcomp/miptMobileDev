@@ -256,7 +256,7 @@ public class User {
                     JSONObject tmp = scheduleData.getJSONObject(i);
                     Long start = tmp.getLong("start");
                     Long end = tmp.getLong("end");
-                    String group = tmp.getString("group");
+                    //String group = tmp.getString("group");
                     String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
@@ -277,6 +277,10 @@ public class User {
         this.userName = userName;
         this.password = password;
         userRequest(userName, password, responseCallback);
+    }
+
+    public static void logOut() {
+        instance = null;
     }
 
     public static User getInstance() {

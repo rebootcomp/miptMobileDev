@@ -71,11 +71,13 @@ public class LoginActivity extends AppCompatActivity {
                 allusersCallback = new ResponseCallback() {
                     @Override
                     public void onResponse(String data) {
-                        if (User.getInstance().updateAllUsers(data))
+                        if (User.getInstance().updateAllUsers(data)) {
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        else
+                            finish();
+                        } else {
                             Toast.makeText(LoginActivity.this,
                                     "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                        }
                     }
 
                     @Override

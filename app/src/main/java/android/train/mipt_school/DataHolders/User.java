@@ -249,7 +249,7 @@ public class User {
                     JSONObject tmp = scheduleData.getJSONObject(i);
                     Long start = tmp.getLong("start");
                     Long end = tmp.getLong("end");
-                    String group = tmp.getString("group");
+                    //String group = tmp.getString("group");
                     String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
@@ -292,11 +292,19 @@ public class User {
             return;
         }
 
+        // сортировка событий расписания по времени
+        Collections.sort(User.getInstance().getSchedule(), new Comparator<ScheduleItem>() {
+            @Override
+            public int compare(ScheduleItem o1, ScheduleItem o2) {
+                return o1.getStartDate().compareTo(o2.getStartDate());
+            }
+        });
 
         ArrayList<ScheduleItem> buffer = new ArrayList<>();
         String currentDate =
                 DateFormatter.dayMonthFormat(User.getInstance().getSchedule().get(0).getStartDate());
 
+        // разделение событий расписания по дням
         for (ScheduleItem item : User.getInstance().getSchedule()) {
             String eventDate = DateFormatter.dayMonthFormat(item.getStartDate());
             if (eventDate.equals(currentDate)) {

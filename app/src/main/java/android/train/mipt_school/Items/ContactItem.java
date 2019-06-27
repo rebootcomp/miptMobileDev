@@ -7,14 +7,6 @@ public class ContactItem {
     private Bitmap image;
     private String name;
 
-    public long getUserId() {
-        return userId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
     public ContactItem(long userId, String name, Bitmap image) {
         this.userId = userId;
         this.name = name;
@@ -29,4 +21,13 @@ public class ContactItem {
     public Bitmap getImage() {
         return image;
     }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public String getName() {
+        return name;
+    }
+
 }

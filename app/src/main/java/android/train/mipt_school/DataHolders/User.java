@@ -333,7 +333,7 @@ public class User {
         return VK;
     }
 
-    public String getPhoneNumber(){
+    public String getPhoneNumber() {
         Log.i("PhoneNumber", phoneNumber);
         return phoneNumber;
     }
@@ -386,14 +386,15 @@ public class User {
         return allusers;
     }
 
-    public boolean getVKAccess(){
+    public boolean getVKAccess() {
         return isVKAvailable;
     }
 
-    public boolean getEmailAccess(){
+    public boolean getEmailAccess() {
         return isEmailAvailable;
     }
 
-    public boolean getPhoneNumberAccess(){
+    public boolean getPhoneNumberAccess() {
         return isPhoneNumberAvailable;
     }
+}

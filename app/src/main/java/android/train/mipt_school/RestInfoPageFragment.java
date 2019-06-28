@@ -2,8 +2,12 @@ package android.train.mipt_school;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AlertDialog;
+import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +22,7 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
     private View contactsButton;
     private View mapsButton;
     private View cultButton;
+    private View logOutButton;
 
     private ImageView profileImage;
     private TextView profileName;
@@ -45,10 +50,13 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         contactsButton = view.findViewById(R.id.button_contacts);
         mapsButton = view.findViewById(R.id.button_maps);
         cultButton = view.findViewById(R.id.button_cultural_events);
+        logOutButton = view.findViewById(R.id.button_logout);
 
 
         profileImage = view.findViewById(R.id.profile_image);
         profileName = view.findViewById(R.id.profile_name);
+
+        profileName.setText(User.getInstance().getFirstName() + " " + User.getInstance().getLastName());
 
         questionButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -60,11 +68,9 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         profileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).loadFragment(ProfilePageFragment
-                                .newInstance()
-                        /*view.findViewById(R.id.profile_image),
-                        view.findViewById(R.id.profile_image_card),
-                        view.findViewById(R.id.profile_card)*/);
+                ProfilePageFragment pf = ProfilePageFragment.newInstance();
+                pf.loadUser(User.getInstance());
+                ((MainActivity) getActivity()).loadFragment(pf);
             }
         });
 
@@ -89,6 +95,32 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
             }
         });
 
+        logOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                User.logOut();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle("Подтвердите действие")
+                        .setMessage("Вы точно хотите выйти?")
+                        .setCancelable(false)
+                        .setPositiveButton("Да", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                startActivity(new Intent(getContext(), LoginActivity.class));
+                                getActivity().finish();
+                            }
+                        })
+                        .setNegativeButton("Нет",
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                    }
+                                });
+                AlertDialog alert = builder.create();
+                alert.show();
+            }
+        });
         return view;
     }
 

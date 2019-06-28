@@ -19,8 +19,6 @@ import java.util.List;
 
 public class ScheduleAdapter extends RecyclerView.Adapter<ScheduleAdapter.ScheduleHolder> {
 
-    Date date = SchedulePageFragment.getDate();
-
     private List<ScheduleItem> listItems;
 
     public ScheduleAdapter(List<ScheduleItem> listItems) {

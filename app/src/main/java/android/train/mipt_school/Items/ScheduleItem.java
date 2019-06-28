@@ -72,8 +72,8 @@ public class ScheduleItem {
         this.endDate = new Date(endDate * 1000L);
         //TODO: нормально посчитать eventHours
         Locale local = new Locale("ru","RU");
-        DateFormat df = DateFormat.getTimeInstance(DateFormat.DEFAULT,local );
-        this.eventHours = df.format(this.startDate) + " - " + df.format(this.endDate);
+        DateFormat df = DateFormat.getTimeInstance(DateFormat.DEFAULT, local);
+        this.eventHours = df.format(this.startDate).substring(0, 5) + " - " + df.format(this.endDate).substring(0, 5);
     }
 
 }

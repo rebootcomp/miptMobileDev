@@ -41,11 +41,8 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
     private ProgressBar progressBar;
     private ContactAdapter contactAdapter;
     private TextView noDataMessage;
+    private ProfilePageFragment pf;
     ArrayList<ContactItem> foundData;
-
-    public interface ResponseCallback {
-        void call(String s);
-    }
 
     public ResponseCallback responseCallback;
 
@@ -100,6 +97,7 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
                 return false;
             }
         });
+
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -140,39 +138,26 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
                 contactAdapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View itemView, int position) {
+                        pf = ProfilePageFragment.newInstance();
                         responseCallback = new ResponseCallback() {
                             @Override
-                            public void call(String s) {
-                                Toast.makeText(getContext(), s, Toast.LENGTH_LONG).show();
-                                try {
-                                    JSONObject jsonObject = new JSONObject(s);
-                                    if (jsonObject.has("bad_request"))
-                                        Toast.makeText(getContext(), jsonObject.getString("bad_request"), Toast.LENGTH_LONG).show();
-                                    else {
-                                        JSONObject data = jsonObject.getJSONObject("data");
-                                        String lastname = data.getString("lastname");
-                                        String firstname = data.getString("firstname");
-                                        String email = data.getString("email");
-                                        long id = data.getLong("id");
-                                        ProfilePageFragment pf = ProfilePageFragment.newInstance();
-                                        pf.setFirtsname(firstname);
-                                        pf.setLastname(lastname);
-                                        pf.setId(id);
-                                        pf.setEmail(email);
-                                        ((MainActivity) getActivity()).loadFragment(pf);
-                                    }
-                                } catch (JSONException e) {
-                                    e.printStackTrace();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                }
+                            public void onResponse(String data) {
+                                if (pf.loadUser(data)) {
+                                    ((MainActivity) getActivity()).loadFragment(pf);
+                                } else
+                                    Toast.makeText(getContext(), "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                            }
+
+                            @Override
+                            public void onFailure(String message) {
+                                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
                             }
                         };
                         Integer itmid = position;
                         ContactItem ci = foundData.get(itmid);
-                        Long userid = ci.getUserId();
-                        Toast.makeText(getContext(), userid.toString() + " " + itmid.toString(), Toast.LENGTH_LONG).show();
-                        User.getInstance().userInfoRequest(ci.getUserId(), responseCallback);
+
+                        Long selectedUser = ci.getUserId();
+                        User.getInstance().userInfoRequest(selectedUser, responseCallback);
                     }
                 });
 

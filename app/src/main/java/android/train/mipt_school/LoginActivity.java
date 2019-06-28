@@ -37,10 +37,6 @@ public class LoginActivity extends AppCompatActivity {
     private String userName = null;
     private String password = null;
 
-    public interface ResponseCallback {
-        void call(String s);
-    }
-
     public ResponseCallback responseCallback;
     public ResponseCallback initCallback;
     public ResponseCallback allusersCallback;
@@ -65,33 +61,51 @@ public class LoginActivity extends AppCompatActivity {
                 userName = loginField.getText().toString();
                 password = passwordField.getText().toString();
                 initCallback = new ResponseCallback() {
+
                     @Override
-                    public void call(String s) {
-                        if (s.equals("success")) {
-                            User.getInstance().updateAllUsers(allusersCallback);
-                            Toast.makeText(LoginActivity.this, "расписание получено", Toast.LENGTH_LONG).show();
-//                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        } else
-                            Toast.makeText(LoginActivity.this, s, Toast.LENGTH_LONG).show();
+                    public void onResponse(String data) {
+                        if (User.getInstance().init(data))
+                            User.getInstance().allUsersRequest(allusersCallback);
+                        else
+                            Toast.makeText(LoginActivity.this,
+                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 };
                 allusersCallback = new ResponseCallback() {
                     @Override
-                    public void call(String s) {
-                        if (s.equals("success")) {
+                    public void onResponse(String data) {
+                        if (User.getInstance().updateAllUsers(data)) {
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        } else
-                            Toast.makeText(LoginActivity.this, s, Toast.LENGTH_LONG).show();
+                            finish();
+                        } else {
+                            Toast.makeText(LoginActivity.this,
+                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 };
                 responseCallback = new ResponseCallback() {
                     @Override
-                    public void call(String s) {
-                        if (s.equals("success")) {
-                            User.getInstance().init(initCallback);
-//                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                        } else
-                            Toast.makeText(LoginActivity.this, s, Toast.LENGTH_LONG).show();
+                    public void onResponse(String data) {
+                        if (User.getInstance().updateToken(data))
+                            User.getInstance().scheduleRequest(initCallback);
+                        else
+                            Toast.makeText(LoginActivity.this,
+                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 };
                 User.getInstance().logIn(userName, password, responseCallback);

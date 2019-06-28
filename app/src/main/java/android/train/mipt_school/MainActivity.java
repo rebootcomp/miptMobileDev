@@ -26,6 +26,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.GridView;
+import android.widget.ProgressBar;
 
 import java.util.ArrayList;
 
@@ -39,6 +40,20 @@ public class MainActivity
     private final long TRANSITITON_DURATION = 200;
     private BottomNavigationView bottomNavigationBar;
     private Toolbar toolbar;
+
+    void setLoadingScreenState(boolean state) {
+        // включает/выключает загрузочный экран
+
+        View fragmentContainer = findViewById(R.id.fragment_container);
+        ProgressBar progressBar = findViewById(R.id.main_activity_progressbar);
+        if (state == true) {
+            fragmentContainer.setVisibility(View.INVISIBLE);
+            progressBar.setVisibility(View.VISIBLE);
+        } else {
+            fragmentContainer.setVisibility(View.VISIBLE);
+            progressBar.setVisibility(View.INVISIBLE);
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

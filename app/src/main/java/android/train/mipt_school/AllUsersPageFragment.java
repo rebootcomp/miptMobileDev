@@ -97,6 +97,7 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
                 return false;
             }
         });
+
         searchField.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -154,8 +155,9 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
                         };
                         Integer itmid = position;
                         ContactItem ci = foundData.get(itmid);
-                        Long chousenUser = ci.getUserId();
-                        User.getInstance().userInfoRequest(chousenUser, responseCallback);
+
+                        Long selectedUser = ci.getUserId();
+                        User.getInstance().userInfoRequest(selectedUser, responseCallback);
                     }
                 });
 

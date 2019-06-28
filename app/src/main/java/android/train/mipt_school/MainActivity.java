@@ -39,7 +39,7 @@ public class MainActivity
     private BottomNavigationView bottomNavigationBar;
     private Toolbar toolbar;
 
-    void loadingScreen(boolean state) {
+    void setLoadingScreenState(boolean state) {
         // включает/выключает загрузочный экран
 
         View fragmentContainer = findViewById(R.id.fragment_container);

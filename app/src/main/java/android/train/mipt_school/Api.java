@@ -46,7 +46,7 @@ public interface Api {
             @Field("body") String body
     );
 
-    @POST("usergroups/{id}")
+    @POST("user/{id}")
     Call<ResponseBody> userInfo(
             @Path("id") Long id,
             @Header("Authorization") String auth

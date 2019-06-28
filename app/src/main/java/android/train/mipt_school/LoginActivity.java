@@ -47,6 +47,9 @@ public class LoginActivity extends AppCompatActivity {
         loginField = findViewById(R.id.login_field);
         passwordField = findViewById(R.id.password_field);
 
+        loginField.setText("alexmuratidi");
+        passwordField.setText("Alex17112001#");
+
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

@@ -23,6 +23,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -36,10 +37,12 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
     private TextView phoneField;
     private TextView VKField;
     private TextView userStatus;
+    private TextView groupNameField;
 
     private String lastname;
     private String firtsname;
     private String email;
+    private String groupName;
     private int vis;
     private String status;
     private long userId;
@@ -61,10 +64,23 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
                 String firstname = data.getString("firstname");
                 String email = data.getString("email");
                 String approle = data.getString("approle");
+                String groupName = "Нет данных";
+                String vkId = data.getString("vk_id");
+                String phone = data.getString("phone");
                 long id = data.getLong("id");
+                JSONArray groups = data.getJSONArray("groups");
+                JSONObject lastGroup = null;
+                for (int i = 0; i < groups.length(); i++)
+                    lastGroup = groups.getJSONObject(i);
+                if (lastGroup != null) {
+                    groupName = lastGroup.getString("group_name");
+                }
                 this.setFirtsname(firstname);
                 this.setLastname(lastname);
                 this.setId(id);
+                this.groupName = groupName;
+                this.phoneNumber = phone;
+                this.VK = vkId;
                 if (id == User.getInstance().getUserId())
                     vis = View.INVISIBLE;
                 else
@@ -165,6 +181,7 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
         profileName = view.findViewById(R.id.fragment_profile_name);
         emailField = view.findViewById(R.id.mail_field);
         userStatus = view.findViewById(R.id.user_status);
+        groupNameField = view.findViewById(R.id.group_id_field);
 //        addToContacts = view.findViewById(R.id.add_to_contacts);
 //
 //        addToContacts.setOnClickListener(new View.OnClickListener() {
@@ -181,6 +198,7 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
         emailField.setText(email);
         phoneField.setText(phoneNumber);
         VKField.setText(VK);
+        groupNameField.setText(groupName);
 
         setHasOptionsMenu(true);
 

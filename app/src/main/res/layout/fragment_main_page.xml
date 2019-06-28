@@ -7,7 +7,10 @@
     android:background="@color/backgroundGray"
     android:orientation="vertical"
     tools:context=".MainPageFragment">
-
+    <WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"></WebView>
     <android.support.constraint.ConstraintLayout
         android:id="@+id/more_info_page"
         android:layout_width="match_parent"
@@ -32,6 +35,15 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+
+
+        <ProgressBar
+            android:id="@+id/pb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            />
 
         <TextView
             android:id="@+id/main_page_swipe_tip_text"

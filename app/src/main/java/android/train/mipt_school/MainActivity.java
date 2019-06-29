@@ -1,7 +1,6 @@
 package android.train.mipt_school;
 
-import android.content.Context;
-import android.content.SharedPreferences;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.transition.AutoTransition;
@@ -35,7 +34,7 @@ import static android.support.transition.TransitionSet.ORDERING_TOGETHER;
 public class MainActivity
         extends AppCompatActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
-    SharedPreferences mSP;
+
     private final String BUNDLE_TITLE_NAME = "ACTIONBAR_TITLE";
     private final long TRANSITITON_DURATION = 200;
     private BottomNavigationView bottomNavigationBar;
@@ -66,10 +65,7 @@ public class MainActivity
         setSupportActionBar(toolbar);
 
         bottomNavigationBar.setOnNavigationItemSelectedListener(this);
-        mSP = getSharedPreferences("settings", Context.MODE_PRIVATE);
-        SharedPreferences.Editor ed = mSP.edit();
-        ed.putString("signed", "true");
-        ed.commit();
+
         if (savedInstanceState == null) {
             bottomNavigationBar.setSelectedItemId(R.id.navigation_main);
         }
@@ -88,45 +84,67 @@ public class MainActivity
         });
     }
 
-    public boolean loadFragment(Fragment fragment, View... sharedElements) {
+    public boolean loadFragment(final Fragment fragment, final View... sharedElements) {
         if (fragment == null) return false;
-
-        getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        getSupportActionBar().setDisplayShowCustomEnabled(false);
-        getSupportActionBar().setDisplayShowTitleEnabled(true);
-
-
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-
 
         Fragment currentSceneFragment = getSupportFragmentManager()
                 .findFragmentById(R.id.fragment_container);
 
-        if (currentSceneFragment == null || !currentSceneFragment
-                .getClass()
-                .isInstance(fragment)) {
-            fragment.setEnterTransition(new Slide(Gravity.RIGHT)
-                    .setDuration(TRANSITITON_DURATION)
-                    .setInterpolator(new LinearOutSlowInInterpolator())); // TODO: починить transitions при перевороте экрана
-
-
-            ft.setReorderingAllowed(true);
-            //ft.setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out);
-            //ft.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right);
-            //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+        if (currentSceneFragment != null
+                && currentSceneFragment.getClass().isInstance(fragment)) {
+            return false;
         }
 
+        setLoadingScreenState(true);
 
-        fragment.setSharedElementEnterTransition(new AutoTransition());
+        Handler mHandler = new Handler();
+        Runnable mPendingRunnable = new Runnable() {
+            @Override
+            public void run() {
 
-        for (View shared : sharedElements) {
-            ft.addSharedElement(shared, shared.getTransitionName());
+                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+
+                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+                getSupportActionBar().setDisplayShowCustomEnabled(false);
+                getSupportActionBar().setDisplayShowTitleEnabled(true);
+
+                fragment.setEnterTransition(new Slide(Gravity.RIGHT)
+                        .setDuration(TRANSITITON_DURATION)
+                        .setInterpolator(new LinearOutSlowInInterpolator())); // TODO: починить transitions при перевороте экрана
+
+
+                ft.setReorderingAllowed(true);
+                //ft.setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out);
+                //ft.setCustomAnimations(R.animator.slide_in_left, R.animator.slide_in_right);
+                //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
+
+
+                fragment.setSharedElementEnterTransition(new
+
+                        AutoTransition());
+
+                for (
+                        View shared : sharedElements) {
+                    ft.addSharedElement(shared, shared.getTransitionName());
+                }
+
+                ft.addToBackStack(null);
+                ft.replace(R.id.fragment_container, fragment).
+
+                        commit();
+
+                getSupportFragmentManager().
+
+                        executePendingTransactions();
+
+                setLoadingScreenState(false);
+            }
+
+        };
+
+        if (mPendingRunnable != null) {
+            mHandler.post(mPendingRunnable);
         }
-
-        ft.addToBackStack(null);
-        ft.replace(R.id.fragment_container, fragment).commit();
-
-        getSupportFragmentManager().executePendingTransactions();
 
         return true;
     }
@@ -141,6 +159,8 @@ public class MainActivity
                 return loadFragment(MainPageFragment.newInstance());
             case R.id.navigation_info:
                 return loadFragment(RestInfoPageFragment.newInstance());
+            case R.id.navigation_group:
+                return loadFragment(GroupViewFragment.newInstance(0));
         }
 
         return true;
@@ -171,4 +191,3 @@ public class MainActivity
         }
     }
 }
-

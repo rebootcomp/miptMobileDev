@@ -36,19 +36,19 @@ public class Group {
         this.name = name;
     }
 
-    public List<ContactItem> getUsers(){
+    public List<ContactItem> getUsers() {
         return this.users;
     }
 
-    public void setUsers(List<ContactItem> users){
+    public void setUsers(List<ContactItem> users) {
         this.users = users;
     }
 
-    public List<ContactItem> getAdmins(){
+    public List<ContactItem> getAdmins() {
         return this.admins;
     }
 
-    public void setAdmins(List<ContactItem> admins){
+    public void setAdmins(List<ContactItem> admins) {
         this.admins = admins;
     }
 

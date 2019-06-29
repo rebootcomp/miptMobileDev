@@ -19,20 +19,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactHolder> {
 
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
-    }
 
     private OnItemClickListener listener;
 
-    public void setData(ArrayList<ContactItem> data) {
-        this.data = data;
-    }
-
-    private ArrayList<ContactItem> data;
+    private List<ContactItem> data;
 
     @NonNull
     @Override
@@ -88,8 +82,20 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
 
     }
 
+    public void setData(List<ContactItem> data) {
+        this.data = data;
+    }
+
+    public List<ContactItem> getData() {
+        return data;
+    }
+
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
     }
 
 }

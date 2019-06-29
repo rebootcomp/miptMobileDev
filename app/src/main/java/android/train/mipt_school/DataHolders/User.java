@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.nio.file.attribute.GroupPrincipal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +47,7 @@ public class User {
     private String token;
     private String VK;
     private String phoneNumber;
+
     //Для отображения профиля
     private boolean isEmailAvailable = true;
     private boolean isPhoneNumberAvailable = true;
@@ -57,6 +59,7 @@ public class User {
     private long approle = 0;
 
     private ArrayList<ContactItem> allusers; // пользователи
+    private ArrayList<Group> groups; // все группы пользователя
 
     private ArrayList<ContactItem> friends; // контакаты пользователя
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
@@ -349,6 +352,29 @@ public class User {
     public void logIn(String userName, String password, final ResponseCallback responseCallback) {
         this.userName = userName;
         this.password = password;
+
+        //для дебага
+
+        // Admins
+        ContactItem contactAdmin = new ContactItem(6227, "Админ Иван", 1);
+        ArrayList<ContactItem> admins = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            admins.add(contactAdmin);
+        }
+
+        // Users
+        ContactItem contactUser = new ContactItem(228, "Юзер Алеша", 0);
+        ArrayList<ContactItem> users = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            users.add(contactUser);
+        }
+
+        Group group = new Group("Отряд 123", users, admins);
+        this.groups = new ArrayList<>();
+        groups.add(group);
+
+        // для дебага
+
         userRequest(userName, password, responseCallback);
     }
 
@@ -473,5 +499,9 @@ public class User {
 
     public boolean getPhoneNumberAccess() {
         return isPhoneNumberAvailable;
+    }
+
+    public ArrayList<Group> getGroups() {
+        return groups;
     }
 }

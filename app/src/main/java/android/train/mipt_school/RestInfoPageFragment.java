@@ -98,8 +98,6 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         logOutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                User.logOut();
-
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
                 builder.setTitle("Подтвердите действие")
                         .setMessage("Вы точно хотите выйти?")
@@ -107,16 +105,12 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
                         .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                User.logOut();
                                 startActivity(new Intent(getContext(), LoginActivity.class));
                                 getActivity().finish();
                             }
                         })
-                        .setNegativeButton("Нет",
-                                new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int id) {
-                                        dialog.cancel();
-                                    }
-                                });
+                        .setNegativeButton("Нет", null);
                 AlertDialog alert = builder.create();
                 alert.show();
             }

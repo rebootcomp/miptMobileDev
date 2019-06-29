@@ -24,6 +24,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.nio.file.attribute.GroupPrincipal;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -46,6 +47,7 @@ public class User {
     private String token;
     private String VK;
     private String phoneNumber;
+
     //Для отображения профиля
     private boolean isEmailAvailable = true;
     private boolean isPhoneNumberAvailable = true;
@@ -57,6 +59,7 @@ public class User {
     private long approle = 0;
 
     private ArrayList<ContactItem> allusers; // пользователи
+    private ArrayList<Group> groups; // все группы пользователя
 
     private ArrayList<ContactItem> friends; // контакаты пользователя
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
@@ -82,7 +85,35 @@ public class User {
                         e.printStackTrace();
                     }
                 } else
-                    s = "{\"bad_request\":\"Ошибка сервера\"}";
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
+    public void groupInfoRequest(long id, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .groupInfo(id, "Bearer " + token);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
                 rc.onResponse(s);
             }
 
@@ -110,7 +141,7 @@ public class User {
                         e.printStackTrace();
                     }
                 } else
-                    s = "{\"bad_request\":\"Ошибка сервера\"}";
+                    s = "{\"error\":\"Ошибка сервера\"}";
                 rc.onResponse(s);
             }
 
@@ -138,7 +169,7 @@ public class User {
                         e.printStackTrace();
                     }
                 } else
-                    s = "{\"bad_request\":\"Ошибка сервера\"}";
+                    s = "{\"error\":\"Ошибка сервера\"}";
                 rc.onResponse(s);
             }
 
@@ -166,7 +197,7 @@ public class User {
                         e.printStackTrace();
                     }
                 } else
-                    s = "{\"bad_request\":\"Ошибка сервера\"}";
+                    s = "{\"error\":\"Ошибка сервера\"}";
                 rc.onResponse(s);
             }
 
@@ -181,7 +212,7 @@ public class User {
     public boolean updateToken(String data) {
         try {
             JSONObject jsonObject = new JSONObject(data);
-            if (!jsonObject.has("bad_request") && !jsonObject.has("new_token")) {
+            if (jsonObject.has("token")) {
                 String tmpToken = jsonObject.getString("token");
                 token = tmpToken;
                 JSONObject userData = new JSONObject(JWTUtils.decoded(tmpToken)).getJSONObject("user_data");
@@ -213,7 +244,7 @@ public class User {
         allusers = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(data);
-            if (!jsonObject.has("bad_request") && !jsonObject.has("new_token")) {
+            if (jsonObject.has("data")) {
                 JSONArray allUsersData = jsonObject.getJSONArray("data");
                 int len = allUsersData.length();
                 for (int i = 0; i < len; i++) {
@@ -236,12 +267,49 @@ public class User {
         return false;
     }
 
-    public ArrayList<ContactItem> getAllusers() {
-        return allusers;
-    }
-
-    public ArrayList<ContactItem> getFriends() {
-        return friends;
+    public boolean updateGroupInfo(String data) {
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            if (jsonObject.has("data")) {
+                String tmpToken = jsonObject.getString("data");
+                token = tmpToken;
+                JSONObject groupData = new JSONObject(JWTUtils.decoded(tmpToken)).getJSONObject("group_data");
+                Group group = Group.getInstance();
+                group.name = groupData.getString("group_name");
+                group.id = groupData.getLong("id");
+                group.event = groupData.getString("event");
+                group.direction = groupData.getString("direction");
+                JSONArray users = groupData.getJSONArray("users");
+                int len = users.length();
+                for (int i = 0; i < len; i++) {
+                    JSONObject tmp = users.getJSONObject(i);
+                    String name = tmp.getString("firstname") + " " + tmp.getString("lastname");
+                    String appr = tmp.getString("approle");
+                    long id = tmp.getLong("id");
+                    if (appr.equals("admin"))
+                        group.getAdmins().add(new ContactItem(id, name, 1));
+                    else
+                        group.getUsers().add(new ContactItem(id, name));
+                }
+                JSONArray scheduleData = jsonObject.getJSONArray("data");
+                len = scheduleData.length();
+                for (int i = 0; i < len; i++) {
+                    JSONObject tmp = scheduleData.getJSONObject(i);
+                    Long start = tmp.getLong("start");
+                    Long end = tmp.getLong("end");
+                    String room = tmp.getString("room");
+                    String name = tmp.getString("title");
+                    String comment = tmp.getString("comment");
+                    schedule.add(new ScheduleItem(start, end, name, room, comment));
+                }
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public boolean init(String data) {
@@ -273,9 +341,40 @@ public class User {
         return false;
     }
 
+    public ArrayList<ContactItem> getAllusers() {
+        return allusers;
+    }
+
+    public ArrayList<ContactItem> getFriends() {
+        return friends;
+    }
+
     public void logIn(String userName, String password, final ResponseCallback responseCallback) {
         this.userName = userName;
         this.password = password;
+
+        //для дебага
+
+        // Admins
+        ContactItem contactAdmin = new ContactItem(6227, "Админ Иван", 1);
+        ArrayList<ContactItem> admins = new ArrayList<>();
+        for (int i = 0; i < 5; i++) {
+            admins.add(contactAdmin);
+        }
+
+        // Users
+        ContactItem contactUser = new ContactItem(228, "Юзер Алеша", 0);
+        ArrayList<ContactItem> users = new ArrayList<>();
+        for (int i = 0; i < 100; i++) {
+            users.add(contactUser);
+        }
+
+        Group group = new Group("Отряд 123", users, admins);
+        this.groups = new ArrayList<>();
+        groups.add(group);
+
+        // для дебага
+
         userRequest(userName, password, responseCallback);
     }
 
@@ -400,5 +499,9 @@ public class User {
 
     public boolean getPhoneNumberAccess() {
         return isPhoneNumberAvailable;
+    }
+
+    public ArrayList<Group> getGroups() {
+        return groups;
     }
 }

@@ -1,6 +1,8 @@
 package android.train.mipt_school;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.customtabs.CustomTabsIntent;
@@ -26,6 +28,8 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
+
+    SharedPreferences mSP;
     private Button logInButton;
     private Button registerButton;
     private EditText loginField;
@@ -42,10 +46,17 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        mSP = getSharedPreferences("settings", Context.MODE_PRIVATE);
+        String logInCondition = mSP.getString("signed", "");
+        if(logInCondition.equals("true"))startActivity(new Intent(getApplicationContext(), MainActivity.class));
+
         logInButton = findViewById(R.id.log_in_button);
         registerButton = findViewById(R.id.register_button);
         loginField = findViewById(R.id.login_field);
         passwordField = findViewById(R.id.password_field);
+
+        loginField.setText("alexmuratidi");
+        passwordField.setText("Alex17112001#");
 
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -118,3 +129,4 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 }
+

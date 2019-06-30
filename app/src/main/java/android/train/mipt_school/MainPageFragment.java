@@ -8,12 +8,21 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.train.mipt_school.Adapters.NewsAdapter;
+import android.train.mipt_school.DataHolders.User;
+import android.train.mipt_school.Items.NewsItem;
+import android.train.mipt_school.Tools.AsyncLoadCallback;
+import android.train.mipt_school.Tools.AsyncLoadingFragment;
 import android.train.mipt_school.Tools.SceneFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -24,34 +33,38 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
-public class MainPageFragment extends Fragment implements SceneFragment {
-    private WebView webView;
+import java.io.IOException;
+import java.util.ArrayList;
 
-    private ProgressDialog progressDialog;
-    private ProgressBar progressBar;
-    SharedPreferences mSP;
 
-    private ValueCallback<Uri> mUploadMessage;
-    public ValueCallback<Uri[]> uploadMessage;
-    public static final int REQUEST_SELECT_FILE = 100;
-    private final static int FILECHOOSER_RESULTCODE = 1;
-
+public class MainPageFragment extends Fragment implements SceneFragment, AsyncLoadingFragment {
 
     private String title;
-    private View moreInfoPage;
+    private RecyclerView newsList;
+    private TextView greetingText;
+
+    private static final String NEWS_WEBSITE = "https://it-edu.com/ru/news";
+    private static final String ITEDU_WEBSITE = "https://it-edu.com";
+    private boolean dataLoaded = false;
+    AsyncLoadCallback dataLoadCallback;
+    ArrayList<NewsItem> newsItems;
 
     public static MainPageFragment newInstance() {
 
 
         MainPageFragment fragment = new MainPageFragment();
+        fragment.loadNews();
 
         return fragment;
     }
-
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -61,113 +74,28 @@ public class MainPageFragment extends Fragment implements SceneFragment {
         // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
-        moreInfoPage = view.findViewById(R.id.more_info_page);
+        newsList = view.findViewById(R.id.news_list);
+        greetingText = view.findViewById(R.id.greeting_text_main_page);
 
-        final View scrollView = view.findViewById(R.id.main_page_scroll_view);
-        final View arrow = view.findViewById(R.id.main_page_expand_sign);
-        final View swipeTipText = view.findViewById(R.id.main_page_swipe_tip_text);
+        greetingText.setText(String.format("Здравствуйте,\n%s %s!",
+                User.getInstance().getFirstName(),
+                User.getInstance().getThirdName()));
 
-        final BottomSheetBehavior bottomSheetBehavior = BottomSheetBehavior.from(moreInfoPage);
+        NewsAdapter adapter = new NewsAdapter();
+        adapter.setData(newsItems);
+        adapter.setMainActivity((MainActivity) getActivity());
 
-        bottomSheetBehavior.setBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
-            @Override
-            public void onStateChanged(@NonNull View view, int i) {
+        newsList.setLayoutManager(new LinearLayoutManager(getActivity()));
+        newsList.setAdapter(adapter);
 
-            }
+        Log.d("fragload", "loaded");
 
-            @Override
-            public void onSlide(@NonNull View view, float slideOffset) {
-                arrow.animate().rotation(180f * slideOffset).setDuration(0).start();
-                swipeTipText.animate().alpha(1 - slideOffset * 3).setDuration(0).start();
-                scrollView.animate().alpha(slideOffset).setDuration(0).start();
-            }
-        });
-
-        swipeTipText.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (bottomSheetBehavior.getState() == bottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                } else {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                }
-            }
-        });
-
-        arrow.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if (bottomSheetBehavior.getState() == bottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
-                } else {
-                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
-                }
-            }
-        });
-
-
-
-        ///
-
-        ///
-
-        ///
-
-
-
-
-        //webview (еще не доделано)
-
-
-          //  CookieManager.getInstance().setAcceptCookie(true);
-
-            webView = view.findViewById(R.id.webview);
-            progressBar = view.findViewById(R.id.pb);
-
-            webView.setWebViewClient(new WebViewClient() {
-
-                @Override
-                public void onPageStarted(WebView view, String url, Bitmap favicon) {
-
-                        CookieManager.getInstance().flush();
-
-
-
-                        super.onPageStarted(view, url, favicon);
-                    }
-
-
-                @Override
-                public void onPageFinished(WebView view, String url) {
-                    if (progressBar.getVisibility() == ProgressBar.VISIBLE)
-                        progressBar.setVisibility(ProgressBar.INVISIBLE);
-                    CookieManager.getInstance().flush();
-                    super.onPageFinished(view, url);
-                }
-
-                @Override
-                public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                    view.loadUrl(request.getUrl().toString());
-                    return true;
-                }
-            });
-
-
-
-            progressBar.setVisibility(ProgressBar.VISIBLE);
-            webView.getSettings().setJavaScriptEnabled(true);
-            webView.getSettings().setUseWideViewPort(true);
-            webView.getSettings().setDomStorageEnabled(true);
-            webView.getSettings().setAllowFileAccess(true);
-            webView.getSettings().setAllowContentAccess(true);
-            webView.loadUrl("https://it-edu.com/ru");
-
-
-
-return view;
+        return view;
     }
 
-
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+    }
 
     @Override
     public void onAttach(Context context) {
@@ -183,6 +111,84 @@ return view;
     @Override
     public String getTitle() {
         return title;
+    }
+
+    @Override
+    public boolean fragmentDataLoaded() {
+        return dataLoaded;
+    }
+
+    @Override
+    public void setLoadCallback(AsyncLoadCallback callback) {
+        this.dataLoadCallback = callback;
+    }
+
+    public void loadNews() {
+
+        new AsyncTask<String, Void, Void>() {
+
+            @Override
+            protected Void doInBackground(String... strings) {
+
+                try {
+
+                    newsItems = new ArrayList<>();
+                    Document newsPage = Jsoup.connect(strings[0]).get();
+
+                    Elements news = newsPage.getElementsByClass("node--content-container");
+
+                    for (Element e : news) {
+
+                        // Получаем заголовок
+                        Element tileElement = e.getElementsByClass("node__title")
+                                .first()
+                                .select("a")
+                                .first();
+
+                        String title = tileElement.select("span").first().text();
+
+
+                        // Получаем дату
+                        Element dateElement = e.getElementsByClass("submitted-date").first();
+
+                        String date = String.format("%s. %s, %s",
+                                dateElement.getElementsByClass("month").first().text(),
+                                dateElement.getElementsByClass("day").first().text(),
+                                dateElement.getElementsByClass("year").first().text());
+
+
+                        // Получаем ссылку на новость
+                        String link = e.select("a").first().attr("href");
+
+
+                        // Получаем описание новости
+                        Element mainContent =
+                                e.getElementsByClass("node--main-content").first();
+
+                        String description = mainContent.select("p").text();
+
+                        newsItems.add(
+                                new NewsItem(title, description, date, ITEDU_WEBSITE + link));
+
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+
+                dataLoaded = true;
+                if (dataLoadCallback != null) {
+                    dataLoadCallback.onDataLoaded();
+                }
+            }
+        }.execute(NEWS_WEBSITE);
     }
 }
 

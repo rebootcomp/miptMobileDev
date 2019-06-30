@@ -18,17 +18,19 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
             android:layout_marginTop="16dp"
+            android:layout_marginRight="2dp"
             app:cardCornerRadius="15dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/rippleGray"
             app:strokeWidth="1dp">
 
             <LinearLayout
-                android:layout_marginTop="16dp"
-                android:layout_marginBottom="16dp"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="16dp"
                 android:orientation="vertical">
 
                 <TextView
@@ -36,10 +38,10 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_margin="8dp"
-                    android:textStyle="bold"
                     android:text="Отряд отряд отряд"
                     android:textColor="@color/darkGray"
-                    android:textSize="24sp" />
+                    android:textSize="24sp"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/fragment_group_info_text"
@@ -68,7 +70,9 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
             android:layout_marginTop="1dp"
+            android:layout_marginRight="2dp"
             app:cardCornerRadius="15dp"
             app:cardElevation="0dp"
             app:strokeColor="@color/rippleGray"
@@ -97,7 +101,9 @@
 
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
             android:layout_marginTop="1dp"
+            android:layout_marginRight="2dp"
             android:layout_marginBottom="16dp"
             app:cardCornerRadius="15dp"
             app:cardElevation="0dp"

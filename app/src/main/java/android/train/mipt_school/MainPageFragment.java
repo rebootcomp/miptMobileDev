@@ -61,6 +61,7 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
 
 
         MainPageFragment fragment = new MainPageFragment();
+        fragment.setRetainInstance(true);
         fragment.loadNews();
 
         return fragment;

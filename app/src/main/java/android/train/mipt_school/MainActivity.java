@@ -1,7 +1,10 @@
 package android.train.mipt_school;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.BottomNavigationView;
 import android.support.transition.AutoTransition;
 import android.support.transition.ChangeBounds;
@@ -19,6 +22,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.train.mipt_school.Items.ScheduleItem;
+import android.train.mipt_school.Tools.AsyncLoadCallback;
+import android.train.mipt_school.Tools.AsyncLoadingFragment;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.Gravity;
 import android.view.MenuItem;
@@ -26,6 +31,7 @@ import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.widget.GridView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 
@@ -63,6 +69,7 @@ public class MainActivity
         bottomNavigationBar = findViewById(R.id.bottom_bar);
 
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         bottomNavigationBar.setOnNavigationItemSelectedListener(this);
 
@@ -84,6 +91,14 @@ public class MainActivity
         });
     }
 
+    public void openWebLink(String link) {
+        CustomTabsIntent intent = new CustomTabsIntent.Builder().build();
+
+        intent.intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        intent.launchUrl(getApplicationContext(), Uri.parse(link));
+    }
+
     public boolean loadFragment(final Fragment fragment, final View... sharedElements) {
         if (fragment == null) return false;
 
@@ -97,8 +112,8 @@ public class MainActivity
 
         setLoadingScreenState(true);
 
-        Handler mHandler = new Handler();
-        Runnable mPendingRunnable = new Runnable() {
+        final Handler mHandler = new Handler();
+        final Runnable mPendingRunnable = new Runnable() {
             @Override
             public void run() {
 
@@ -119,19 +134,14 @@ public class MainActivity
                 //ft.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_FADE);
 
 
-                fragment.setSharedElementEnterTransition(new
+                fragment.setSharedElementEnterTransition(new AutoTransition());
 
-                        AutoTransition());
-
-                for (
-                        View shared : sharedElements) {
+                for (View shared : sharedElements) {
                     ft.addSharedElement(shared, shared.getTransitionName());
                 }
 
                 ft.addToBackStack(null);
-                ft.replace(R.id.fragment_container, fragment).
-
-                        commit();
+                ft.replace(R.id.fragment_container, fragment).commit();
 
                 getSupportFragmentManager().
 
@@ -142,7 +152,18 @@ public class MainActivity
 
         };
 
-        if (mPendingRunnable != null) {
+        if (fragment instanceof AsyncLoadingFragment) {
+            if (((AsyncLoadingFragment) fragment).fragmentDataLoaded()) {
+                mHandler.post(mPendingRunnable);
+            } else {
+                ((AsyncLoadingFragment) fragment).setLoadCallback(new AsyncLoadCallback() {
+                    @Override
+                    public void onDataLoaded() {
+                        mHandler.post(mPendingRunnable);
+                    }
+                });
+            }
+        } else {
             mHandler.post(mPendingRunnable);
         }
 
@@ -190,4 +211,5 @@ public class MainActivity
             ((SceneFragment) currentSceneFragment).onBackButtonPressed();
         }
     }
+
 }

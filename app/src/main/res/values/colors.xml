@@ -13,4 +13,5 @@
     <color name="rippleBlue">#64B5F6</color>
     <color name="backgroundGray">#FAFAFA</color>
     <color name="secondaryGray">#9E9E9E</color>
+    <color name="webLinkColor">#0645AD</color>
 </resources>

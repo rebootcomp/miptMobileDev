@@ -108,8 +108,7 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
         vis = View.VISIBLE;
         if (user.getEmailAccess()) {
             this.setEmail(user.getEmail());
-        }
-        else {
+        } else {
             this.setEmail("Email не доступен");
         }
         if (user.getApprole() == 1)
@@ -118,14 +117,12 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
             this.status = "Ученик";
         if (user.getPhoneNumberAccess()) {
             this.phoneNumber = user.getPhoneNumber();
-        }
-        else {
+        } else {
             this.phoneNumber = "Номер телефона не досупен";
         }
         if (user.getVKAccess()) {
             this.VK = user.getVK();
-        }
-        else {
+        } else {
             this.VK = "Страница во ВКонтакте не доступна";
         }
     }
@@ -162,6 +159,8 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
 
     public static ProfilePageFragment newInstance() {
         ProfilePageFragment fragment = new ProfilePageFragment();
+
+        fragment.setRetainInstance(true);
         return fragment;
     }
 

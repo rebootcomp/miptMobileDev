@@ -20,6 +20,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -39,6 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
     public ResponseCallback responseCallback;
     public ResponseCallback initCallback;
+    public ResponseCallback groupCallback;
     public ResponseCallback allusersCallback;
 
     @Override
@@ -67,9 +69,10 @@ public class LoginActivity extends AppCompatActivity {
 
                     @Override
                     public void onResponse(String data) {
-                        if (User.getInstance().init(data))
-                            User.getInstance().allUsersRequest(allusersCallback);
-                        else
+                        if (User.getInstance().init(data)) {
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            finish();
+                        } else
                             Toast.makeText(LoginActivity.this,
                                     "Что-то пошло не так", Toast.LENGTH_LONG).show();
                     }
@@ -96,14 +99,36 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 };
+                groupCallback = new ResponseCallback() {
+                    @Override
+                    public void onResponse(String data) {
+                        if (User.getInstance().updateGroupInfo(data)) {
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            finish();
+                        } else
+                            Toast.makeText(LoginActivity.this,
+                                    "Что-то пошло не так2", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                    }
+                };
                 responseCallback = new ResponseCallback() {
                     @Override
                     public void onResponse(String data) {
-                        if (User.getInstance().updateToken(data))
-                            User.getInstance().scheduleRequest(initCallback);
-                        else
+                        if (User.getInstance().updateToken(data)) {
+                            if (User.getInstance().getGroupId() != -1)
+                                User.getInstance().groupInfoRequest(User.getInstance().getGroupId(), groupCallback);
+                            else {
+                                // TODO: если нет групп крашится
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                finish();
+                            }
+                        } else
                             Toast.makeText(LoginActivity.this,
-                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                                    "Что-то пошло не так1", Toast.LENGTH_LONG).show();
                     }
 
                     @Override

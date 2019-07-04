@@ -29,6 +29,11 @@ public interface Api {
             @Header("Authorization") String auth
     );
 
+    @POST("allschedules")
+    Call<ResponseBody> allrooms(
+            @Header("Authorization") String auth
+    );
+
     //@FormUrlEncoded
     @POST("allusers")
     Call<ResponseBody> allusers(
@@ -46,15 +51,29 @@ public interface Api {
             @Field("body") String body
     );
 
+    @FormUrlEncoded
+    @POST("addschedule/{group_id}")
+    Call<ResponseBody> addSchedule(
+            @Header("Authorization") String auth,
+            @Path("groud_id") long id,
+            @Field("room_id") long userId,
+            @Field("start") long start,
+            @Field("end") long end,
+            @Field("comment") String comment,
+            @Field("title") String title
+    );
+
     @POST("user/{id}")
     Call<ResponseBody> userInfo(
-            @Path("id") Long id,
+            @Path("id") long id,
             @Header("Authorization") String auth
     );
 
     @POST("groups/{id}")
     Call<ResponseBody> groupInfo(
-            @Path("id") Long id,
+            @Path("id") long id,
             @Header("Authorization") String auth
     );
+
+
 }

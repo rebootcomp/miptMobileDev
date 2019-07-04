@@ -66,7 +66,6 @@ public class User {
 
     private ArrayList<DailyScheduleItem> dailySchedule; // расписание по дням
 
-
     private static volatile User instance;
 
     private void userRequest(String username, String password, final ResponseCallback rc) {
@@ -125,7 +124,7 @@ public class User {
         });
     }
 
-    public void userInfoRequest(Long id, final ResponseCallback rc) {
+    public void userInfoRequest(long id, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
@@ -181,6 +180,87 @@ public class User {
         });
     }
 
+    public void addScheduleRequest(long groupId, long roomId, long start, long end, String comment,
+                                   String title, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .addSchedule("Bearer " + token, groupId, roomId, start, end, comment, title);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
+    public void allRoomsRequest(final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .allrooms("Bearer " + token);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                rc.onFailure(s);
+            }
+        });
+    }
+
+    public boolean updateAllRooms(String data) {
+        allusers = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            if (jsonObject.has("data")) {
+                JSONArray allRoomsData = jsonObject.getJSONArray("data");
+                int len = allRoomsData.length();
+                for (int i = 0; i < len; i++) {
+                    JSONObject tmp = allRoomsData.getJSONObject(i);
+                    // todo: куда нибудь сохранить
+                    long roomId = tmp.getLong("id");
+                    String RoomName = tmp.getString("room");
+                    // есть еще поле schedules но вроде пока бесполезное
+                }
+                return true;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public void scheduleRequest(final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
@@ -224,7 +304,10 @@ public class User {
                 VK = userData.getString("vk_id");
                 phoneNumber = userData.getString("phone");
                 //groupId = data.getLong("groudid"); не добавлено еще
-                groupId = 0;
+                JSONArray groups = userData.getJSONArray("groups_id");
+                groupId = -1;
+                for (int i = 0; i < groups.length(); i++)
+                    groupId = groups.getInt(i);
                 String ar = userData.getString("approle");
                 if (ar.equals("user"))
                     approle = 0;
@@ -271,10 +354,8 @@ public class User {
         try {
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
-                String tmpToken = jsonObject.getString("data");
-                token = tmpToken;
-                JSONObject groupData = new JSONObject(JWTUtils.decoded(tmpToken)).getJSONObject("group_data");
-                Group group = Group.getInstance();
+                JSONObject groupData = jsonObject.getJSONObject("data");
+                Group group = new Group();
                 group.name = groupData.getString("group_name");
                 group.id = groupData.getLong("id");
                 group.event = groupData.getString("event");
@@ -287,11 +368,11 @@ public class User {
                     String appr = tmp.getString("approle");
                     long id = tmp.getLong("id");
                     if (appr.equals("admin"))
-                        group.getAdmins().add(new ContactItem(id, name, 1));
+                        group.admins.add(new ContactItem(id, name, 1));
                     else
-                        group.getUsers().add(new ContactItem(id, name));
+                        group.users.add(new ContactItem(id, name));
                 }
-                JSONArray scheduleData = jsonObject.getJSONArray("data");
+                JSONArray scheduleData = groupData.getJSONArray("schedules");
                 len = scheduleData.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = scheduleData.getJSONObject(i);
@@ -302,6 +383,8 @@ public class User {
                     String comment = tmp.getString("comment");
                     schedule.add(new ScheduleItem(start, end, name, room, comment));
                 }
+                prepareSchedule();
+                groups.add(group);
                 return true;
             }
         } catch (JSONException e) {
@@ -352,7 +435,9 @@ public class User {
     public void logIn(String userName, String password, final ResponseCallback responseCallback) {
         this.userName = userName;
         this.password = password;
-
+        this.schedule = new ArrayList<>();
+        this.groups = new ArrayList<>();
+        /*
         //для дебага
 
         // Admins
@@ -374,7 +459,7 @@ public class User {
         groups.add(group);
 
         // для дебага
-
+        */
         userRequest(userName, password, responseCallback);
     }
 

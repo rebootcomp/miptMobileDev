@@ -14,29 +14,29 @@ public interface Api {
 
     @FormUrlEncoded
     @POST("authenticateuser")
-    Call<ResponseBody> authenticateuser(
+    Call<ResponseBody> authenticateUser(
             @Field("username") String username,
             @Field("password") String passsword
     );
 
     @FormUrlEncoded
     @POST("allevents")
-    Call<ResponseBody> allevents();
+    Call<ResponseBody> alleEents();
 
     //@FormUrlEncoded
     @POST("allschedules")
-    Call<ResponseBody> allschedules(
+    Call<ResponseBody> allSchedules(
             @Header("Authorization") String auth
     );
 
     @POST("allschedules")
-    Call<ResponseBody> allrooms(
+    Call<ResponseBody> allRooms(
             @Header("Authorization") String auth
     );
 
     //@FormUrlEncoded
     @POST("allusers")
-    Call<ResponseBody> allusers(
+    Call<ResponseBody> allUsers(
             @Header("Authorization") String auth
     );
 

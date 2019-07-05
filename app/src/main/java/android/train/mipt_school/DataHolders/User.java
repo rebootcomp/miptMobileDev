@@ -72,7 +72,7 @@ public class User {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .authenticateuser(username, password);
+                .authenticateUser(username, password);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -156,7 +156,7 @@ public class User {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .allusers("Bearer " + token);
+                .allUsers("Bearer " + token);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -213,7 +213,7 @@ public class User {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .allrooms("Bearer " + token);
+                .allRooms("Bearer " + token);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -265,7 +265,7 @@ public class User {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .allschedules("Bearer " + token);
+                .allSchedules("Bearer " + token);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class RestInfoPageFragment extends Fragment implements SceneFragment {
 
@@ -26,6 +27,8 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
 
     private ImageView profileImage;
     private TextView profileName;
+
+    private ResponseCallback responseCallback;
 
     private String title;
 
@@ -77,7 +80,23 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         contactsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).loadFragment(AllUsersPageFragment.newInstance());
+                responseCallback = new ResponseCallback() {
+                    @Override
+                    public void onResponse(String data) {
+                        if (User.getInstance().updateAllUsers(data)) {
+                            ((MainActivity) getActivity()).loadFragment(AllUsersPageFragment.newInstance());
+                        } else {
+                            Toast.makeText(getContext(),
+                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                };
+                User.getInstance().allUsersRequest(responseCallback);
             }
         });
 

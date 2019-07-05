@@ -68,13 +68,13 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
                 String vkId = data.getString("vk_id");
                 String phone = data.getString("phone");
                 long id = data.getLong("id");
-                JSONArray groups = data.getJSONArray("groups");
-                JSONObject lastGroup = null;
-                for (int i = 0; i < groups.length(); i++)
-                    lastGroup = groups.getJSONObject(i);
-                if (lastGroup != null) {
-                    groupName = lastGroup.getString("group_name");
-                }
+//                JSONArray groups = data.getJSONArray("groups");
+//                JSONObject lastGroup = null;
+//                for (int i = 0; i < groups.length(); i++)
+//                    lastGroup = groups.getJSONObject(i);
+//                if (lastGroup != null) {
+//                    groupName = lastGroup.getString("group_name");
+//                }
                 this.setFirtsname(firstname);
                 this.setLastname(lastname);
                 this.setId(id);

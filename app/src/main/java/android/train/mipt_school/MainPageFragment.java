@@ -161,39 +161,10 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
                         //получаем дату
                         String date = post_link.getElementsByClass("rel_date").first().text();
 
-
-                        /*
-                        // Получаем заголовок
-                        Element tileElement = e.getElementsByClass("node__title")
-                                .first()
-                                .select("a")
-                                .first();
-
-                        String title = tileElement.select("span").first().text();
-
-
-                        // Получаем дату
-                        Element dateElement = e.getElementsByClass("submitted-date").first();
-
-                        String date = String.format("%s. %s, %s",
-                                dateElement.getElementsByClass("month").first().text(),
-                                dateElement.getElementsByClass("day").first().text(),
-                                dateElement.getElementsByClass("year").first().text());
-
-
-                        // Получаем ссылку на новость
-                        String link = e.select("a").first().attr("href");
-
-
-                        // Получаем описание новости
-                        Element mainContent =
-                                e.getElementsByClass("node--main-content").first();
-
-                        String description = mainContent.select("p").text();*/
-
                         if (!link.contains("reply")) {
                             Element mainContent = e.getElementsByClass("wall_post_text").first();
-                            String text = mainContent.text();
+                            System.out.println(mainContent.toString());
+                            String text = textEditor(mainContent.toString());
                             newsItems.add(
                                 new NewsItem("Олимпиадные школы МФТИ",text , date, link  ));
                         }
@@ -202,7 +173,6 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
 
                 } catch (IOException e) {
                     e.printStackTrace();
-                    Log.i("hello", "Словил исключение");
                 }
 
                 return null;
@@ -220,43 +190,26 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         }.execute(NEWS_WEBSITE);
     }
 
-
-    /*public void news() {
-        newsItems = new ArrayList<>();
-        VKRequest vkRequest = new VKApiGroups().getById(VKParameters.from("group_ids","miptschool"));
-        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
-            @Override
-            public void onComplete(VKResponse response) {
-                super.onComplete(response);
-
-                VKList vkList = (VKList) response.parsedModel;
-                try {
-                    System.out.println(vkList.get(0).fields.getInt("id"));
-                    VKRequest vkRequest1 = new VKApiWall()
-                            .get(VKParameters.from(VKApiConst.OWNER_ID,
-                             "-"+vkList.get(0).fields.getInt("id"),VKApiConst.COUNT, 10));
-                    vkRequest1.executeWithListener(new VKRequest.VKRequestListener() {
-                        @Override
-                        public void onComplete(VKResponse response) {
-                            super.onComplete(response);
-
-                            try {
-                                JSONObject jsonObject = (JSONObject) response.json.get("response");
-                                JSONArray jsonArray = (JSONArray) jsonObject.get("items");
-                                for (int i = 0; i < jsonArray.length(); i++) {
-                                    JSONObject post = (JSONObject) jsonArray.get(i);
-                                    newsItems.add(new NewsItem("TEST", post.getString("text"),"1 мая",""));
-                                }
-                            } catch (JSONException e) {
-                                e.printStackTrace();
-                            }
-                        }
-                    });
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
+    public String textEditor(String string) {
+        String string1 = string.replace("\n", "");
+        char[] res = string1.replace("<br>", "\n").toCharArray();
+        string = "";
+        boolean delete = false;
+        for (int i = 0; i < res.length; i++) {
+            if (res[i] == '<') {
+                delete = true;
             }
-        });
-    }*/
+            if (!delete) {
+                string+=res[i];
+            }
+            if (res[i] == '>') {
+                delete = false;
+            }
+        }
+        String result = string.replace("Показать полностью…","\n");
+        return result;
+    }
+
+    
 }
 

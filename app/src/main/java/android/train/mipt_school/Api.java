@@ -63,6 +63,13 @@ public interface Api {
             @Field("title") String title
     );
 
+    @FormUrlEncoded
+    @POST("deleteschedule/{schdedule_id}")
+    Call<ResponseBody> deleteSchedule(
+            @Header("Authorization") String auth,
+            @Path("schdedule_id") long id
+    );
+
     @POST("user/{id}")
     Call<ResponseBody> userInfo(
             @Path("id") long id,

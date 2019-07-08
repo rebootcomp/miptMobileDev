@@ -82,53 +82,14 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 };
-                allusersCallback = new ResponseCallback() {
-                    @Override
-                    public void onResponse(String data) {
-                        if (User.getInstance().updateAllUsers(data)) {
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            finish();
-                        } else {
-                            Toast.makeText(LoginActivity.this,
-                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(String message) {
-                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
-                    }
-                };
-                groupCallback = new ResponseCallback() {
-                    @Override
-                    public void onResponse(String data) {
-                        if (User.getInstance().updateGroupInfo(data)) {
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            finish();
-                        } else
-                            Toast.makeText(LoginActivity.this,
-                                    "Что-то пошло не так2", Toast.LENGTH_LONG).show();
-                    }
-
-                    @Override
-                    public void onFailure(String message) {
-                        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
-                    }
-                };
                 responseCallback = new ResponseCallback() {
                     @Override
                     public void onResponse(String data) {
                         if (User.getInstance().updateToken(data)) {
-                            if (User.getInstance().getGroupId() != -1)
-                                User.getInstance().groupInfoRequest(User.getInstance().getGroupId(), groupCallback);
-                            else {
-                                // TODO: если нет групп крашится
-                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                                finish();
-                            }
+                            User.getInstance().scheduleRequest(initCallback);
                         } else
                             Toast.makeText(LoginActivity.this,
-                                    "Что-то пошло не так1", Toast.LENGTH_LONG).show();
+                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -137,7 +98,6 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 };
                 User.getInstance().logIn(userName, password, responseCallback);
-//                Toast.makeText(getApplicationContext(), userName + " " + password, Toast.LENGTH_LONG).show();
             }
         });
 

@@ -13,6 +13,8 @@ public class ScheduleItem {
     private String place;
     private String eventHours;
     private String comment;
+    private Long groupId;
+    private Long scheduleId;
 
     public Date getStartDate() {
         return startDate;
@@ -62,14 +64,14 @@ public class ScheduleItem {
         this.eventHours = eventHours;
     }
 
-
-
-    public ScheduleItem(Long startDate, Long endDate, String name, String place, String comment) {
+    public ScheduleItem(Long startDate, Long endDate, String name, String place, String comment, Long groupId, Long scheduleId) {
         this.name = name;
         this.place = place;
         this.comment = comment;
         this.startDate = new Date(startDate * 1000L);
         this.endDate = new Date(endDate * 1000L);
+        this.groupId = groupId;
+        this.scheduleId = scheduleId;
         //TODO: нормально посчитать eventHours
         Locale local = new Locale("ru","RU");
         DateFormat df = DateFormat.getTimeInstance(DateFormat.DEFAULT, local);

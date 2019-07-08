@@ -15,6 +15,8 @@ import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ContactItem;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,10 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
     private RecyclerView userList;
     private TextView groupName;
     private TextView groupInfo;
+    private TextView groupDirection;
+    private TextView groupEvent;
+
+    private int groupPosition; // позиция группы в списке групп
 
     public static final String BUNDLE_POS = "POSITION";
 
@@ -64,6 +70,8 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
         userList = view.findViewById(R.id.group_user_list);
         groupInfo = view.findViewById(R.id.fragment_group_info_text);
         groupName = view.findViewById(R.id.group_view_group_name);
+        groupDirection = view.findViewById(R.id.group_view_direction);
+        groupEvent = view.findViewById(R.id.group_view_event);
 
         return view;
     }
@@ -73,8 +81,8 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         Bundle args = getArguments();
 
-        final int position = args.getInt(BUNDLE_POS);
-        displayedGroup = User.getInstance().getGroups().get(position);
+        groupPosition = args.getInt(BUNDLE_POS);
+        displayedGroup = User.getInstance().getGroups().get(groupPosition);
 
 
         userList.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -144,7 +152,9 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
 
         adminList.setAdapter(adminAdapter);
 
-        groupName.setText(displayedGroup.name);
+        groupName.setText(displayedGroup.getName()); // TODO : Обновлять все поля после редактирования группы
+        groupEvent.setText(displayedGroup.getEvent());
+        groupDirection.setText(displayedGroup.getDirection());
 
         int members = displayedGroup.getUsers().size() + displayedGroup.getAdmins().size();
 
@@ -159,9 +169,13 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home) {
-            onBackButtonPressed();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackButtonPressed();
+                return true;
+            case R.id.group_edit_button:
+                return ((MainActivity) getActivity())
+                        .loadFragment(GroupEditFragment.newInstance(groupPosition));
         }
         return false;
     }
@@ -180,5 +194,13 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
     public void onAttach(Context context) {
         super.onAttach(context);
         title = context.getString(R.string.groupview_page_title);
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (User.getInstance().getApprole() == 1) {
+            inflater.inflate(R.menu.group_view_menu, menu);
+        }
+        super.onCreateOptionsMenu(menu, inflater);
     }
 }

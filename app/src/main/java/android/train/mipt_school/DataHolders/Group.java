@@ -9,12 +9,14 @@ public class Group {
 
     private static volatile Group instance;
 
-    public String name;
-    public String event;
-    public String direction;
-    public Long id;
-    public List<ContactItem> users;
-    public List<ContactItem> admins;
+    private String name;
+
+    private String event;
+    private String direction;
+
+    private Long id;
+    private List<ContactItem> users;
+    private List<ContactItem> admins;
 
     Group() {
         name = "Default";
@@ -63,5 +65,29 @@ public class Group {
             }
         }
         return localInstance;
+    }
+
+    public static void setInstance(Group instance) {
+        Group.instance = instance;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getEvent() {
+        return event;
+    }
+
+    public String getDirection() {
+        return direction;
     }
 }

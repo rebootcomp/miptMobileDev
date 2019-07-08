@@ -75,6 +75,14 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
+        // setting up bottombar
+        ((MainActivity) getActivity())
+                .getBottomNavigationBar()
+                .setSelectedItemId(R.id.navigation_main);
+        ((MainActivity) getActivity())
+                .getBottomNavigationBar()
+                .getMenu().getItem(0).setChecked(true);
+
         newsList = view.findViewById(R.id.news_list);
         greetingText = view.findViewById(R.id.greeting_text_main_page);
 
@@ -89,7 +97,6 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         newsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         newsList.setAdapter(adapter);
 
-        Log.d("fragload", "loaded");
 
         return view;
     }

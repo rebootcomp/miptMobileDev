@@ -17,6 +17,8 @@ import android.support.transition.TransitionSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.animation.FastOutLinearInInterpolator;
+import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -42,7 +44,8 @@ public class MainActivity
         implements BottomNavigationView.OnNavigationItemSelectedListener {
 
     private final String BUNDLE_TITLE_NAME = "ACTIONBAR_TITLE";
-    private final long TRANSITITON_DURATION = 200;
+    private final long TRANSITITON_DURATION = 250;
+
     private BottomNavigationView bottomNavigationBar;
     private Toolbar toolbar;
 
@@ -60,6 +63,10 @@ public class MainActivity
         }
     }
 
+    private Fragment getCurrentSceneFragment() {
+        return getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -71,10 +78,16 @@ public class MainActivity
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
+        Fragment currentSceneFragment = getCurrentSceneFragment();
+
+        if (currentSceneFragment != null && currentSceneFragment instanceof SceneFragment) {
+            getSupportActionBar().setDisplayShowTitleEnabled(true);
+        }
+
         bottomNavigationBar.setOnNavigationItemSelectedListener(this);
 
         if (savedInstanceState == null) {
-            bottomNavigationBar.setSelectedItemId(R.id.navigation_main);
+            loadFragment(MainPageFragment.newInstance());
         }
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
@@ -83,8 +96,7 @@ public class MainActivity
                 FragmentManager manager = getSupportFragmentManager();
 
                 if (manager != null) {
-                    Fragment currentSceneFragment = getSupportFragmentManager()
-                            .findFragmentById(R.id.fragment_container);
+                    Fragment currentSceneFragment = getCurrentSceneFragment();
                     currentSceneFragment.onResume();
                 }
             }
@@ -102,8 +114,7 @@ public class MainActivity
     public boolean loadFragment(final Fragment fragment, final View... sharedElements) {
         if (fragment == null) return false;
 
-        Fragment currentSceneFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_container);
+        Fragment currentSceneFragment = getCurrentSceneFragment();
 
         if (currentSceneFragment != null
                 && currentSceneFragment.getClass().isInstance(fragment)) {
@@ -123,10 +134,13 @@ public class MainActivity
                 getSupportActionBar().setDisplayShowCustomEnabled(false);
                 getSupportActionBar().setDisplayShowTitleEnabled(true);
 
-                fragment.setEnterTransition(new Slide(Gravity.RIGHT)
-                        .setDuration(TRANSITITON_DURATION)
-                        .setInterpolator(new LinearOutSlowInInterpolator())); // TODO: починить transitions при перевороте экрана
+                TransitionSet enterTransition = new TransitionSet()
+                        .addTransition(new Fade(Fade.IN).setStartDelay(80)
+                                .setInterpolator(new FastOutSlowInInterpolator()))
+                        .addTransition(new Slide(Gravity.RIGHT))
+                        .setDuration(TRANSITITON_DURATION);
 
+                fragment.setEnterTransition(enterTransition); // TODO: починить transitions при перевороте экрана
 
                 ft.setReorderingAllowed(true);
                 //ft.setCustomAnimations(R.anim.slide_in, R.anim.fade_out, R.anim.fade_in, R.anim.slide_out);
@@ -143,9 +157,7 @@ public class MainActivity
                 ft.addToBackStack(null);
                 ft.replace(R.id.fragment_container, fragment).commit();
 
-                getSupportFragmentManager().
-
-                        executePendingTransactions();
+                getSupportFragmentManager().executePendingTransactions();
 
                 setLoadingScreenState(false);
             }
@@ -169,6 +181,11 @@ public class MainActivity
 
         return true;
     }
+
+    public BottomNavigationView getBottomNavigationBar() {
+        return bottomNavigationBar;
+    }
+
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
@@ -203,13 +220,12 @@ public class MainActivity
 
     @Override
     public void onBackPressed() {
-        Fragment currentSceneFragment = getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_container);
-
+        Fragment currentSceneFragment = getCurrentSceneFragment();
 
         if (currentSceneFragment instanceof SceneFragment) {
             ((SceneFragment) currentSceneFragment).onBackButtonPressed();
         }
     }
+
 
 }

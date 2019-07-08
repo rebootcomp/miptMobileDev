@@ -38,7 +38,15 @@ public class QuestionPageFragment extends Fragment implements SceneFragment {
         void call(String s);
     }
 
-    private void sendRequest(long userId, String fio, String fromEmail, String toEmail, String subject, String body, final ResponseCallback rc) {
+    private void sendRequest(
+            long userId,
+            String fio,
+            String fromEmail,
+            String toEmail,
+            String subject,
+            String body,
+            final ResponseCallback rc) {
+
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
@@ -111,11 +119,21 @@ public class QuestionPageFragment extends Fragment implements SceneFragment {
                     public void call(String s) {
                         if (s.equals("Отправлено успешно"))
                             questionText.setText("");
-                        Toast.makeText((MainActivity)getActivity(), s, Toast.LENGTH_LONG).show();
+                        Toast.makeText((MainActivity) getActivity(), s, Toast.LENGTH_LONG).show();
                     }
                 };
+                
                 User user = User.getInstance();
-                sendRequest(user.getUserId(), user.getLastName() + " " + user.getFirstName() + " " + user.getLastName(), user.getEmail(), "technical-support@it-edu.com", title, questionText.getText().toString(), rc);
+
+                sendRequest(
+                        user.getUserId(),
+                        user.getFullName(),
+                        user.getEmail(),
+                        "technical-support@it-edu.com",
+                        title,
+                        questionText.getText().toString(),
+                        rc);
+
                 return true;
         }
         return false;

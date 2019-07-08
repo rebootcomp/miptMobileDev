@@ -80,23 +80,7 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         contactsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                responseCallback = new ResponseCallback() {
-                    @Override
-                    public void onResponse(String data) {
-                        if (User.getInstance().updateAllUsers(data)) {
-                            ((MainActivity) getActivity()).loadFragment(AllUsersPageFragment.newInstance());
-                        } else {
-                            Toast.makeText(getContext(),
-                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(String message) {
-                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-                    }
-                };
-                User.getInstance().allUsersRequest(responseCallback);
+                ((MainActivity) getActivity()).loadFragment(AllUsersPageFragment.newInstance());
             }
         });
 

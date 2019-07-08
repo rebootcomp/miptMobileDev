@@ -12,7 +12,7 @@
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:indeterminate="true"
-        android:visibility="visible"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHeight_max="56dp"
@@ -22,7 +22,6 @@
         app:layout_constraintWidth_max="56dp" />
 
     <TextView
-        android:visibility="invisible"
         android:id="@+id/no_data_found_message"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
@@ -34,6 +33,7 @@
         android:textAlignment="center"
         android:textColor="@color/secondaryGray"
         android:textSize="18sp"
+        android:visibility="invisible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -42,7 +42,6 @@
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/contacts_view"
-        android:visibility="invisible"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:scrollbars="vertical"

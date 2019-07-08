@@ -1,35 +1,22 @@
 package android.train.mipt_school.DataHolders;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-import android.train.mipt_school.AllUsersPageFragment;
-import android.train.mipt_school.DailyScheduleFragment;
 import android.train.mipt_school.Items.ContactItem;
 import android.train.mipt_school.Items.DailyScheduleItem;
 import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.JWTUtils;
-import android.train.mipt_school.LoginActivity;
-import android.train.mipt_school.MainActivity;
 import android.train.mipt_school.ResponseCallback;
 import android.train.mipt_school.RetrofitClient;
 import android.train.mipt_school.Tools.DateFormatter;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.nio.file.attribute.GroupPrincipal;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -58,7 +45,7 @@ public class User {
 
     private long approle = 0;
 
-    private ArrayList<ContactItem> allusers; // пользователи
+    private ArrayList<ContactItem> allUsers; // пользователи
     private ArrayList<Group> groups; // все группы пользователя
 
     private ArrayList<ContactItem> friends; // контакаты пользователя
@@ -238,7 +225,7 @@ public class User {
     }
 
     public boolean updateAllRooms(String data) {
-        allusers = new ArrayList<>();
+        allUsers = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
@@ -324,7 +311,7 @@ public class User {
     }
 
     public boolean updateAllUsers(String data) {
-        allusers = new ArrayList<>();
+        allUsers = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
@@ -332,9 +319,9 @@ public class User {
                 int len = allUsersData.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = allUsersData.getJSONObject(i);
-                    allusers.add(new ContactItem(tmp.getLong("id"), tmp.getString("firstname") + " " + tmp.getString("lastname")));
+                    allUsers.add(new ContactItem(tmp.getLong("id"), tmp.getString("firstname") + " " + tmp.getString("lastname")));
                 }
-                Collections.sort(allusers, new Comparator<ContactItem>() {
+                Collections.sort(allUsers, new Comparator<ContactItem>() {
                     @Override
                     public int compare(ContactItem lhs, ContactItem rhs) {
                         return lhs.getName().compareTo(rhs.getName());
@@ -356,10 +343,10 @@ public class User {
             if (jsonObject.has("data")) {
                 JSONObject groupData = jsonObject.getJSONObject("data");
                 Group group = new Group();
-                group.name = groupData.getString("group_name");
-                group.id = groupData.getLong("id");
-                group.event = groupData.getString("event");
-                group.direction = groupData.getString("direction");
+                group.setName(groupData.getString("group_name"));
+                group.setId(groupData.getLong("id"));
+                group.setEvent(groupData.getString("event"));
+                group.setDirection(groupData.getString("direction"));
                 JSONArray users = groupData.getJSONArray("users");
                 int len = users.length();
                 for (int i = 0; i < len; i++) {
@@ -368,9 +355,9 @@ public class User {
                     String appr = tmp.getString("approle");
                     long id = tmp.getLong("id");
                     if (appr.equals("admin"))
-                        group.admins.add(new ContactItem(id, name, 1));
+                        group.getAdmins().add(new ContactItem(id, name, 1));
                     else
-                        group.users.add(new ContactItem(id, name));
+                        group.getUsers().add(new ContactItem(id, name));
                 }
                 JSONArray scheduleData = groupData.getJSONArray("schedules");
                 len = scheduleData.length();
@@ -397,7 +384,7 @@ public class User {
 
     public boolean init(String data) {
         try {
-            allusers = new ArrayList<>();
+            allUsers = new ArrayList<>();
             schedule = new ArrayList<>();
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
@@ -422,14 +409,6 @@ public class User {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public ArrayList<ContactItem> getAllusers() {
-        return allusers;
-    }
-
-    public ArrayList<ContactItem> getFriends() {
-        return friends;
     }
 
     public void logIn(String userName, String password, final ResponseCallback responseCallback) {
@@ -571,7 +550,7 @@ public class User {
     }
 
     public ArrayList<ContactItem> getAllUsers() {
-        return allusers;
+        return allUsers;
     }
 
     public boolean getVKAccess() {
@@ -588,5 +567,13 @@ public class User {
 
     public ArrayList<Group> getGroups() {
         return groups;
+    }
+
+    public ArrayList<ContactItem> getFriends() {
+        return friends;
+    }
+
+    public String getFullName() {
+        return getLastName() + " " + getFirstName() + " " + getLastName();
     }
 }

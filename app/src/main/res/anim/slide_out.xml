@@ -4,7 +4,7 @@
         android:duration="250"
         android:fromXDelta="0%"
         android:fromYDelta="0%"
-        android:toXDelta="30%"
+        android:toXDelta="60%"
         android:toYDelta="0%" />
     <alpha
         android:duration="150"

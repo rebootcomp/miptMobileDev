@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.BottomNavigationView;
 import android.support.transition.AutoTransition;
@@ -33,7 +34,18 @@ import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKCallback;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKError;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.methods.VKApiGroups;
+import com.vk.sdk.util.VKUtil;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import static android.support.transition.TransitionSet.ORDERING_TOGETHER;
 
@@ -70,12 +82,12 @@ public class MainActivity
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
-
         bottomNavigationBar.setOnNavigationItemSelectedListener(this);
 
         if (savedInstanceState == null) {
             bottomNavigationBar.setSelectedItemId(R.id.navigation_main);
         }
+
 
         getSupportFragmentManager().addOnBackStackChangedListener(new FragmentManager.OnBackStackChangedListener() {
             @Override
@@ -211,5 +223,4 @@ public class MainActivity
             ((SceneFragment) currentSceneFragment).onBackButtonPressed();
         }
     }
-
 }

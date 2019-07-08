@@ -1,6 +1,7 @@
 package android.train.mipt_school;
 
 
+import android.annotation.SuppressLint;
 import android.app.ProgressDialog;
 import android.content.ActivityNotFoundException;
 import android.content.Context;
@@ -36,6 +37,19 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.vk.sdk.VKAccessToken;
+import com.vk.sdk.VKSdk;
+import com.vk.sdk.api.VKApiConst;
+import com.vk.sdk.api.VKParameters;
+import com.vk.sdk.api.VKRequest;
+import com.vk.sdk.api.VKResponse;
+import com.vk.sdk.api.methods.VKApiGroups;
+import com.vk.sdk.api.methods.VKApiWall;
+import com.vk.sdk.api.model.VKList;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -43,6 +57,7 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class MainPageFragment extends Fragment implements SceneFragment, AsyncLoadingFragment {
@@ -51,8 +66,8 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
     private RecyclerView newsList;
     private TextView greetingText;
 
-    private static final String NEWS_WEBSITE = "https://it-edu.com/ru/news";
-    private static final String ITEDU_WEBSITE = "https://it-edu.com";
+    private static final String NEWS_WEBSITE = "https://vk.com/miptschool";
+    private static final String VK_WEBSITE = "https://vk.com";
     private boolean dataLoaded = false;
     AsyncLoadCallback dataLoadCallback;
     ArrayList<NewsItem> newsItems;
@@ -63,7 +78,6 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         MainPageFragment fragment = new MainPageFragment();
         fragment.setRetainInstance(true);
         fragment.loadNews();
-
         return fragment;
     }
 
@@ -85,10 +99,8 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         NewsAdapter adapter = new NewsAdapter();
         adapter.setData(newsItems);
         adapter.setMainActivity((MainActivity) getActivity());
-
         newsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         newsList.setAdapter(adapter);
-
         Log.d("fragload", "loaded");
 
         return view;
@@ -124,6 +136,8 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         this.dataLoadCallback = callback;
     }
 
+
+    @SuppressLint("StaticFieldLeak")
     public void loadNews() {
 
         new AsyncTask<String, Void, Void>() {
@@ -136,10 +150,19 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
                     newsItems = new ArrayList<>();
                     Document newsPage = Jsoup.connect(strings[0]).get();
 
-                    Elements news = newsPage.getElementsByClass("node--content-container");
+                    Elements news = newsPage.getElementsByClass("_post_content");
 
                     for (Element e : news) {
 
+                        //получаем ссылку
+                        Element post_link = e.getElementsByClass("post_link").first();
+                        String link = VK_WEBSITE + post_link.attr("href");
+
+                        //получаем дату
+                        String date = post_link.getElementsByClass("rel_date").first().text();
+
+
+                        /*
                         // Получаем заголовок
                         Element tileElement = e.getElementsByClass("node__title")
                                 .first()
@@ -166,15 +189,20 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
                         Element mainContent =
                                 e.getElementsByClass("node--main-content").first();
 
-                        String description = mainContent.select("p").text();
+                        String description = mainContent.select("p").text();*/
 
-                        newsItems.add(
-                                new NewsItem(title, description, date, ITEDU_WEBSITE + link));
+                        if (!link.contains("reply")) {
+                            Element mainContent = e.getElementsByClass("wall_post_text").first();
+                            String text = mainContent.text();
+                            newsItems.add(
+                                new NewsItem("Олимпиадные школы МФТИ",text , date, link  ));
+                        }
 
                     }
 
                 } catch (IOException e) {
                     e.printStackTrace();
+                    Log.i("hello", "Словил исключение");
                 }
 
                 return null;
@@ -191,5 +219,44 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
             }
         }.execute(NEWS_WEBSITE);
     }
+
+
+    /*public void news() {
+        newsItems = new ArrayList<>();
+        VKRequest vkRequest = new VKApiGroups().getById(VKParameters.from("group_ids","miptschool"));
+        vkRequest.executeWithListener(new VKRequest.VKRequestListener() {
+            @Override
+            public void onComplete(VKResponse response) {
+                super.onComplete(response);
+
+                VKList vkList = (VKList) response.parsedModel;
+                try {
+                    System.out.println(vkList.get(0).fields.getInt("id"));
+                    VKRequest vkRequest1 = new VKApiWall()
+                            .get(VKParameters.from(VKApiConst.OWNER_ID,
+                             "-"+vkList.get(0).fields.getInt("id"),VKApiConst.COUNT, 10));
+                    vkRequest1.executeWithListener(new VKRequest.VKRequestListener() {
+                        @Override
+                        public void onComplete(VKResponse response) {
+                            super.onComplete(response);
+
+                            try {
+                                JSONObject jsonObject = (JSONObject) response.json.get("response");
+                                JSONArray jsonArray = (JSONArray) jsonObject.get("items");
+                                for (int i = 0; i < jsonArray.length(); i++) {
+                                    JSONObject post = (JSONObject) jsonArray.get(i);
+                                    newsItems.add(new NewsItem("TEST", post.getString("text"),"1 мая",""));
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    });
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }*/
 }
 

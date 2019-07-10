@@ -2,18 +2,11 @@ package android.train.mipt_school;
 
 
 import android.annotation.SuppressLint;
-import android.app.ProgressDialog;
-import android.content.ActivityNotFoundException;
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
-import android.graphics.Bitmap;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -27,29 +20,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.webkit.CookieManager;
-import android.webkit.ValueCallback;
-import android.webkit.WebChromeClient;
-import android.webkit.WebResourceRequest;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKApiConst;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.methods.VKApiGroups;
-import com.vk.sdk.api.methods.VKApiWall;
-import com.vk.sdk.api.model.VKList;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -57,7 +29,6 @@ import org.jsoup.select.Elements;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
 
 
 public class MainPageFragment extends Fragment implements SceneFragment, AsyncLoadingFragment {
@@ -161,6 +132,7 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
                         //получаем дату
                         String date = post_link.getElementsByClass("rel_date").first().text();
 
+                        //получает ещё и комментарии, поэтому проверка
                         if (!link.contains("reply")) {
                             Element mainContent = e.getElementsByClass("wall_post_text").first();
                             System.out.println(mainContent.toString());

@@ -1,13 +1,12 @@
 package android.train.mipt_school.DataHolders;
 
 import android.train.mipt_school.Items.ContactItem;
+import android.train.mipt_school.Items.ScheduleItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Group {
-
-    private static volatile Group instance;
 
     public String name;
     public String event;
@@ -15,6 +14,23 @@ public class Group {
     public Long id;
     public List<ContactItem> users;
     public List<ContactItem> admins;
+    public ArrayList<ScheduleItem> schedule; // расписание группы
+
+    public String getEvent() {
+        return event;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public ArrayList<ScheduleItem> getSchedule() {
+        return schedule;
+    }
 
     Group() {
         name = "Default";
@@ -52,16 +68,4 @@ public class Group {
         this.admins = admins;
     }
 
-    public static Group getInstance() {
-        Group localInstance = instance;
-        if (localInstance == null) {
-            synchronized (Group.class) {
-                localInstance = instance;
-                if (localInstance == null) {
-                    instance = localInstance = new Group();
-                }
-            }
-        }
-        return localInstance;
-    }
 }

@@ -7,6 +7,7 @@ import android.train.mipt_school.AllUsersPageFragment;
 import android.train.mipt_school.DailyScheduleFragment;
 import android.train.mipt_school.Items.ContactItem;
 import android.train.mipt_school.Items.DailyScheduleItem;
+import android.train.mipt_school.Items.GroupItem;
 import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.JWTUtils;
 import android.train.mipt_school.LoginActivity;
@@ -54,14 +55,19 @@ public class User {
     private boolean isVKAvailable = true;
 
     private long userId; // идентификатор пользователя
-    private long groupId; // отряд, в котором находится пользователь
+
+    private ArrayList<GroupItem> allGroups; // все id групп пользователя
+
+    public ArrayList<GroupItem> getAllGroups() {
+        return allGroups;
+    }
 
     private long approle = 0;
 
     private ArrayList<ContactItem> allusers; // пользователи
+    // вроде лишнее allgroups хватает
     private ArrayList<Group> groups; // все группы пользователя
 
-    private ArrayList<ContactItem> friends; // контакаты пользователя
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
 
     private ArrayList<DailyScheduleItem> dailySchedule; // расписание по дням
@@ -237,6 +243,34 @@ public class User {
         });
     }
 
+    public void deleteScheduleRequest(Long scheduleId, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .deleteSchedule("Bearer " + token, scheduleId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                rc.onFailure(s);
+            }
+        });
+    }
+
     public boolean updateAllRooms(String data) {
         allusers = new ArrayList<>();
         try {
@@ -305,9 +339,9 @@ public class User {
                 phoneNumber = userData.getString("phone");
                 //groupId = data.getLong("groudid"); не добавлено еще
                 JSONArray groups = userData.getJSONArray("groups_id");
-                groupId = -1;
+                allGroups = new ArrayList<>();
                 for (int i = 0; i < groups.length(); i++)
-                    groupId = groups.getInt(i);
+                    allGroups.add(new GroupItem("default", groups.getLong(i)));
                 String ar = userData.getString("approle");
                 if (ar.equals("user"))
                     approle = 0;
@@ -350,12 +384,12 @@ public class User {
         return false;
     }
 
-    public boolean updateGroupInfo(String data) {
+    public boolean updateGroupInfo(String data, Group group) {
         try {
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
                 JSONObject groupData = jsonObject.getJSONObject("data");
-                Group group = new Group();
+                //Group group = new Group();
                 group.name = groupData.getString("group_name");
                 group.id = groupData.getLong("id");
                 group.event = groupData.getString("event");
@@ -381,10 +415,11 @@ public class User {
                     String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
-                    schedule.add(new ScheduleItem(start, end, name, room, comment));
+                    Long groupId = tmp.getLong("group_id");
+                    Long scheduleId = tmp.getLong("id");
+                    group.schedule.add(new ScheduleItem(start, end, name, room, comment, groupId, scheduleId));
                 }
-                prepareSchedule();
-                groups.add(group);
+                //gr = group;
                 return true;
             }
         } catch (JSONException e) {
@@ -407,11 +442,17 @@ public class User {
                     JSONObject tmp = scheduleData.getJSONObject(i);
                     Long start = tmp.getLong("start");
                     Long end = tmp.getLong("end");
-                    //String group = tmp.getString("group");
                     String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
-                    schedule.add(new ScheduleItem(start, end, name, room, comment));
+                    Long groupId = tmp.getLong("group_id");
+                    Long scheduleId = tmp.getLong("id");
+                    int ok = 0;
+                    for (int j = 0; j < allGroups.size(); j++)
+                        if (allGroups.get(j).getGroupId().equals(groupId))
+                            ok = 1;
+                    if (ok == 1)
+                        schedule.add(new ScheduleItem(start, end, name, room, comment, groupId, scheduleId));
                 }
                 prepareSchedule();
                 return true;
@@ -428,16 +469,12 @@ public class User {
         return allusers;
     }
 
-    public ArrayList<ContactItem> getFriends() {
-        return friends;
-    }
-
     public void logIn(String userName, String password, final ResponseCallback responseCallback) {
         this.userName = userName;
         this.password = password;
         this.schedule = new ArrayList<>();
         this.groups = new ArrayList<>();
-        /*
+
         //для дебага
 
         // Admins
@@ -459,7 +496,7 @@ public class User {
         groups.add(group);
 
         // для дебага
-        */
+
         userRequest(userName, password, responseCallback);
     }
 
@@ -556,10 +593,6 @@ public class User {
 
     public ArrayList<ScheduleItem> getSchedule() {
         return schedule;
-    }
-
-    public long getGroupId() {
-        return groupId;
     }
 
     public ArrayList<DailyScheduleItem> getDailySchedule() {

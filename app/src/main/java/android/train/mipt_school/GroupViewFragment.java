@@ -119,6 +119,7 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
 
 
         userList.setAdapter(userAdapter);
+        userList.setNestedScrollingEnabled(false);
 
 
         final ContactAdapter adminAdapter = new ContactAdapter();
@@ -151,6 +152,7 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
         });
 
         adminList.setAdapter(adminAdapter);
+        adminList.setNestedScrollingEnabled(false);
 
         groupName.setText(displayedGroup.getName()); // TODO : Обновлять все поля после редактирования группы
         groupEvent.setText(displayedGroup.getEvent());

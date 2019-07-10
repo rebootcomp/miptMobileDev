@@ -122,7 +122,7 @@ public class QuestionPageFragment extends Fragment implements SceneFragment {
                         Toast.makeText((MainActivity) getActivity(), s, Toast.LENGTH_LONG).show();
                     }
                 };
-                
+
                 User user = User.getInstance();
 
                 sendRequest(

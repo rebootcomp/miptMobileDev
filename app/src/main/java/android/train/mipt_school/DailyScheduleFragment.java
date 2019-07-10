@@ -56,7 +56,7 @@ public class DailyScheduleFragment extends Fragment {
                         .getInstance()
                         .getDailySchedule()
                         .get(position)
-                        .getSchedule()));
+                        .getSchedule(), false));
 
         scheduleList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 

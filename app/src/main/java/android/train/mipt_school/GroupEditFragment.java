@@ -21,6 +21,8 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 public class GroupEditFragment extends Fragment implements SceneFragment {
 
@@ -77,7 +79,9 @@ public class GroupEditFragment extends Fragment implements SceneFragment {
         DatePickerDialog.OnDateSetListener listener = new DatePickerDialog.OnDateSetListener() {
             @Override
             public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
-
+                long pickedDate = new GregorianCalendar(year, month, dayOfMonth).getTime().getTime();
+                ((MainActivity) getActivity()).loadFragment(
+                        ScheduleEditFragment.newInstance(pickedDate, editGroup.getId()));
             }
         };
 

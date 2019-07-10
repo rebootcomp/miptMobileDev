@@ -2,11 +2,12 @@ package android.train.mipt_school.DataHolders;
 
 import android.train.mipt_school.Items.ContactItem;
 import android.train.mipt_school.Items.DailyScheduleItem;
+import android.train.mipt_school.Items.GroupItem;
 import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.JWTUtils;
 import android.train.mipt_school.ResponseCallback;
 import android.train.mipt_school.RetrofitClient;
-import android.train.mipt_school.Tools.DateFormatter;
+import android.train.mipt_school.Tools.DateTools;
 import android.util.Log;
 
 import org.json.JSONArray;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -41,14 +43,15 @@ public class User {
     private boolean isVKAvailable = true;
 
     private long userId; // идентификатор пользователя
-    private long groupId; // отряд, в котором находится пользователь
+
+    private ArrayList<GroupItem> allGroups; // все id групп пользователя
 
     private long approle = 0;
 
     private ArrayList<ContactItem> allUsers; // пользователи
+    // вроде лишнее allgroups хватает
     private ArrayList<Group> groups; // все группы пользователя
 
-    private ArrayList<ContactItem> friends; // контакаты пользователя
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
 
     private ArrayList<DailyScheduleItem> dailySchedule; // расписание по дням
@@ -224,6 +227,34 @@ public class User {
         });
     }
 
+    public void deleteScheduleRequest(Long scheduleId, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .deleteSchedule("Bearer " + token, scheduleId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                rc.onFailure(s);
+            }
+        });
+    }
+
     public boolean updateAllRooms(String data) {
         allUsers = new ArrayList<>();
         try {
@@ -282,7 +313,9 @@ public class User {
             if (jsonObject.has("token")) {
                 String tmpToken = jsonObject.getString("token");
                 token = tmpToken;
-                JSONObject userData = new JSONObject(JWTUtils.decoded(tmpToken)).getJSONObject("user_data");
+                JSONObject userData =
+                        new JSONObject(JWTUtils.decoded(tmpToken)).getJSONObject("user_data");
+
                 firstName = userData.getString("firstname");
                 lastName = userData.getString("lastname");
                 thirdName = userData.getString("thirdname");
@@ -292,9 +325,9 @@ public class User {
                 phoneNumber = userData.getString("phone");
                 //groupId = data.getLong("groudid"); не добавлено еще
                 JSONArray groups = userData.getJSONArray("groups_id");
-                groupId = -1;
+                allGroups = new ArrayList<>();
                 for (int i = 0; i < groups.length(); i++)
-                    groupId = groups.getInt(i);
+                    allGroups.add(new GroupItem("default", groups.getLong(i)));
                 String ar = userData.getString("approle");
                 if (ar.equals("user"))
                     approle = 0;
@@ -319,7 +352,12 @@ public class User {
                 int len = allUsersData.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = allUsersData.getJSONObject(i);
-                    allUsers.add(new ContactItem(tmp.getLong("id"), tmp.getString("firstname") + " " + tmp.getString("lastname")));
+                    String firstName = tmp.getString("firstname");
+                    String lastName = tmp.getString("lastname");
+                    allUsers.add(
+                            new ContactItem(
+                                    tmp.getLong("id"),
+                                    String.format("%s %s", firstName, lastName)));
                 }
                 Collections.sort(allUsers, new Comparator<ContactItem>() {
                     @Override
@@ -337,12 +375,12 @@ public class User {
         return false;
     }
 
-    public boolean updateGroupInfo(String data) {
+    public boolean updateGroupInfo(String data, Group group) {
         try {
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
                 JSONObject groupData = jsonObject.getJSONObject("data");
-                Group group = new Group();
+                //Group group = new Group();
                 group.setName(groupData.getString("group_name"));
                 group.setId(groupData.getLong("id"));
                 group.setEvent(groupData.getString("event"));
@@ -351,7 +389,8 @@ public class User {
                 int len = users.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = users.getJSONObject(i);
-                    String name = tmp.getString("firstname") + " " + tmp.getString("lastname");
+                    String name =
+                            tmp.getString("firstname") + " " + tmp.getString("lastname");
                     String appr = tmp.getString("approle");
                     long id = tmp.getLong("id");
                     if (appr.equals("admin"))
@@ -363,15 +402,23 @@ public class User {
                 len = scheduleData.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = scheduleData.getJSONObject(i);
-                    Long start = tmp.getLong("start");
-                    Long end = tmp.getLong("end");
+                    Long start = tmp.getLong("start") * 1000L;
+                    Long end = tmp.getLong("end") * 1000L;
                     String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
-                    schedule.add(new ScheduleItem(start, end, name, room, comment));
+                    Long groupId = tmp.getLong("group_id");
+                    Long scheduleId = tmp.getLong("id");
+                    group.getSchedule().add(new ScheduleItem(
+                            new Date(start),
+                            new Date(end),
+                            name,
+                            room,
+                            comment,
+                            groupId,
+                            scheduleId));
                 }
-                prepareSchedule();
-                groups.add(group);
+                //gr = group;
                 return true;
             }
         } catch (JSONException e) {
@@ -392,14 +439,33 @@ public class User {
                 int len = scheduleData.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = scheduleData.getJSONObject(i);
-                    Long start = tmp.getLong("start");
-                    Long end = tmp.getLong("end");
-                    //String group = tmp.getString("group");
+                    Long start = tmp.getLong("start") * 1000L;
+                    Long end = tmp.getLong("end") * 1000L;
                     String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
-                    schedule.add(new ScheduleItem(start, end, name, room, comment));
+                    Long groupId = tmp.getLong("group_id");
+                    Long scheduleId = tmp.getLong("id");
+                    boolean isGroupMember = false;
+
+                    for (GroupItem group : allGroups) {
+                        if (group.getGroupId().equals(groupId)) {
+                            isGroupMember = true;
+                        }
+                    }
+
+                    if (isGroupMember) {
+                        schedule.add(new ScheduleItem(
+                                new Date(start),
+                                new Date(end),
+                                name,
+                                room,
+                                comment,
+                                groupId,
+                                scheduleId));
+                    }
                 }
+
                 prepareSchedule();
                 return true;
             }
@@ -416,7 +482,7 @@ public class User {
         this.password = password;
         this.schedule = new ArrayList<>();
         this.groups = new ArrayList<>();
-        /*
+
         //для дебага
 
         // Admins
@@ -434,11 +500,12 @@ public class User {
         }
 
         Group group = new Group("Отряд 123", users, admins);
+        group.setId(1L);
         this.groups = new ArrayList<>();
         groups.add(group);
 
         // для дебага
-        */
+
         userRequest(userName, password, responseCallback);
     }
 
@@ -466,13 +533,20 @@ public class User {
             return;
         }
 
+        // сортировка событий расписания по времени
+        Collections.sort(User.getInstance().getSchedule(), new Comparator<ScheduleItem>() {
+            @Override
+            public int compare(ScheduleItem o1, ScheduleItem o2) {
+                return o1.getStartDate().compareTo(o2.getStartDate());
+            }
+        });
 
         ArrayList<ScheduleItem> buffer = new ArrayList<>();
         String currentDate =
-                DateFormatter.dayMonthFormat(User.getInstance().getSchedule().get(0).getStartDate());
+                DateTools.dayMonthFormat(User.getInstance().getSchedule().get(0).getStartDate());
 
         for (ScheduleItem item : User.getInstance().getSchedule()) {
-            String eventDate = DateFormatter.dayMonthFormat(item.getStartDate());
+            String eventDate = DateTools.dayMonthFormat(item.getStartDate());
             if (eventDate.equals(currentDate)) {
                 buffer.add(item);
             } else {
@@ -537,10 +611,6 @@ public class User {
         return schedule;
     }
 
-    public long getGroupId() {
-        return groupId;
-    }
-
     public ArrayList<DailyScheduleItem> getDailySchedule() {
         return dailySchedule;
     }
@@ -569,11 +639,11 @@ public class User {
         return groups;
     }
 
-    public ArrayList<ContactItem> getFriends() {
-        return friends;
-    }
-
     public String getFullName() {
         return getLastName() + " " + getFirstName() + " " + getLastName();
+    }
+
+    public ArrayList<GroupItem> getAllGroups() {
+        return allGroups;
     }
 }

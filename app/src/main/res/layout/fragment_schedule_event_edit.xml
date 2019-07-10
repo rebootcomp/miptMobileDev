@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/backgroundGray"
+    tools:context=".ScheduleEventEditFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Название мероприятия"
+            android:textColor="@color/lightGray"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <android.support.design.card.MaterialCardView
+
+            android:id="@+id/eventcard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="2dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/rippleGray"
+            app:strokeWidth="1dp">
+
+            <EditText
+                android:id="@+id/event_edit_event_name"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginBottom="16dp"
+                android:background="@android:color/transparent" />
+
+        </android.support.design.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Место"
+            android:textColor="@color/lightGray"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <android.support.design.card.MaterialCardView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="2dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/rippleGray"
+            app:strokeWidth="1dp">
+
+            <EditText
+                android:id="@+id/event_edit_event_place"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginBottom="16dp"
+                android:background="@android:color/transparent" />
+
+        </android.support.design.card.MaterialCardView>
+
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="16dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Начало"
+                android:textColor="@color/lightGray"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:text="Завершение"
+                android:textColor="@color/lightGray"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent" />
+        </android.support.constraint.ConstraintLayout>
+
+        <android.support.design.card.MaterialCardView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="2dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/rippleGray"
+            app:strokeWidth="1dp">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/event_edit_event_start"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="16dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="16dp"
+                    android:text="6:00"
+                    android:textColor="@android:color/black"
+                    android:textSize="35sp"
+
+                    app:layout_constraintStart_toStartOf="parent" />
+
+                <TextView
+                    android:id="@+id/event_edit_event_end"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:background="?attr/selectableItemBackground"
+                    android:clickable="true"
+                    android:paddingLeft="14dp"
+                    android:paddingTop="16dp"
+                    android:paddingRight="14dp"
+                    android:paddingBottom="16dp"
+                    android:text="12:00"
+                    android:textColor="@android:color/black"
+                    android:textSize="35sp"
+                    app:layout_constraintEnd_toEndOf="parent" />
+            </android.support.constraint.ConstraintLayout>
+        </android.support.design.card.MaterialCardView>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Комментарий"
+            android:textColor="@color/lightGray"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <android.support.design.card.MaterialCardView
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="2dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginRight="2dp"
+            app:cardCornerRadius="15dp"
+            app:cardElevation="0dp"
+            app:strokeColor="@color/rippleGray"
+            app:strokeWidth="1dp">
+
+            <EditText
+                android:id="@+id/event_edit_event_comment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="14dp"
+                android:layout_marginTop="16dp"
+                android:layout_marginRight="14dp"
+                android:layout_marginBottom="16dp"
+                android:background="@android:color/transparent" />
+
+        </android.support.design.card.MaterialCardView>
+    </LinearLayout>
+
+</android.support.v4.widget.NestedScrollView>

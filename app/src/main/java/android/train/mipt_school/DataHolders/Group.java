@@ -1,22 +1,25 @@
 package android.train.mipt_school.DataHolders;
 
 import android.train.mipt_school.Items.ContactItem;
+import android.train.mipt_school.Items.ScheduleItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Group {
 
-    private static volatile Group instance;
-
     private String name;
-
     private String event;
     private String direction;
-
     private Long id;
     private List<ContactItem> users;
     private List<ContactItem> admins;
+    private ArrayList<ScheduleItem> schedule; // расписание группы
+
+
+    public ArrayList<ScheduleItem> getSchedule() {
+        return schedule;
+    }
 
     Group() {
         name = "Default";
@@ -30,45 +33,40 @@ public class Group {
         this.admins = admins;
     }
 
-    public String getName() {
-        return this.name;
+    public String getEvent() {
+        return event;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public String getDirection() {
+        return direction;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public String getName() {
+        return this.name;
     }
 
     public List<ContactItem> getUsers() {
         return this.users;
     }
 
-    public void setUsers(List<ContactItem> users) {
-        this.users = users;
-    }
-
     public List<ContactItem> getAdmins() {
         return this.admins;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUsers(List<ContactItem> users) {
+        this.users = users;
+    }
+
     public void setAdmins(List<ContactItem> admins) {
         this.admins = admins;
-    }
-
-    public static Group getInstance() {
-        Group localInstance = instance;
-        if (localInstance == null) {
-            synchronized (Group.class) {
-                localInstance = instance;
-                if (localInstance == null) {
-                    instance = localInstance = new Group();
-                }
-            }
-        }
-        return localInstance;
-    }
-
-    public static void setInstance(Group instance) {
-        Group.instance = instance;
     }
 
     public void setEvent(String event) {
@@ -83,11 +81,8 @@ public class Group {
         this.id = id;
     }
 
-    public String getEvent() {
-        return event;
+    public void setSchedule(ArrayList<ScheduleItem> schedule) {
+        this.schedule = schedule;
     }
 
-    public String getDirection() {
-        return direction;
-    }
 }

@@ -1,5 +1,6 @@
 package android.train.mipt_school;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
@@ -20,17 +21,21 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.animation.FastOutLinearInInterpolator;
 import android.support.v4.view.animation.FastOutSlowInInterpolator;
 import android.support.v4.view.animation.LinearOutSlowInInterpolator;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.Tools.AsyncLoadCallback;
 import android.train.mipt_school.Tools.AsyncLoadingFragment;
+import android.train.mipt_school.Tools.DataSavingFragment;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.GridView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -114,7 +119,7 @@ public class MainActivity
     public boolean loadFragment(final Fragment fragment, final View... sharedElements) {
         if (fragment == null) return false;
 
-        Fragment currentSceneFragment = getCurrentSceneFragment();
+        final Fragment currentSceneFragment = getCurrentSceneFragment();
 
         if (currentSceneFragment != null
                 && currentSceneFragment.getClass().isInstance(fragment)) {
@@ -182,6 +187,15 @@ public class MainActivity
         return true;
     }
 
+
+    public void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if (view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
+    }
+
     public BottomNavigationView getBottomNavigationBar() {
         return bottomNavigationBar;
     }
@@ -189,6 +203,21 @@ public class MainActivity
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+        Fragment currentSceneFragment = getCurrentSceneFragment();
+
+        if (item.getItemId() != getBottomNavigationBar().getSelectedItemId() &&
+                currentSceneFragment instanceof DataSavingFragment &&
+                !((DataSavingFragment) currentSceneFragment).canSwitch()) {
+
+            AlertDialog.Builder builder =
+                    new AlertDialog.Builder(this);
+            builder.setTitle(Html.fromHtml("<b>Вы изменили настройки</b>"))
+                    .setMessage("Сначала сохраните изменения")
+                    .setPositiveButton("ОК", null);
+            builder.show();
+
+            return false;
+        }
 
         switch (item.getItemId()) {
             case R.id.navigation_schedule:
@@ -201,7 +230,7 @@ public class MainActivity
                 return loadFragment(GroupViewFragment.newInstance(0));
         }
 
-        return true;
+        return false;
     }
 
     @Override

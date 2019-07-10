@@ -34,6 +34,7 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
 
     public static RestInfoPageFragment newInstance() {
         RestInfoPageFragment fragment = new RestInfoPageFragment();
+        fragment.setRetainInstance(true);
         return fragment;
     }
 

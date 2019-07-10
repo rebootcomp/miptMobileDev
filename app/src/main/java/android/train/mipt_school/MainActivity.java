@@ -4,17 +4,10 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.BottomNavigationView;
 import android.support.transition.AutoTransition;
-import android.support.transition.ChangeBounds;
-import android.support.transition.ChangeImageTransform;
-import android.support.transition.ChangeTransform;
-import android.support.transition.Fade;
 import android.support.transition.Slide;
-import android.support.transition.Transition;
-import android.support.transition.TransitionSet;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -22,32 +15,14 @@ import android.support.v4.view.animation.LinearOutSlowInInterpolator;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.Tools.AsyncLoadCallback;
 import android.train.mipt_school.Tools.AsyncLoadingFragment;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.AccelerateInterpolator;
-import android.widget.GridView;
 import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.vk.sdk.VKAccessToken;
-import com.vk.sdk.VKCallback;
-import com.vk.sdk.VKSdk;
-import com.vk.sdk.api.VKError;
-import com.vk.sdk.api.VKParameters;
-import com.vk.sdk.api.VKRequest;
-import com.vk.sdk.api.VKResponse;
-import com.vk.sdk.api.methods.VKApiGroups;
-import com.vk.sdk.util.VKUtil;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static android.support.transition.TransitionSet.ORDERING_TOGETHER;
 
 public class MainActivity
         extends AppCompatActivity

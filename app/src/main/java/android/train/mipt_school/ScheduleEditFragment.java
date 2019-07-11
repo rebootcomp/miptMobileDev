@@ -34,6 +34,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.Random;
 
 
 public class ScheduleEditFragment extends Fragment implements SceneFragment, DataSavingFragment {
@@ -109,6 +110,35 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
             }
         }
 
+        User user = User.getInstance();
+
+        for (ScheduleItem item : changedItems) {
+            ScheduleItem originalItem = user.getScheduleById().get(item.getScheduleId());
+            int pos = user.getSchedule().indexOf(originalItem);
+            user.getSchedule().set(pos, item);
+        }
+
+        for (ScheduleItem item : deletedItems) {
+            ScheduleItem originalItem = user.getScheduleById().get(item.getScheduleId());
+            int pos = user.getSchedule().indexOf(originalItem);
+            user.getSchedule().remove(pos);
+            user.getScheduleById().remove(item.getScheduleId());
+        }
+
+        for (ScheduleItem item : addedItems) {
+
+            /*long scheduleId = new Random().nextLong();
+            item.setScheduleId(scheduleId);
+
+            user.getScheduleById().put(scheduleId, item);*/
+
+            user.getSchedule().add(item);
+
+            // todo добавлять scheduleId и в User.scheduleById добавлять пару
+        }
+
+        user.prepareSchedule();
+
         getActivity().getSupportFragmentManager().popBackStack();
 
         /*
@@ -167,6 +197,7 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
                             @Override
                             public void onSave(ScheduleItem changedItem) {
                                 scheduleForEditing.set(pos, changedItem);
+                                adapter.sortItemsByTime();
                                 adapter.notifyItemChanged(pos, changedItem);
                             }
 
@@ -184,7 +215,6 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
             }
         });
 
-        adapter.sortItemsByTime();
         scheduleList.setLayoutManager(new LinearLayoutManager(getActivity()));
         scheduleList.setAdapter(adapter);
 
@@ -198,6 +228,7 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
                             @Override
                             public void onSave(ScheduleItem changedItem) {
                                 scheduleForEditing.add(changedItem);
+                                adapter.sortItemsByTime();
                                 adapter.notifyItemChanged(adapter.getItemCount() - 1);
                             }
 
@@ -207,7 +238,7 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
                             }
                         };
 
-                ScheduleItem item = new ScheduleItem(groupId);
+                ScheduleItem item = new ScheduleItem(groupId, date);
                 ((MainActivity) getActivity()).loadFragment(
                         ScheduleEventEditFragment.newInstance(item, date, saveCallback, true));
             }

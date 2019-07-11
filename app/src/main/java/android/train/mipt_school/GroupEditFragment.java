@@ -32,50 +32,31 @@ public class GroupEditFragment extends Fragment implements SceneFragment, DataSa
 
 
     private String title;
-    private EditText groupNameField;
     private Group editGroup;
 
     private View scheduleEditButton;
-    private EditText eventNameField;
-    private EditText directionNameField;
+    private EditText groupNameField;
 
     private String groupName;
-    private String eventName;
-    private String directionName;
 
-    public static final String BUNDLE_POS = "POSITION";
+    private static final String BUNDLE_POS = "POSITION";
+    private static final String BUNLDE_GROUP_NAME = "NAME";
 
     public static GroupEditFragment newInstance(int groupPosition) {
 
         GroupEditFragment fragment = new GroupEditFragment();
+        Group GroupForEditing = User.getInstance().getGroups().get(groupPosition);
 
         Bundle args = new Bundle();
         args.putInt(BUNDLE_POS, groupPosition);
+        args.putString(BUNLDE_GROUP_NAME, GroupForEditing.getName());
 
-        Group GroupForEditing = User.getInstance().getGroups().get(groupPosition);
 
         fragment.setArguments(args);
         fragment.setRetainInstance(true);
 
-        fragment.setEventName(GroupForEditing.getEvent());
-        fragment.setGroupName(GroupForEditing.getName());
-        fragment.setDirectionName(GroupForEditing.getDirection());
-
         return fragment;
     }
-
-    public void setGroupName(String groupName) {
-        this.groupName = groupName;
-    }
-
-    public void setEventName(String eventName) {
-        this.eventName = eventName;
-    }
-
-    public void setDirectionName(String directionName) {
-        this.directionName = directionName;
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -89,8 +70,6 @@ public class GroupEditFragment extends Fragment implements SceneFragment, DataSa
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
         groupNameField = view.findViewById(R.id.group_name_edit_field);
-        eventNameField = view.findViewById(R.id.group_event_name_field);
-        directionNameField = view.findViewById(R.id.group_direction_name_field);
 
         scheduleEditButton = view.findViewById(R.id.schedule_edit_button);
 
@@ -104,11 +83,11 @@ public class GroupEditFragment extends Fragment implements SceneFragment, DataSa
         Bundle args = getArguments();
 
         final int position = args.getInt(BUNDLE_POS);
+        groupName = args.getString(BUNLDE_GROUP_NAME);
+
         editGroup = User.getInstance().getGroups().get(position);
 
         groupNameField.setText(groupName);
-        eventNameField.setText(eventName);
-        directionNameField.setText(directionName);
 
         Calendar dateAndTime = Calendar.getInstance();
 
@@ -168,10 +147,8 @@ public class GroupEditFragment extends Fragment implements SceneFragment, DataSa
     public boolean onSave() {
 
         editGroup.setName(groupNameField.getText().toString());
-        editGroup.setEvent(eventNameField.getText().toString());
-        editGroup.setDirection(directionNameField.getText().toString());
 
-        // TODO обновлять название, направление и мероприятие группы на сервере
+        // TODO обновлять название группы на сервере
 
         getActivity().getSupportFragmentManager().popBackStack();
         return true;
@@ -202,8 +179,6 @@ public class GroupEditFragment extends Fragment implements SceneFragment, DataSa
 
     @Override
     public boolean canSwitch() {
-        return groupNameField.getText().toString().equals(editGroup.getName()) &&
-                eventNameField.getText().toString().equals(editGroup.getEvent()) &&
-                directionNameField.getText().toString().equals(editGroup.getDirection());
+        return groupNameField.getText().toString().equals(editGroup.getName());
     }
 }

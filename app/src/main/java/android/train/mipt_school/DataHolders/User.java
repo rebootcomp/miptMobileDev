@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -54,7 +55,10 @@ public class User {
 
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
 
+    private HashMap<Long, ScheduleItem> scheduleById;
+
     private ArrayList<DailyScheduleItem> dailySchedule; // расписание по дням
+
 
     private static volatile User instance;
 
@@ -266,7 +270,7 @@ public class User {
                     JSONObject tmp = allRoomsData.getJSONObject(i);
                     // todo: куда нибудь сохранить
                     long roomId = tmp.getLong("id");
-                    String RoomName = tmp.getString("room");
+                    String roomName = tmp.getString("room");
                     // есть еще поле schedules но вроде пока бесполезное
                 }
                 return true;
@@ -418,7 +422,6 @@ public class User {
                             groupId,
                             scheduleId));
                 }
-                //gr = group;
                 return true;
             }
         } catch (JSONException e) {
@@ -433,6 +436,8 @@ public class User {
         try {
             allUsers = new ArrayList<>();
             schedule = new ArrayList<>();
+            scheduleById = new HashMap<>();
+
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
                 JSONArray scheduleData = jsonObject.getJSONArray("data");
@@ -455,14 +460,17 @@ public class User {
                     }
 
                     if (isGroupMember) {
-                        schedule.add(new ScheduleItem(
+                        ScheduleItem item = new ScheduleItem(
                                 new Date(start),
                                 new Date(end),
                                 name,
                                 room,
                                 comment,
                                 groupId,
-                                scheduleId));
+                                scheduleId);
+
+                        schedule.add(item);
+                        scheduleById.put(scheduleId, item);
                     }
                 }
 
@@ -526,7 +534,7 @@ public class User {
         return localInstance;
     }
 
-    private void prepareSchedule() {
+    public void prepareSchedule() {
         dailySchedule = new ArrayList<>();
 
         if (User.getInstance().getSchedule().size() == 0) {
@@ -646,4 +654,9 @@ public class User {
     public ArrayList<GroupItem> getAllGroups() {
         return allGroups;
     }
+
+    public HashMap<Long, ScheduleItem> getScheduleById() {
+        return scheduleById;
+    }
+
 }

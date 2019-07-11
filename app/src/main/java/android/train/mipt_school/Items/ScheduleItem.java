@@ -20,12 +20,16 @@ public class ScheduleItem {
 
     private Long scheduleId;
 
-    public ScheduleItem(long groupId) {
+    public ScheduleItem(long groupId, Date dayStartDate) {
+        long currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        long currentMinute = Calendar.getInstance().get(Calendar.MINUTE);
+
+        long timeSinceMidnight = (currentHour * 3600L + currentMinute * 60L) * 1000L;
         this.name = "";
         this.place = "";
         this.comment = "";
-        this.startDate = Calendar.getInstance().getTime();
-        this.endDate = Calendar.getInstance().getTime();
+        this.startDate = new Date(dayStartDate.getTime() + timeSinceMidnight);
+        this.endDate = new Date(dayStartDate.getTime() + timeSinceMidnight);
         this.groupId = groupId;
     }
 
@@ -126,6 +130,10 @@ public class ScheduleItem {
 
     public Long getGroupId() {
         return groupId;
+    }
+
+    public void setScheduleId(Long scheduleId) {
+        this.scheduleId = scheduleId;
     }
 
 

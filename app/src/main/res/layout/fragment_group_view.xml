@@ -83,9 +83,10 @@
                         android:id="@+id/group_view_event"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="ЛОШ 2019 Август"
+                        android:text="ЛОШ 2019 Авгус3383т"
                         android:textColor="@android:color/black"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"
@@ -99,9 +100,10 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_marginTop="16dp"
-                        android:text="Информатика Профи"
+                        android:text="Информатика Профииии"
                         android:textColor="@android:color/black"
-                        android:textSize="18sp" />
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
 
                     <TextView
                         android:layout_width="match_parent"

@@ -98,7 +98,8 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
         }
     }
 
-    private void saveChanges() {
+    @Override
+    public boolean onSave() {
 
         for (ScheduleItem e : scheduleForEditing) {
             if (e.getScheduleId() == null) {
@@ -108,8 +109,14 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
             }
         }
 
-        System.out.println("jdjdd");
-        // здесь нужно делать сохранение изменений
+        getActivity().getSupportFragmentManager().popBackStack();
+
+        /*
+                 todo в onSave нужен callback который будет уведомлять о том что изменения загружены на сервер,
+                 и по нему будет делаться popbackstack
+                 */
+
+        return true;
     }
 
     @Override
@@ -215,13 +222,7 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
                 onBackButtonPressed();
                 return true;
             case R.id.group_edit_save_button:
-                saveChanges();
-                /*
-                 todo в savechanges нужен callback который будет уведомлять о том что изменения загружены на сервер,
-                 и по нему будет делаться popbackstack, который ниже
-                 */
-                getActivity().getSupportFragmentManager().popBackStack();
-                return true;
+                return onSave();
         }
         return false;
     }

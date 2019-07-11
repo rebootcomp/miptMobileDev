@@ -31,6 +31,8 @@ public class Group {
         this.name = name;
         this.users = users;
         this.admins = admins;
+        this.event = "ЛОШ 2019 Август";
+        this.direction = "Информатика профи";
     }
 
     public String getEvent() {

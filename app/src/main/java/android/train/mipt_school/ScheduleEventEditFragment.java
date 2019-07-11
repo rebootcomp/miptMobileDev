@@ -78,15 +78,6 @@ public class ScheduleEventEditFragment extends Fragment implements SceneFragment
         this.currentDate = currentDate;
     }
 
-    void saveChanges() {
-        eventForEditing.setComment(eventComment.getText().toString());
-        eventForEditing.setName(eventName.getText().toString());
-        eventForEditing.setPlace(eventPlace.getText().toString());
-
-        eventForEditing.setStartDate(pickedStartDate);
-        eventForEditing.setEndDate(pickedEndDate);
-    }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -213,6 +204,17 @@ public class ScheduleEventEditFragment extends Fragment implements SceneFragment
     }
 
     @Override
+    public boolean onSave() {
+        eventForEditing.setComment(eventComment.getText().toString());
+        eventForEditing.setName(eventName.getText().toString());
+        eventForEditing.setPlace(eventPlace.getText().toString());
+
+        eventForEditing.setStartDate(pickedStartDate);
+        eventForEditing.setEndDate(pickedEndDate);
+        return true;
+    }
+
+    @Override
     public void onBackButtonPressed() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -254,7 +256,7 @@ public class ScheduleEventEditFragment extends Fragment implements SceneFragment
                 onBackButtonPressed();
                 return true;
             case R.id.event_edit_save_button:
-                saveChanges();
+                onSave();
                 saveCallback.onSave(eventForEditing);
                 ((MainActivity) getActivity()).hideKeyboard();
                 onBackButtonPressed();

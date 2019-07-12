@@ -1,7 +1,9 @@
 package android.train.mipt_school;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -12,6 +14,7 @@ import android.text.TextWatcher;
 import android.train.mipt_school.Adapters.ContactAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ContactItem;
+import android.train.mipt_school.Items.NewsItem;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -27,7 +30,12 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -132,6 +140,8 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
 
         contactList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
+
+        // это не передлать, будет всегда выполняться в UI потоке
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -169,6 +179,7 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
                 progressBar.setVisibility(View.INVISIBLE);
             }
         }).run(); // кажется, так быстрее будет
+        // P.s. не будет :)
 
         return view;
 
@@ -206,16 +217,16 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
         return title;
     }
 
+    @SuppressLint("StaticFieldLeak")
     private void performSearch(final String text) {
-        if (searchThread != null) {
-            searchThread.interrupt();
-        }
 
-        searchThread = new Thread(new Runnable() {
+        contactList.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+
+        new AsyncTask<String, Void, Void>() {
+
             @Override
-            public void run() {
-                contactList.setVisibility(View.INVISIBLE);
-                progressBar.setVisibility(View.VISIBLE);
+            protected Void doInBackground(String... strings) {
 
                 foundData = new ArrayList<>();
 
@@ -247,7 +258,13 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
                 }
 
 
-                contactAdapter.setData(foundData);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                contactAdapter.setData(foundData); // интерфейс начало
                 contactAdapter.notifyDataSetChanged();
 
                 if (foundData.size() == 0) {
@@ -259,11 +276,72 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
                 contactList.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
 
+            }
+        }.execute();
+
+        /*
+        if (searchThread != null) {
+            searchThread.interrupt();
+        }
+
+
+        //AsyncTask
+        searchThread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                contactList.setVisibility(View.INVISIBLE); //интерфейс
+                progressBar.setVisibility(View.VISIBLE); //интерфейс
+
+                foundData = new ArrayList<>();
+
+                String[] words = text.split(" ");
+
+                for (int i = 0; i < words.length; i++) {
+                    words[i] = words[i].toLowerCase();
+                }
+
+                for (ContactItem item : User.getInstance().getAllUsers()) {
+                    String[] name = item.getName().split(" ");
+                    boolean hasKeyWords = false;
+
+                    for (String i : name) {
+                        if (hasKeyWords) {
+                            break;
+                        }
+                        for (String j : words) {
+                            if (isSubsequence(i.toLowerCase(), j)) {
+                                hasKeyWords = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (hasKeyWords) {
+                        foundData.add(item);
+                    }
+                }
+
+
+                contactAdapter.setData(foundData); // интерфейс начало
+                contactAdapter.notifyDataSetChanged();
+
+                if (foundData.size() == 0) {
+                    noDataMessage.setVisibility(View.VISIBLE);
+                } else {
+                    noDataMessage.setVisibility(View.INVISIBLE);
+                }
+
+                contactList.setVisibility(View.VISIBLE);
+                progressBar.setVisibility(View.INVISIBLE); // интерфейс конец
+
 
             }
         });
 
         searchThread.run();
+        */
+
+
     }
 
     boolean isSubsequence(String s, String t) {

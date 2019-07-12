@@ -199,4 +199,3 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         }.execute(NEWS_WEBSITE);
     }
 }
-

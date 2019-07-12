@@ -1,6 +1,7 @@
 package android.train.mipt_school;
 
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -12,6 +13,8 @@ import android.text.TextWatcher;
 import android.train.mipt_school.Adapters.ContactAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ContactItem;
+import android.train.mipt_school.Tools.AsyncLoadCallback;
+import android.train.mipt_school.Tools.AsyncLoadingFragment;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -31,7 +34,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 
-public class AllUsersPageFragment extends Fragment implements SceneFragment {
+public class AllUsersPageFragment extends Fragment implements SceneFragment, AsyncLoadingFragment {
 
     private String title;
     private RecyclerView contactList;
@@ -44,11 +47,48 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
     private ProfilePageFragment pf;
     ArrayList<ContactItem> foundData;
 
+    private boolean dataLoaded = false;
+    private AsyncLoadCallback loadCallback;
     public ResponseCallback responseCallback;
 
     public static AllUsersPageFragment newInstance() {
         AllUsersPageFragment fragment = new AllUsersPageFragment();
+        fragment.loadUsers();
+
         return fragment;
+    }
+
+    private void loadUsers() {
+        if (User.getInstance().getAllUsers() != null
+                && !User.getInstance().getAllUsers().isEmpty()) {
+            dataLoaded = true;
+            if (loadCallback != null) {
+                loadCallback.onDataLoaded();
+            }
+            return;
+        }
+
+
+        ResponseCallback responseCallback = new ResponseCallback() {
+            @Override
+            public void onResponse(String data) {
+                if (User.getInstance().updateAllUsers(data)) {
+                    dataLoaded = true;
+                    if (loadCallback != null) {
+                        loadCallback.onDataLoaded();
+                    }
+                } else {
+                    Toast.makeText(getContext(),
+                            "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+            }
+        };
+        User.getInstance().allUsersRequest(responseCallback);
     }
 
     @Override
@@ -67,7 +107,6 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
         /*DividerItemDecoration itemDecorator = new DividerItemDecoration(getContext(),
                 DividerItemDecoration.VERTICAL);
         itemDecorator.setDrawable(ContextCompat.getDrawable(getContext(), R.drawable.gray_divider));
-
         contactList.addItemDecoration(itemDecorator);*/
 
 
@@ -205,6 +244,17 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
     public String getTitle() {
         return title;
     }
+
+    @Override
+    public boolean fragmentDataLoaded() {
+        return dataLoaded;
+    }
+
+    @Override
+    public void setLoadCallback(AsyncLoadCallback callback) {
+        loadCallback = callback;
+    }
+
 
     private void performSearch(final String text) {
         if (searchThread != null) {

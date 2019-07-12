@@ -1,12 +1,18 @@
 package android.train.mipt_school;
 
 
-import android.annotation.SuppressLint;
+import android.app.ProgressDialog;
+import android.content.ActivityNotFoundException;
 import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -20,7 +26,15 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.CookieManager;
+import android.webkit.ValueCallback;
+import android.webkit.WebChromeClient;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,8 +51,8 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
     private RecyclerView newsList;
     private TextView greetingText;
 
-    private static final String NEWS_WEBSITE = "https://vk.com/miptschool";
-    private static final String VK_WEBSITE = "https://vk.com";
+    private static final String NEWS_WEBSITE = "https://it-edu.com/ru/news";
+    private static final String ITEDU_WEBSITE = "https://it-edu.com";
     private boolean dataLoaded = false;
     AsyncLoadCallback dataLoadCallback;
     ArrayList<NewsItem> newsItems;
@@ -49,6 +63,7 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         MainPageFragment fragment = new MainPageFragment();
         fragment.setRetainInstance(true);
         fragment.loadNews();
+
         return fragment;
     }
 
@@ -60,6 +75,14 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
+        // setting up bottombar
+        ((MainActivity) getActivity())
+                .getBottomNavigationBar()
+                .setSelectedItemId(R.id.navigation_main);
+        ((MainActivity) getActivity())
+                .getBottomNavigationBar()
+                .getMenu().getItem(0).setChecked(true);
+
         newsList = view.findViewById(R.id.news_list);
         greetingText = view.findViewById(R.id.greeting_text_main_page);
 
@@ -70,9 +93,10 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         NewsAdapter adapter = new NewsAdapter();
         adapter.setData(newsItems);
         adapter.setMainActivity((MainActivity) getActivity());
+
         newsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         newsList.setAdapter(adapter);
-        Log.d("fragload", "loaded");
+
 
         return view;
     }
@@ -107,8 +131,6 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         this.dataLoadCallback = callback;
     }
 
-
-    @SuppressLint("StaticFieldLeak")
     public void loadNews() {
 
         new AsyncTask<String, Void, Void>() {
@@ -121,25 +143,40 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
                     newsItems = new ArrayList<>();
                     Document newsPage = Jsoup.connect(strings[0]).get();
 
-                    Elements news = newsPage.getElementsByClass("_post_content");
+                    Elements news = newsPage.getElementsByClass("node--content-container");
 
                     for (Element e : news) {
 
-                        //получаем ссылку
-                        Element post_link = e.getElementsByClass("post_link").first();
-                        String link = VK_WEBSITE + post_link.attr("href");
+                        // Получаем заголовок
+                        Element tileElement = e.getElementsByClass("node__title")
+                                .first()
+                                .select("a")
+                                .first();
 
-                        //получаем дату
-                        String date = post_link.getElementsByClass("rel_date").first().text();
+                        String title = tileElement.select("span").first().text();
 
-                        //получает ещё и комментарии, поэтому проверка
-                        if (!link.contains("reply")) {
-                            Element mainContent = e.getElementsByClass("wall_post_text").first();
-                            System.out.println(mainContent.toString());
-                            String text = textEditor(mainContent.toString());
-                            newsItems.add(
-                                new NewsItem("Олимпиадные школы МФТИ",text , date, link  ));
-                        }
+
+                        // Получаем дату
+                        Element dateElement = e.getElementsByClass("submitted-date").first();
+
+                        String date = String.format("%s. %s, %s",
+                                dateElement.getElementsByClass("month").first().text(),
+                                dateElement.getElementsByClass("day").first().text(),
+                                dateElement.getElementsByClass("year").first().text());
+
+
+                        // Получаем ссылку на новость
+                        String link = e.select("a").first().attr("href");
+
+
+                        // Получаем описание новости
+                        Element mainContent =
+                                e.getElementsByClass("node--main-content").first();
+
+                        String description = mainContent.select("p").text();
+
+                        newsItems.add(
+                                new NewsItem(title, description, date, ITEDU_WEBSITE + link));
 
                     }
 
@@ -161,27 +198,4 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
             }
         }.execute(NEWS_WEBSITE);
     }
-
-    public String textEditor(String string) {
-        String string1 = string.replace("\n", "");
-        char[] res = string1.replace("<br>", "\n").toCharArray();
-        string = "";
-        boolean delete = false;
-        for (int i = 0; i < res.length; i++) {
-            if (res[i] == '<') {
-                delete = true;
-            }
-            if (!delete) {
-                string+=res[i];
-            }
-            if (res[i] == '>') {
-                delete = false;
-            }
-        }
-        String result = string.replace("Показать полностью…","\n");
-        return result;
-    }
-
-    
 }
-

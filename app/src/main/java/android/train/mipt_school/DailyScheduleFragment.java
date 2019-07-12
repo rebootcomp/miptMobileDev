@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.train.mipt_school.Adapters.ScheduleAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ScheduleItem;
+import android.train.mipt_school.Tools.DateTools;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,25 +16,26 @@ import android.view.ViewGroup;
 import android.train.mipt_school.R;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 public class DailyScheduleFragment extends Fragment {
 
-    private String date;
+    private Date date;
     private int position;
     private RecyclerView scheduleList;
 
     public static final String BUNLDE_DATE = "DATE";
     public static final String BUNDLE_POS = "POSITION";
 
-    public static DailyScheduleFragment newInstance(String date, int position) {
+    public static DailyScheduleFragment newInstance(long date, int position) {
         DailyScheduleFragment instance = new DailyScheduleFragment();
         Bundle args = new Bundle();
 
-        instance.date = date;
-        instance.position = position;
-
-        args.putString(BUNLDE_DATE, date);
+        args.putLong(BUNLDE_DATE, date);
         args.putInt(BUNDLE_POS, position);
+
+        instance.setDate(new Date(date));
+        instance.setPosition(position);
 
         instance.setArguments(args);
         return instance;
@@ -48,7 +50,7 @@ public class DailyScheduleFragment extends Fragment {
 
         Bundle bundle = getArguments();
         position = bundle.getInt(BUNDLE_POS);
-        date = bundle.getString(BUNLDE_DATE);
+        date = new Date(bundle.getLong(BUNLDE_DATE));
 
 
         scheduleList.setAdapter(
@@ -56,7 +58,7 @@ public class DailyScheduleFragment extends Fragment {
                         .getInstance()
                         .getDailySchedule()
                         .get(position)
-                        .getSchedule()));
+                        .getSchedule(), false));
 
         scheduleList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
@@ -65,12 +67,22 @@ public class DailyScheduleFragment extends Fragment {
     }
 
 
-    public String getDate() {
+    public Date getDate() {
         return date;
     }
 
-    public void setDate(String date) {
+    public String getDateString() {
+        return String.format("%s %s",
+                DateTools.dayOfWeekFormat(date),
+                DateTools.dayMonthFormat(date));
+    }
+
+    public void setDate(Date date) {
         this.date = date;
+    }
+
+    public void setPosition(int position) {
+        this.position = position;
     }
 
 }

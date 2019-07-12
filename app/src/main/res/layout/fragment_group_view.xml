@@ -1,122 +1,183 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/backgroundGray"
-    android:scrollbars="vertical"
+    android:orientation="vertical"
     tools:context=".GroupViewFragment">
 
-
-    <LinearLayout
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+        android:layout_height="match_parent"
+        android:background="@color/backgroundGray"
+        android:scrollbars="vertical">
 
-        <android.support.design.card.MaterialCardView
 
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginRight="2dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/rippleGray"
-            app:strokeWidth="1dp">
+            android:orientation="vertical">
 
-            <LinearLayout
+            <android.support.design.card.MaterialCardView
+
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/colorPrimary"
+                app:cardCornerRadius="0dp"
+                app:cardElevation="0dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginBottom="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/group_view_group_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginTop="8dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="Отряд отряд отряд"
+                        android:textColor="@android:color/white"
+                        android:textSize="24sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/fragment_group_info_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginBottom="8dp"
+                        android:text="25 участников"
+                        android:textColor="@android:color/white"
+                        android:textSize="16sp" />
+                </LinearLayout>
+
+            </android.support.design.card.MaterialCardView>
+
+            <android.support.design.card.MaterialCardView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="2dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/rippleGray"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="16dp"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/group_view_event"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="ЛОШ 2019 Авгус3383т"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Мероприятие"
+                        android:textColor="@color/lightGray"
+                        android:textSize="14sp" />
+
+                    <TextView
+                        android:id="@+id/group_view_direction"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="16dp"
+                        android:text="Информатика Профииии"
+                        android:textColor="@android:color/black"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Направление"
+                        android:textColor="@color/lightGray"
+                        android:textSize="14sp" />
+
+                </LinearLayout>
+
+            </android.support.design.card.MaterialCardView>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
                 android:layout_marginTop="16dp"
+                android:text="Администраторы"
+                android:textColor="@color/lightGray"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+            <android.support.design.card.MaterialCardView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="2dp"
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/rippleGray"
+                app:strokeWidth="1dp">
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/group_admin_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </android.support.design.card.MaterialCardView>
+
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="16dp"
+                android:layout_marginTop="16dp"
+                android:text="Участники"
+                android:textColor="@color/lightGray"
+                android:textSize="14sp"
+                android:textStyle="bold" />
+
+
+            <android.support.design.card.MaterialCardView
+
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="2dp"
+                android:layout_marginTop="1dp"
+                android:layout_marginRight="2dp"
                 android:layout_marginBottom="16dp"
-                android:orientation="vertical">
+                app:cardCornerRadius="15dp"
+                app:cardElevation="0dp"
+                app:strokeColor="@color/rippleGray"
+                app:strokeWidth="1dp">
 
-                <TextView
-                    android:id="@+id/group_view_group_name"
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/group_user_list"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="8dp"
-                    android:text="Отряд отряд отряд"
-                    android:textColor="@color/darkGray"
-                    android:textSize="24sp"
-                    android:textStyle="bold" />
+                    android:layout_height="match_parent" />
 
-                <TextView
-                    android:id="@+id/fragment_group_info_text"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_marginLeft="8dp"
-                    android:layout_marginRight="8dp"
-                    android:layout_marginBottom="8dp"
-                    android:text="25 участников"
-                    android:textSize="16sp" />
-            </LinearLayout>
-
-        </android.support.design.card.MaterialCardView>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:text="Администраторы"
-            android:textColor="@color/lightGray"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-        <android.support.design.card.MaterialCardView
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginRight="2dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/rippleGray"
-            app:strokeWidth="1dp">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/group_admin_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </android.support.design.card.MaterialCardView>
+            </android.support.design.card.MaterialCardView>
+        </LinearLayout>
 
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="16dp"
-            android:layout_marginTop="16dp"
-            android:text="Участники"
-            android:textColor="@color/lightGray"
-            android:textSize="14sp"
-            android:textStyle="bold" />
-
-
-        <android.support.design.card.MaterialCardView
-
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="2dp"
-            android:layout_marginTop="1dp"
-            android:layout_marginRight="2dp"
-            android:layout_marginBottom="16dp"
-            app:cardCornerRadius="15dp"
-            app:cardElevation="0dp"
-            app:strokeColor="@color/rippleGray"
-            app:strokeWidth="1dp">
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/group_user_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent" />
-
-        </android.support.design.card.MaterialCardView>
-    </LinearLayout>
-
-
-</android.support.v4.widget.NestedScrollView>
+    </android.support.v4.widget.NestedScrollView>
+</LinearLayout>

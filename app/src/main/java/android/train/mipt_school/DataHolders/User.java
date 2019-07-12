@@ -1,36 +1,25 @@
 package android.train.mipt_school.DataHolders;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Handler;
-import android.train.mipt_school.AllUsersPageFragment;
-import android.train.mipt_school.DailyScheduleFragment;
 import android.train.mipt_school.Items.ContactItem;
 import android.train.mipt_school.Items.DailyScheduleItem;
 import android.train.mipt_school.Items.GroupItem;
 import android.train.mipt_school.Items.ScheduleItem;
 import android.train.mipt_school.JWTUtils;
-import android.train.mipt_school.LoginActivity;
-import android.train.mipt_school.MainActivity;
 import android.train.mipt_school.ResponseCallback;
 import android.train.mipt_school.RetrofitClient;
-import android.train.mipt_school.Tools.DateFormatter;
+import android.train.mipt_school.Tools.DateTools;
 import android.util.Log;
-import android.widget.Toast;
-
-import com.google.gson.JsonObject;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.nio.file.attribute.GroupPrincipal;
-import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -58,19 +47,18 @@ public class User {
 
     private ArrayList<GroupItem> allGroups; // все id групп пользователя
 
-    public ArrayList<GroupItem> getAllGroups() {
-        return allGroups;
-    }
-
     private long approle = 0;
 
-    private ArrayList<ContactItem> allusers; // пользователи
+    private ArrayList<ContactItem> allUsers; // пользователи
     // вроде лишнее allgroups хватает
     private ArrayList<Group> groups; // все группы пользователя
 
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
 
+    private HashMap<Long, ScheduleItem> scheduleById;
+
     private ArrayList<DailyScheduleItem> dailySchedule; // расписание по дням
+
 
     private static volatile User instance;
 
@@ -272,7 +260,7 @@ public class User {
     }
 
     public boolean updateAllRooms(String data) {
-        allusers = new ArrayList<>();
+        allUsers = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
@@ -282,7 +270,7 @@ public class User {
                     JSONObject tmp = allRoomsData.getJSONObject(i);
                     // todo: куда нибудь сохранить
                     long roomId = tmp.getLong("id");
-                    String RoomName = tmp.getString("room");
+                    String roomName = tmp.getString("room");
                     // есть еще поле schedules но вроде пока бесполезное
                 }
                 return true;
@@ -329,7 +317,9 @@ public class User {
             if (jsonObject.has("token")) {
                 String tmpToken = jsonObject.getString("token");
                 token = tmpToken;
-                JSONObject userData = new JSONObject(JWTUtils.decoded(tmpToken)).getJSONObject("user_data");
+                JSONObject userData =
+                        new JSONObject(JWTUtils.decoded(tmpToken)).getJSONObject("user_data");
+
                 firstName = userData.getString("firstname");
                 lastName = userData.getString("lastname");
                 thirdName = userData.getString("thirdname");
@@ -358,7 +348,7 @@ public class User {
     }
 
     public boolean updateAllUsers(String data) {
-        allusers = new ArrayList<>();
+        allUsers = new ArrayList<>();
         try {
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
@@ -366,9 +356,14 @@ public class User {
                 int len = allUsersData.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = allUsersData.getJSONObject(i);
-                    allusers.add(new ContactItem(tmp.getLong("id"), tmp.getString("firstname") + " " + tmp.getString("lastname")));
+                    String firstName = tmp.getString("firstname");
+                    String lastName = tmp.getString("lastname");
+                    allUsers.add(
+                            new ContactItem(
+                                    tmp.getLong("id"),
+                                    String.format("%s %s", firstName, lastName)));
                 }
-                Collections.sort(allusers, new Comparator<ContactItem>() {
+                Collections.sort(allUsers, new Comparator<ContactItem>() {
                     @Override
                     public int compare(ContactItem lhs, ContactItem rhs) {
                         return lhs.getName().compareTo(rhs.getName());
@@ -390,36 +385,43 @@ public class User {
             if (jsonObject.has("data")) {
                 JSONObject groupData = jsonObject.getJSONObject("data");
                 //Group group = new Group();
-                group.name = groupData.getString("group_name");
-                group.id = groupData.getLong("id");
-                group.event = groupData.getString("event");
-                group.direction = groupData.getString("direction");
+                group.setName(groupData.getString("group_name"));
+                group.setId(groupData.getLong("id"));
+                group.setEvent(groupData.getString("event"));
+                group.setDirection(groupData.getString("direction"));
                 JSONArray users = groupData.getJSONArray("users");
                 int len = users.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = users.getJSONObject(i);
-                    String name = tmp.getString("firstname") + " " + tmp.getString("lastname");
+                    String name =
+                            tmp.getString("firstname") + " " + tmp.getString("lastname");
                     String appr = tmp.getString("approle");
                     long id = tmp.getLong("id");
                     if (appr.equals("admin"))
-                        group.admins.add(new ContactItem(id, name, 1));
+                        group.getAdmins().add(new ContactItem(id, name, 1));
                     else
-                        group.users.add(new ContactItem(id, name));
+                        group.getUsers().add(new ContactItem(id, name));
                 }
                 JSONArray scheduleData = groupData.getJSONArray("schedules");
                 len = scheduleData.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = scheduleData.getJSONObject(i);
-                    Long start = tmp.getLong("start");
-                    Long end = tmp.getLong("end");
+                    Long start = tmp.getLong("start") * 1000L;
+                    Long end = tmp.getLong("end") * 1000L;
                     String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
                     Long groupId = tmp.getLong("group_id");
                     Long scheduleId = tmp.getLong("id");
-                    group.schedule.add(new ScheduleItem(start, end, name, room, comment, groupId, scheduleId));
+                    group.getSchedule().add(new ScheduleItem(
+                            new Date(start),
+                            new Date(end),
+                            name,
+                            room,
+                            comment,
+                            groupId,
+                            scheduleId));
                 }
-                //gr = group;
                 return true;
             }
         } catch (JSONException e) {
@@ -432,28 +434,46 @@ public class User {
 
     public boolean init(String data) {
         try {
-            allusers = new ArrayList<>();
+            allUsers = new ArrayList<>();
             schedule = new ArrayList<>();
+            scheduleById = new HashMap<>();
+
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
                 JSONArray scheduleData = jsonObject.getJSONArray("data");
                 int len = scheduleData.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = scheduleData.getJSONObject(i);
-                    Long start = tmp.getLong("start");
-                    Long end = tmp.getLong("end");
+                    Long start = tmp.getLong("start") * 1000L;
+                    Long end = tmp.getLong("end") * 1000L;
                     String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
                     Long groupId = tmp.getLong("group_id");
                     Long scheduleId = tmp.getLong("id");
-                    int ok = 0;
-                    for (int j = 0; j < allGroups.size(); j++)
-                        if (allGroups.get(j).getGroupId().equals(groupId))
-                            ok = 1;
-                    if (ok == 1)
-                        schedule.add(new ScheduleItem(start, end, name, room, comment, groupId, scheduleId));
+                    boolean isGroupMember = false;
+
+                    for (GroupItem group : allGroups) {
+                        if (group.getGroupId().equals(groupId)) {
+                            isGroupMember = true;
+                        }
+                    }
+
+                    if (isGroupMember) {
+                        ScheduleItem item = new ScheduleItem(
+                                new Date(start),
+                                new Date(end),
+                                name,
+                                room,
+                                comment,
+                                groupId,
+                                scheduleId);
+
+                        schedule.add(item);
+                        scheduleById.put(scheduleId, item);
+                    }
                 }
+
                 prepareSchedule();
                 return true;
             }
@@ -463,10 +483,6 @@ public class User {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public ArrayList<ContactItem> getAllusers() {
-        return allusers;
     }
 
     public void logIn(String userName, String password, final ResponseCallback responseCallback) {
@@ -487,11 +503,12 @@ public class User {
         // Users
         ContactItem contactUser = new ContactItem(228, "Юзер Алеша", 0);
         ArrayList<ContactItem> users = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 25; i++) {
             users.add(contactUser);
         }
 
         Group group = new Group("Отряд 123", users, admins);
+        group.setId(1L);
         this.groups = new ArrayList<>();
         groups.add(group);
 
@@ -517,27 +534,32 @@ public class User {
         return localInstance;
     }
 
-    private void prepareSchedule() {
+    public void prepareSchedule() {
         dailySchedule = new ArrayList<>();
 
         if (User.getInstance().getSchedule().size() == 0) {
             return;
         }
 
+        // сортировка событий расписания по времени
+        Collections.sort(User.getInstance().getSchedule(), new Comparator<ScheduleItem>() {
+            @Override
+            public int compare(ScheduleItem o1, ScheduleItem o2) {
+                return o1.getStartDate().compareTo(o2.getStartDate());
+            }
+        });
 
         ArrayList<ScheduleItem> buffer = new ArrayList<>();
-        String currentDate =
-                DateFormatter.dayMonthFormat(User.getInstance().getSchedule().get(0).getStartDate());
+        Date currentDate = User.getInstance().getSchedule().get(0).getStartDate();
 
         for (ScheduleItem item : User.getInstance().getSchedule()) {
-            String eventDate = DateFormatter.dayMonthFormat(item.getStartDate());
-            if (eventDate.equals(currentDate)) {
+            Date eventDate = item.getStartDate();
+            if (DateTools.sameDay(eventDate, currentDate)) {
                 buffer.add(item);
             } else {
                 dailySchedule.add(new DailyScheduleItem(
                         currentDate,
                         (ArrayList<ScheduleItem>) buffer.clone()));
-
                 buffer.clear();
                 buffer.add(item);
                 currentDate = eventDate;
@@ -604,7 +626,7 @@ public class User {
     }
 
     public ArrayList<ContactItem> getAllUsers() {
-        return allusers;
+        return allUsers;
     }
 
     public boolean getVKAccess() {
@@ -622,4 +644,17 @@ public class User {
     public ArrayList<Group> getGroups() {
         return groups;
     }
+
+    public String getFullName() {
+        return getLastName() + " " + getFirstName() + " " + getLastName();
+    }
+
+    public ArrayList<GroupItem> getAllGroups() {
+        return allGroups;
+    }
+
+    public HashMap<Long, ScheduleItem> getScheduleById() {
+        return scheduleById;
+    }
+
 }

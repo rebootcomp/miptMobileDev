@@ -8,25 +8,14 @@ import java.util.List;
 
 public class Group {
 
-    public String name;
-    public String event;
-    public String direction;
-    public Long id;
-    public List<ContactItem> users;
-    public List<ContactItem> admins;
-    public ArrayList<ScheduleItem> schedule; // расписание группы
+    private String name;
+    private String event;
+    private String direction;
+    private Long id;
+    private List<ContactItem> users;
+    private List<ContactItem> admins;
+    private ArrayList<ScheduleItem> schedule; // расписание группы
 
-    public String getEvent() {
-        return event;
-    }
-
-    public String getDirection() {
-        return direction;
-    }
-
-    public Long getId() {
-        return id;
-    }
 
     public ArrayList<ScheduleItem> getSchedule() {
         return schedule;
@@ -42,30 +31,60 @@ public class Group {
         this.name = name;
         this.users = users;
         this.admins = admins;
+        this.event = "ЛОШ 2019 Август";
+        this.direction = "Информатика профи";
+    }
+
+    public String getEvent() {
+        return event;
+    }
+
+    public String getDirection() {
+        return direction;
+    }
+
+    public Long getId() {
+        return id;
     }
 
     public String getName() {
         return this.name;
     }
 
-    public void setName(String name) {
-        this.name = name;
-    }
-
     public List<ContactItem> getUsers() {
         return this.users;
-    }
-
-    public void setUsers(List<ContactItem> users) {
-        this.users = users;
     }
 
     public List<ContactItem> getAdmins() {
         return this.admins;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setUsers(List<ContactItem> users) {
+        this.users = users;
+    }
+
     public void setAdmins(List<ContactItem> admins) {
         this.admins = admins;
+    }
+
+    public void setEvent(String event) {
+        this.event = event;
+    }
+
+    public void setDirection(String direction) {
+        this.direction = direction;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public void setSchedule(ArrayList<ScheduleItem> schedule) {
+        this.schedule = schedule;
     }
 
 }

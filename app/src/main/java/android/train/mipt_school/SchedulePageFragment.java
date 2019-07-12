@@ -12,6 +12,7 @@ import android.support.v4.view.ViewPager;
 import android.train.mipt_school.Adapters.ScheduleTabsAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.DailyScheduleItem;
+import android.train.mipt_school.Tools.DateTools;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,10 +64,18 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
 
         // инициализация расписания на каждый день
 
+        int selectedPagePosition = 0;
+
         for (int i = 0; i < User.getInstance().getDailySchedule().size(); i++) {
             DailyScheduleItem item = User.getInstance().getDailySchedule().get(i);
-            schedule.add(DailyScheduleFragment.newInstance(item.getDate(), i));
+            schedule.add(DailyScheduleFragment.newInstance(item.getDate().getTime(), i));
+            if (item.getDate().getTime() < DateTools.getCurrentDayStart().getTime()) {
+                selectedPagePosition++;
+            }
         }
+
+        selectedPagePosition = Math.min(selectedPagePosition,
+                User.getInstance().getDailySchedule().size() - 1);
 
 
         ViewPager viewPager = view.findViewById(R.id.schedule_pager);
@@ -76,6 +85,7 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         TabLayout tabLayout = view.findViewById(R.id.schedule_tablayout);
 
         tabLayout.setupWithViewPager(viewPager);
+        viewPager.setCurrentItem(selectedPagePosition);
 
         ((MainActivity) getActivity()).setLoadingScreenState(false);
     }

@@ -503,7 +503,7 @@ public class User {
         // Users
         ContactItem contactUser = new ContactItem(228, "Юзер Алеша", 0);
         ArrayList<ContactItem> users = new ArrayList<>();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 25; i++) {
             users.add(contactUser);
         }
 
@@ -550,18 +550,16 @@ public class User {
         });
 
         ArrayList<ScheduleItem> buffer = new ArrayList<>();
-        String currentDate =
-                DateTools.dayMonthFormat(User.getInstance().getSchedule().get(0).getStartDate());
+        Date currentDate = User.getInstance().getSchedule().get(0).getStartDate();
 
         for (ScheduleItem item : User.getInstance().getSchedule()) {
-            String eventDate = DateTools.dayMonthFormat(item.getStartDate());
-            if (eventDate.equals(currentDate)) {
+            Date eventDate = item.getStartDate();
+            if (DateTools.sameDay(eventDate, currentDate)) {
                 buffer.add(item);
             } else {
                 dailySchedule.add(new DailyScheduleItem(
                         currentDate,
                         (ArrayList<ScheduleItem>) buffer.clone()));
-
                 buffer.clear();
                 buffer.add(item);
                 currentDate = eventDate;

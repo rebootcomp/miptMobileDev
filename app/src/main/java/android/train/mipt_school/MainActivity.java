@@ -205,8 +205,7 @@ public class MainActivity
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         Fragment currentSceneFragment = getCurrentSceneFragment();
 
-        if (item.getItemId() != getBottomNavigationBar().getSelectedItemId() &&
-                currentSceneFragment instanceof DataSavingFragment &&
+        if (currentSceneFragment instanceof DataSavingFragment &&
                 !((DataSavingFragment) currentSceneFragment).canSwitch()) {
 
             AlertDialog.Builder builder =

@@ -21,10 +21,7 @@ public class ScheduleItem {
     private Long scheduleId;
 
     public ScheduleItem(long groupId, Date dayStartDate) {
-        long currentHour = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
-        long currentMinute = Calendar.getInstance().get(Calendar.MINUTE);
-
-        long timeSinceMidnight = (currentHour * 3600L + currentMinute * 60L) * 1000L;
+        long timeSinceMidnight = DateTools.getTimeSinceMidnight();
         this.name = "";
         this.place = "";
         this.comment = "";
@@ -80,6 +77,10 @@ public class ScheduleItem {
     public String getEventHours() {
         String startTime = DateTools.hourMinuteFormat(getStartDate());
         String endTime = DateTools.hourMinuteFormat(getEndDate());
+
+        if (startTime.equals(endTime)) {
+            return startTime;
+        }
 
         return String.format("%s - %s", startTime, endTime);
     }

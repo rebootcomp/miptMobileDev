@@ -154,7 +154,7 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
         adminList.setAdapter(adminAdapter);
         adminList.setNestedScrollingEnabled(false);
 
-        groupName.setText(displayedGroup.getName()); // TODO : Обновлять все поля после редактирования группы
+        groupName.setText(displayedGroup.getName());
         groupEvent.setText(displayedGroup.getEvent());
         groupDirection.setText(displayedGroup.getDirection());
 

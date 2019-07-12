@@ -127,10 +127,13 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
 
         for (ScheduleItem item : addedItems) {
 
-            /*long scheduleId = new Random().nextLong();
-            item.setScheduleId(scheduleId);
 
-            user.getScheduleById().put(scheduleId, item);*/
+            // для дебага
+            long scheduleId = new Random().nextLong();
+            item.setScheduleId(scheduleId);
+            user.getScheduleById().put(scheduleId, item);
+            // для дебага
+
 
             user.getSchedule().add(item);
 

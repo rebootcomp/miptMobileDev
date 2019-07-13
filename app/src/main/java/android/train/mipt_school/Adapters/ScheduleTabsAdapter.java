@@ -28,7 +28,7 @@ public class ScheduleTabsAdapter extends FragmentPagerAdapter {
     @Nullable
     @Override
     public CharSequence getPageTitle(int position) {
-        return dailySchedules.get(position).getDate();
+        return dailySchedules.get(position).getDateString();
     }
 
     @Override

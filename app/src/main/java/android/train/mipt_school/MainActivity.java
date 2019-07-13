@@ -30,15 +30,13 @@ public class MainActivity
 
     private final String BUNDLE_TITLE_NAME = "ACTIONBAR_TITLE";
     private final long TRANSITITON_DURATION = 200;
-    private BottomNavigationView bottomNavigationBar;
-    private Toolbar toolbar;
 
     void setLoadingScreenState(boolean state) {
         // включает/выключает загрузочный экран
 
         View fragmentContainer = findViewById(R.id.fragment_container);
         ProgressBar progressBar = findViewById(R.id.main_activity_progressbar);
-        if (state == true) {
+        if (state) {
             fragmentContainer.setVisibility(View.INVISIBLE);
             progressBar.setVisibility(View.VISIBLE);
         } else {
@@ -52,8 +50,8 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        toolbar = findViewById(R.id.main_activity_toolbar);
-        bottomNavigationBar = findViewById(R.id.bottom_bar);
+        Toolbar toolbar = findViewById(R.id.main_activity_toolbar);
+        BottomNavigationView bottomNavigationBar = findViewById(R.id.bottom_bar);
 
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayShowTitleEnabled(false);

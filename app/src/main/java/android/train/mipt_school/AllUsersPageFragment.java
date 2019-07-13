@@ -14,7 +14,6 @@ import android.text.TextWatcher;
 import android.train.mipt_school.Adapters.ContactAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ContactItem;
-import android.train.mipt_school.Items.NewsItem;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -28,14 +27,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-
-import java.io.IOException;
 import java.util.ArrayList;
 
 
@@ -45,7 +36,6 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
     private RecyclerView contactList;
     private View clearSearch;
     private EditText searchField;
-    private Thread searchThread;
     private ProgressBar progressBar;
     private ContactAdapter contactAdapter;
     private TextView noDataMessage;
@@ -141,10 +131,7 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
         contactList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
 
-        // это не передлать, будет всегда выполняться в UI потоке
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+
                 contactAdapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View itemView, int position) {
@@ -177,12 +164,8 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
 
                 contactList.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
-            }
-        }).run(); // кажется, так быстрее будет
-        // P.s. не будет :)
 
         return view;
-
     }
 
     @Override
@@ -278,70 +261,6 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment {
 
             }
         }.execute();
-
-        /*
-        if (searchThread != null) {
-            searchThread.interrupt();
-        }
-
-
-        //AsyncTask
-        searchThread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                contactList.setVisibility(View.INVISIBLE); //интерфейс
-                progressBar.setVisibility(View.VISIBLE); //интерфейс
-
-                foundData = new ArrayList<>();
-
-                String[] words = text.split(" ");
-
-                for (int i = 0; i < words.length; i++) {
-                    words[i] = words[i].toLowerCase();
-                }
-
-                for (ContactItem item : User.getInstance().getAllUsers()) {
-                    String[] name = item.getName().split(" ");
-                    boolean hasKeyWords = false;
-
-                    for (String i : name) {
-                        if (hasKeyWords) {
-                            break;
-                        }
-                        for (String j : words) {
-                            if (isSubsequence(i.toLowerCase(), j)) {
-                                hasKeyWords = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (hasKeyWords) {
-                        foundData.add(item);
-                    }
-                }
-
-
-                contactAdapter.setData(foundData); // интерфейс начало
-                contactAdapter.notifyDataSetChanged();
-
-                if (foundData.size() == 0) {
-                    noDataMessage.setVisibility(View.VISIBLE);
-                } else {
-                    noDataMessage.setVisibility(View.INVISIBLE);
-                }
-
-                contactList.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.INVISIBLE); // интерфейс конец
-
-
-            }
-        });
-
-        searchThread.run();
-        */
-
-
     }
 
     boolean isSubsequence(String s, String t) {

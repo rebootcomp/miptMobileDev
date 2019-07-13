@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.LayoutInflater;
@@ -103,7 +104,7 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Подтвердите действие")
+                builder.setTitle(Html.fromHtml("</b>Подтвердите действие</b>").toString())
                         .setMessage("Вы точно хотите выйти?")
                         .setCancelable(false)
                         .setPositiveButton("Да", new DialogInterface.OnClickListener() {

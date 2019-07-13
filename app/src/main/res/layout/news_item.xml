@@ -28,15 +28,13 @@
             android:fontFamily="@font/rubik_medium"
             android:text="Заголовок"
             android:textColor="@color/webLinkColor"
-            android:textSize="18sp" />
+            android:textSize="15sp" />
 
         <TextView
             android:id="@+id/news_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
-            android:layout_marginTop="6dp"
-            android:justificationMode="inter_word"
             android:text="Текст текст текст текст текст текст текст текст текст текст"
             android:textSize="14sp" />
 
@@ -44,12 +42,13 @@
             android:id="@+id/news_date"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
+            android:layout_marginBottom="8dp"
             android:fontFamily="@font/rubik_medium"
             android:text="20 май 2019"
             android:textAlignment="viewEnd"
             android:textSize="12sp"
-            android:layout_marginBottom="8dp"
             android:textStyle="bold" />
 
     </LinearLayout>

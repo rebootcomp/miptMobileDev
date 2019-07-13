@@ -1,8 +1,10 @@
 package android.train.mipt_school;
 
 
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -28,9 +30,6 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 
 
@@ -40,7 +39,6 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment, Asy
     private RecyclerView contactList;
     private View clearSearch;
     private EditText searchField;
-    private Thread searchThread;
     private ProgressBar progressBar;
     private ContactAdapter contactAdapter;
     private TextView noDataMessage;
@@ -171,9 +169,8 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment, Asy
 
         contactList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
+
+
                 contactAdapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
                     @Override
                     public void onItemClick(View itemView, int position) {
@@ -206,11 +203,8 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment, Asy
 
                 contactList.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
-            }
-        }).run(); // кажется, так быстрее будет
 
         return view;
-
     }
 
     @Override
@@ -254,18 +248,17 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment, Asy
     public void setLoadCallback(AsyncLoadCallback callback) {
         loadCallback = callback;
     }
-
-
+  
+    @SuppressLint("StaticFieldLeak")
     private void performSearch(final String text) {
-        if (searchThread != null) {
-            searchThread.interrupt();
-        }
 
-        searchThread = new Thread(new Runnable() {
+        contactList.setVisibility(View.INVISIBLE);
+        progressBar.setVisibility(View.VISIBLE);
+
+        new AsyncTask<String, Void, Void>() {
+
             @Override
-            public void run() {
-                contactList.setVisibility(View.INVISIBLE);
-                progressBar.setVisibility(View.VISIBLE);
+            protected Void doInBackground(String... strings) {
 
                 foundData = new ArrayList<>();
 
@@ -297,7 +290,13 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment, Asy
                 }
 
 
-                contactAdapter.setData(foundData);
+                return null;
+            }
+
+            @Override
+            protected void onPostExecute(Void aVoid) {
+                super.onPostExecute(aVoid);
+                contactAdapter.setData(foundData); // интерфейс начало
                 contactAdapter.notifyDataSetChanged();
 
                 if (foundData.size() == 0) {
@@ -309,11 +308,8 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment, Asy
                 contactList.setVisibility(View.VISIBLE);
                 progressBar.setVisibility(View.INVISIBLE);
 
-
             }
-        });
-
-        searchThread.run();
+        }.execute();
     }
 
     boolean isSubsequence(String s, String t) {

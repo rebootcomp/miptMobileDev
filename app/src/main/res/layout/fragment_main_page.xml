@@ -55,6 +55,26 @@
             android:layout_height="wrap_content"
             android:paddingBottom="16dp" />
 
+        <android.support.design.button.MaterialButton
+            android:id="@+id/vk_button"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="75dp"
+            android:layout_marginEnd="75dp"
+            android:text="Смотреть больше новостей"
+            android:textAllCaps="false"
+            android:textColor="@color/midBlue"
+            android:textSize="17sp"
+            app:backgroundTint="@android:color/transparent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/news_list"
+            app:layout_constraintWidth_max="400dp"
+            app:rippleColor="@color/secondaryGray" />
+        <!--android:layout_marginTop="16dp"-->
+
         <!-- SlideUp информация -->
         <!--<android.support.constraint.ConstraintLayout
             android:id="@+id/more_info_page"

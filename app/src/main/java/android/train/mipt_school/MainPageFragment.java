@@ -12,6 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.button.MaterialButton;
 import android.support.design.widget.BottomSheetBehavior;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -48,8 +49,6 @@ import java.util.ArrayList;
 public class MainPageFragment extends Fragment implements SceneFragment, AsyncLoadingFragment {
 
     private String title;
-    private RecyclerView newsList;
-    private TextView greetingText;
 
     private static final String NEWS_WEBSITE = "https://it-edu.com/ru/news";
     private static final String ITEDU_WEBSITE = "https://it-edu.com";
@@ -75,6 +74,10 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
 
+
+        RecyclerView newsList = view.findViewById(R.id.news_list);
+        TextView greetingText = view.findViewById(R.id.greeting_text_main_page);
+        MaterialButton vkButton = view.findViewById(R.id.vk_button);
         // setting up bottombar
         ((MainActivity) getActivity())
                 .getBottomNavigationBar()
@@ -83,12 +86,18 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
                 .getBottomNavigationBar()
                 .getMenu().getItem(0).setChecked(true);
 
-        newsList = view.findViewById(R.id.news_list);
-        greetingText = view.findViewById(R.id.greeting_text_main_page);
+       
 
         greetingText.setText(String.format("Здравствуйте,\n%s %s!",
                 User.getInstance().getFirstName(),
                 User.getInstance().getThirdName()));
+
+        vkButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).openWebLink(NEWS_WEBSITE);
+            }
+        });
 
         NewsAdapter adapter = new NewsAdapter();
         adapter.setData(newsItems);

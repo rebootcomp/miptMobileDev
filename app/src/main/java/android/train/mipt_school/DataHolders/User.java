@@ -203,6 +203,35 @@ public class User {
         });
     }
 
+    public void updateScheduleRequest(long scheduleId, long start, long end, String comment,
+                                   String title, long roomId, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .updateSchedule("Bearer " + token, scheduleId, start, end, comment, title, roomId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
     public void allRoomsRequest(final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
@@ -281,6 +310,23 @@ public class User {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public long updateAddedSchedule(String data) {
+        allUsers = new ArrayList<>();
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            if (jsonObject.has("data")) {
+                JSONObject updatedScheduleData = jsonObject.getJSONObject("data");
+                Long scheduleId = updatedScheduleData.getLong("id");
+                return scheduleId;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
     }
 
     public void scheduleRequest(final ResponseCallback rc) {

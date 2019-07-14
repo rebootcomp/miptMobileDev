@@ -55,19 +55,30 @@ public interface Api {
     @POST("addschedule/{group_id}")
     Call<ResponseBody> addSchedule(
             @Header("Authorization") String auth,
-            @Path("groud_id") long id,
-            @Field("room_id") long userId,
+            @Path("group_id") long id,
+            @Field("room_id") long room_id,
             @Field("start") long start,
             @Field("end") long end,
             @Field("comment") String comment,
             @Field("title") String title
     );
 
-    @FormUrlEncoded
     @POST("deleteschedule/{schdedule_id}")
     Call<ResponseBody> deleteSchedule(
             @Header("Authorization") String auth,
             @Path("schdedule_id") long id
+    );
+
+    @FormUrlEncoded
+    @POST("updateschedule/{schdedule_id}")
+    Call<ResponseBody> updateSchedule(
+            @Header("Authorization") String auth,
+            @Path("schdedule_id") long id,
+            @Field("start") long start,
+            @Field("end") long end,
+            @Field("comment") String comment,
+            @Field("title") String title,
+            @Field("room_id") long roomId
     );
 
     @POST("user/{id}")

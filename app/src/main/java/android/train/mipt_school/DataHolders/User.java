@@ -609,9 +609,16 @@ public class User {
         return VK;
     }
 
+    public void setVK(String VK) {
+        this.VK = VK;
+    }
+
     public String getPhoneNumber() {
-        Log.i("PhoneNumber", phone);
         return phone;
+    }
+
+    public void setPhoneNumber(String phone) {
+        this.phone = phone;
     }
 
     public String getLastName() {

@@ -1,6 +1,7 @@
 package android.train.mipt_school;
 
 
+import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.transition.Slide;
@@ -9,8 +10,10 @@ import android.support.v7.widget.CardView;
 import android.train.mipt_school.Adapters.ContactAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ContactItem;
+import android.train.mipt_school.Tools.Edit_Fragment;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.transition.Fade;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -22,6 +25,7 @@ import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -40,6 +44,8 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
     private TextView VKField;
     private TextView userStatus;
     private TextView groupNameField;
+    private LinearLayout editButton;
+    private CardView editButtonCard;
 
     private String lastname;
     private String firtsname;
@@ -114,14 +120,15 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
         this.setFirtsname(user.getFirstName());
         this.setLastname(user.getLastName());
         this.setId(id);
+        this.groupName = "Нет данных";
         vis = View.VISIBLE;
-        this.setEmail(user.getEmail());
+        setEmail(user.getEmail());
         if (user.getApprole() == 1)
             this.status = "Администратор";
         else
             this.status = "Ученик";
-        this.phoneNumber = user.getPhoneNumber();
-        this.VK = user.getVK();
+        setPhone(user.getPhoneNumber());
+        setVK(user.getVK());
     }
 
     public void setLastname(String lastname) {
@@ -149,8 +156,8 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
     }
 
     public void setVK(String VK) {
-        if (VK == null) {
-            this.VK = "-";
+        if (VK == null || VK.equals("null")) {
+            this.VK = "Нет данных";
         }
         else {
             this.VK = VK;
@@ -158,8 +165,8 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
     }
 
     public void setPhone(String phone) {
-        if (VK == null) {
-            this.phoneNumber = phone;
+        if (phone == null || phone.equals("null")) {
+            this.phoneNumber = "Нет данных";
         }
         else {
             this.phoneNumber = phone;
@@ -198,6 +205,22 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
         emailField = view.findViewById(R.id.mail_field);
         userStatus = view.findViewById(R.id.user_status);
         groupNameField = view.findViewById(R.id.group_id_field);
+        editButton = view.findViewById(R.id.button_editProfile);
+        editButtonCard = view.findViewById(R.id.button_editProfileView);
+        if (User.getInstance().getUserId() == userId) {
+            editButtonCard.setVisibility(View.VISIBLE);
+        }
+        else {
+            editButtonCard.setVisibility(View.INVISIBLE);
+        }
+        editButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ((MainActivity) getActivity()).loadFragment(Edit_Fragment.newInstance());
+
+            }
+        });
 //        addToContacts = view.findViewById(R.id.add_to_contacts);
 //
 //        addToContacts.setOnClickListener(new View.OnClickListener() {

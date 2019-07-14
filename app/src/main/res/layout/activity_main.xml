@@ -25,6 +25,7 @@
         app:titleTextColor="@android:color/white" />
 
 
+
     <ProgressBar
         android:id="@+id/main_activity_progressbar"
         android:layout_width="0dp"

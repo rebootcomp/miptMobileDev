@@ -82,6 +82,7 @@ public interface Api {
             @Header("Authorization") String auth
     );
 
+    @FormUrlEncoded
     @POST("updateuser/{user_id}")
     Call<ResponseBody> updatePhone(
             @Header("Authorization") String auth,

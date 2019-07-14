@@ -303,6 +303,10 @@ public class User {
                     // есть еще поле schedules но вроде пока бесполезное
                 }
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -367,6 +371,10 @@ public class User {
                 else
                     approle = 1;
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -399,6 +407,10 @@ public class User {
                     }
                 });
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -452,6 +464,10 @@ public class User {
                             scheduleId));
                 }
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -505,6 +521,10 @@ public class User {
 
                 prepareSchedule();
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();

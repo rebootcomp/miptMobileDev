@@ -50,15 +50,53 @@ public class LoginActivity extends AppCompatActivity {
 
         mSP = getSharedPreferences("settings", Context.MODE_PRIVATE);
         String logInCondition = mSP.getString("signed", "");
-        if(logInCondition.equals("true"))startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        if(logInCondition.equals("true")){
+
+            userName = mSP.getString("login","");
+            password = mSP.getString("pass","");
+            initCallback = new ResponseCallback() {
+
+                @Override
+                public void onResponse(String data) {
+                    if (User.getInstance().init(data)) {
+                        startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                        finish();
+                    } else
+                        Toast.makeText(LoginActivity.this,
+                                "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                }
+            };
+            responseCallback = new ResponseCallback() {
+                @Override
+                public void onResponse(String data) {
+                    if (User.getInstance().updateToken(data)) {
+                        User.getInstance().scheduleRequest(initCallback);
+                    } else
+                        Toast.makeText(LoginActivity.this,
+                                "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
+                }
+            };
+            User.getInstance().logIn(userName, password, responseCallback);
+
+//            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+        }
 
         logInButton = findViewById(R.id.log_in_button);
         registerButton = findViewById(R.id.register_button);
         loginField = findViewById(R.id.login_field);
         passwordField = findViewById(R.id.password_field);
 
-        loginField.setText("alexmuratidi");
-        passwordField.setText("Alex17112001#");
+
 
         logInButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -70,6 +108,12 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String data) {
                         if (User.getInstance().init(data)) {
+                            mSP = getSharedPreferences("settings", Context.MODE_PRIVATE);
+                            SharedPreferences.Editor ed=mSP.edit();
+                            ed.putString("signed","true");
+                            ed.putString("login",userName);
+                            ed.putString("pass",password);
+                            ed.commit();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             finish();
                         } else

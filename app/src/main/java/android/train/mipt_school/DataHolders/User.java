@@ -231,11 +231,11 @@ public class User {
         });
     }
 
-    public void editPhoneRequest(String phone, final ResponseCallback rc) {
+    public void editUserRequest(String phone, String vkId, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .updatePhone(phone,"Bearer " + token);
+                .updatePhone("Bearer " + token, userId, phone, vkId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -249,8 +249,6 @@ public class User {
                 } else {
                     s = "{\"error\":\"Ошибка сервера\"}";
                     rc.onResponse(s);
-
-
                 }
             }
 

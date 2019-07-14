@@ -52,8 +52,8 @@ public class LoginActivity extends AppCompatActivity {
         String logInCondition = mSP.getString("signed", "");
         if(logInCondition.equals("true")){
 
-            userName = mSP.getString("login","").toString();
-            password = mSP.getString("pass","").toString();
+            userName = mSP.getString("login","");
+            password = mSP.getString("pass","");
             initCallback = new ResponseCallback() {
 
                 @Override
@@ -88,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
             };
             User.getInstance().logIn(userName, password, responseCallback);
 
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+//            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
 
         logInButton = findViewById(R.id.log_in_button);

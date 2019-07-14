@@ -93,5 +93,20 @@ public interface Api {
             @Header("Authorization") String auth
     );
 
+    @FormUrlEncoded
+    @POST("adduserintogroup/{group_id}")
+    Call<ResponseBody> addUserIntoGroup(
+            @Header("Authorization") String auth,
+            @Path("group_id") long id,
+            @Field("users") String users
+    );
+
+    @FormUrlEncoded
+    @POST("deleteuserfromgroup/{group_id}")
+    Call<ResponseBody> deleteUserFromGroup(
+            @Header("Authorization") String auth,
+            @Path("group_id") long id,
+            @Field("users") String users
+    );
 
 }

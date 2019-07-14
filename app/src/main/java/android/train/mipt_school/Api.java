@@ -82,5 +82,10 @@ public interface Api {
             @Header("Authorization") String auth
     );
 
+    @POST("updateuser/{phone}")
+    Call<ResponseBody> updatePhone(
+            @Field("phone") String phone,
+            @Header("Authorization") String auth
+    );
 
 }

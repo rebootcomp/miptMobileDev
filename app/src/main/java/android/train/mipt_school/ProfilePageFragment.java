@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.transition.Slide;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.CardView;
+import android.train.mipt_school.Adapters.ContactAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ContactItem;
 import android.train.mipt_school.Tools.SceneFragment;
@@ -22,6 +23,7 @@ import android.view.animation.AnimationUtils;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -55,7 +57,7 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
         return lastname;
     }
 
-    public boolean loadUser(String s) {
+    public boolean loadUser(String s, User user) {
         try {
             JSONObject jsonObject = new JSONObject(s);
             if (jsonObject.has("data")) {
@@ -79,13 +81,20 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
                 this.setLastname(lastname);
                 this.setId(id);
                 this.groupName = groupName;
-                this.phoneNumber = phone;
-                this.VK = vkId;
-                if (id == User.getInstance().getUserId())
+                if (user.getApprole() == 1) {
+                    this.setPhone(phoneNumber);
+                    this.setVK(VK);
+                    this.setEmail(email);
+                }
+                else {
+                    this.setVK("Нет доступа");
+                    this.setPhone("Нет доступа");
+                    this.setEmail("Нет доступа");
+                }
+                if (id == user.getUserId())
                     vis = View.INVISIBLE;
                 else
                     vis = View.VISIBLE;
-                this.setEmail(email);
                 if (approle.equals("admin"))
                     this.status = "Администратор";
                 else
@@ -106,25 +115,13 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
         this.setLastname(user.getLastName());
         this.setId(id);
         vis = View.VISIBLE;
-        if (user.getEmailAccess()) {
-            this.setEmail(user.getEmail());
-        } else {
-            this.setEmail("Email не доступен");
-        }
+        this.setEmail(user.getEmail());
         if (user.getApprole() == 1)
             this.status = "Администратор";
         else
             this.status = "Ученик";
-        if (user.getPhoneNumberAccess()) {
-            this.phoneNumber = user.getPhoneNumber();
-        } else {
-            this.phoneNumber = "Номер телефона не досупен";
-        }
-        if (user.getVKAccess()) {
-            this.VK = user.getVK();
-        } else {
-            this.VK = "Страница во ВКонтакте не доступна";
-        }
+        this.phoneNumber = user.getPhoneNumber();
+        this.VK = user.getVK();
     }
 
     public void setLastname(String lastname) {
@@ -150,6 +147,26 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
     public long getUserId() {
         return userId;
     }
+
+    public void setVK(String VK) {
+        if (VK == null) {
+            this.VK = "-";
+        }
+        else {
+            this.VK = VK;
+        }
+    }
+
+    public void setPhone(String phone) {
+        if (VK == null) {
+            this.phoneNumber = phone;
+        }
+        else {
+            this.phoneNumber = phone;
+        }
+    }
+
+
 
     public void setId(long userId) {
         this.userId = userId;

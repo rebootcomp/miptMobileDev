@@ -98,7 +98,7 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
                 ResponseCallback responseCallback = new ResponseCallback() {
                     @Override
                     public void onResponse(String data) {
-                        if (pf.loadUser(data)) {
+                        if (pf.loadUser(data, User.getInstance())) {
                             ((MainActivity) getActivity()).loadFragment(pf);
                         } else
                             Toast.makeText(getContext(), "Что-то пошло не так", Toast.LENGTH_LONG).show();
@@ -132,7 +132,7 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
                 ResponseCallback responseCallback = new ResponseCallback() {
                     @Override
                     public void onResponse(String data) {
-                        if (pf.loadUser(data)) {
+                        if (pf.loadUser(data, User.getInstance())) {
                             ((MainActivity) getActivity()).loadFragment(pf);
                         } else
                             Toast.makeText(getContext(), "Что-то пошло не так", Toast.LENGTH_LONG).show();

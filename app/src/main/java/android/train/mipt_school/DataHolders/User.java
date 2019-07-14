@@ -288,7 +288,7 @@ public class User {
         });
     }
 
-    public void addUsersIntoGroup(Long groupId, ArrayList<Long> usersId, final ResponseCallback rc) {
+    public void addUsersIntoGroupRequest(Long groupId, ArrayList<Long> usersId, final ResponseCallback rc) {
         String users = "";
         for (Long i : usersId) {
             users += i.toString() + ",";
@@ -298,6 +298,34 @@ public class User {
                 .getInstance()
                 .getApi()
                 .addUserIntoGroup("Bearer " + token, groupId, users);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                rc.onFailure(s);
+            }
+        });
+    }
+
+    public void renameGroupRequest(Long groupId, String newName, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .renameGroup("Bearer " + token, groupId, newName);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {

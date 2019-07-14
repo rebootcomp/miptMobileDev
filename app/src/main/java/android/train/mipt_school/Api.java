@@ -109,4 +109,12 @@ public interface Api {
             @Field("users") String users
     );
 
+    @FormUrlEncoded
+    @POST("setgroupname/{group_id}")
+    Call<ResponseBody> renameGroup(
+            @Header("Authorization") String auth,
+            @Path("group_id") long id,
+            @Field("group_name") String groupName
+    );
+
 }

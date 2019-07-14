@@ -177,7 +177,7 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment, Asy
                         responseCallback = new ResponseCallback() {
                             @Override
                             public void onResponse(String data) {
-                                if (pf.loadUser(data)) {
+                                if (pf.loadUser(data, User.getInstance())) {
                                     ((MainActivity) getActivity()).loadFragment(pf);
                                 } else
                                     Toast.makeText(getContext(), "Что-то пошло не так", Toast.LENGTH_LONG).show();

@@ -39,23 +39,20 @@ public class QuestionPageFragment extends Fragment implements SceneFragment {
     }
 
     private void sendRequest(
-            long userId,
-            String fio,
-            String fromEmail,
-            String toEmail,
             String subject,
             String body,
+            Long eventId,
             final ResponseCallback rc) {
 
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .sendQuestion(userId, fio, fromEmail, toEmail, subject, body);
+                .sendQuestion("Bearer " + User.getInstance().getToken(), subject, body, eventId);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String s = null;
-                if (response.code() == 200 || response.code() == 201) {
+                if (response.code() == 200) {
                     s = "Отправлено успешно";
                 } else
                     s = "Ошибка сервера";
@@ -126,12 +123,9 @@ public class QuestionPageFragment extends Fragment implements SceneFragment {
                 User user = User.getInstance();
 
                 sendRequest(
-                        user.getUserId(),
-                        user.getFullName(),
-                        user.getEmail(),
-                        "technical-support@it-edu.com",
                         title,
                         questionText.getText().toString(),
+                        2L,
                         rc);
 
                 return true;

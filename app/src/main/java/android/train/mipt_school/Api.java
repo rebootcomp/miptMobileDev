@@ -43,12 +43,10 @@ public interface Api {
     @FormUrlEncoded
     @POST("email/os")
     Call<ResponseBody> sendQuestion(
-            @Field("user_id") long userId,
-            @Field("fio") String fio,
-            @Field("from_email") String fromEmail,
-            @Field("to_email") String toEmail,
+            @Header("Authorization") String auth,
             @Field("subject") String subject,
-            @Field("body") String body
+            @Field("body") String body,
+            @Field("event_id") long eventId
     );
 
     @FormUrlEncoded

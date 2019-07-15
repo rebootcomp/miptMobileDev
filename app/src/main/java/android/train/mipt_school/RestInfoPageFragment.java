@@ -4,6 +4,7 @@ package android.train.mipt_school;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
@@ -28,6 +29,8 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
 
     private ImageView profileImage;
     private TextView profileName;
+    SharedPreferences mSP;
+    SharedPreferences msp;
 
     private ResponseCallback responseCallback;
 
@@ -110,6 +113,12 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
                         .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                mSP = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor ed  = mSP.edit();
+                                ed.putString("signed", "");
+                                ed.putString("login", "");
+                                ed.putString("pass", "");
+                                ed.commit();
                                 User.logOut();
                                 startActivity(new Intent(getContext(), LoginActivity.class));
                                 getActivity().finish();

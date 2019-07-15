@@ -53,6 +53,8 @@ public class User {
     // вроде лишнее allgroups хватает
     private ArrayList<Group> groups; // все группы пользователя
 
+    private HashMap<Long, Integer> groupPosById;
+
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
 
     private HashMap<Long, ScheduleItem> scheduleById;
@@ -588,11 +590,12 @@ public class User {
         this.password = password;
         this.schedule = new ArrayList<>();
         this.groups = new ArrayList<>();
+        this.groupPosById = new HashMap<>();
 
         //для дебага
 
         // Admins
-        ContactItem contactAdmin = new ContactItem(6227, "Админ", "Иван", 1);
+        /*ContactItem contactAdmin = new ContactItem(6227, "Админ", "Иван", 1);
         ArrayList<ContactItem> admins = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             admins.add(contactAdmin);
@@ -608,7 +611,7 @@ public class User {
         Group group = new Group("Отряд 123", users, admins);
         group.setId(1L);
         this.groups = new ArrayList<>();
-        groups.add(group);
+        groups.add(group);*/
 
         // для дебага
 
@@ -758,8 +761,13 @@ public class User {
         return allGroups;
     }
 
+
     public HashMap<Long, ScheduleItem> getScheduleById() {
         return scheduleById;
+    }
+
+    public HashMap<Long, Integer> getGroupPosById() {
+        return groupPosById;
     }
 
 }

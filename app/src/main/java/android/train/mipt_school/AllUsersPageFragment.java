@@ -164,44 +164,53 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment, Asy
                 clearSearch.setVisibility(View.INVISIBLE);
             }
         });
-        contactAdapter = new ContactAdapter();
+        contactAdapter = new ContactAdapter(null, false);
 
         contactList.setLayoutManager(new LinearLayoutManager(this.getContext()));
 
 
-
-                contactAdapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
+        contactAdapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View itemView, int position) {
+                pf = ProfilePageFragment.newInstance();
+                responseCallback = new ResponseCallback() {
                     @Override
-                    public void onItemClick(View itemView, int position) {
-                        pf = ProfilePageFragment.newInstance();
-                        responseCallback = new ResponseCallback() {
-                            @Override
-                            public void onResponse(String data) {
-                                if (pf.loadUser(data)) {
-                                    ((MainActivity) getActivity()).loadFragment(pf);
-                                } else
-                                    Toast.makeText(getContext(), "Что-то пошло не так", Toast.LENGTH_LONG).show();
-                            }
-
-                            @Override
-                            public void onFailure(String message) {
-                                Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
-                            }
-                        };
-                        Integer itmid = position;
-                        ContactItem ci = foundData.get(itmid);
-
-                        Long selectedUser = ci.getUserId();
-                        User.getInstance().userInfoRequest(selectedUser, responseCallback);
+                    public void onResponse(String data) {
+                        if (pf.loadUser(data)) {
+                            ((MainActivity) getActivity()).loadFragment(pf);
+                        } else
+                            Toast.makeText(getContext(), "Что-то пошло не так", Toast.LENGTH_LONG).show();
                     }
-                });
 
-                contactAdapter.setData(User.getInstance().getAllUsers());
+                    @Override
+                    public void onFailure(String message) {
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                };
+                Integer itmid = position;
+                ContactItem ci = foundData.get(itmid);
 
-                contactList.setAdapter(contactAdapter);
+                Long selectedUser = ci.getUserId();
+                User.getInstance().userInfoRequest(selectedUser, responseCallback);
+            }
 
-                contactList.setVisibility(View.VISIBLE);
-                progressBar.setVisibility(View.INVISIBLE);
+            @Override
+            public void onItemUnchecked(ContactItem item) {
+
+            }
+
+            @Override
+            public void onItemChecked(ContactItem item) {
+
+            }
+        });
+
+        contactAdapter.setData(User.getInstance().getAllUsers());
+
+        contactList.setAdapter(contactAdapter);
+
+        contactList.setVisibility(View.VISIBLE);
+        progressBar.setVisibility(View.INVISIBLE);
 
         return view;
     }
@@ -247,7 +256,7 @@ public class AllUsersPageFragment extends Fragment implements SceneFragment, Asy
     public void setLoadCallback(AsyncLoadCallback callback) {
         loadCallback = callback;
     }
-  
+
     @SuppressLint("StaticFieldLeak")
     private void performSearch(final String text) {
 

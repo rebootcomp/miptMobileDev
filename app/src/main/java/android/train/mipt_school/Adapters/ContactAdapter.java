@@ -19,6 +19,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactHolder> {
@@ -27,6 +28,16 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
     private OnItemClickListener listener;
 
     private List<ContactItem> data;
+
+    private HashSet<ContactItem> selectedItems;
+
+    private boolean selectOnClick;
+
+    public ContactAdapter(ArrayList<ContactItem> data, boolean selectOnClick) {
+        this.selectOnClick = selectOnClick;
+        selectedItems = new HashSet<>();
+        this.data = data;
+    }
 
     @NonNull
     @Override
@@ -52,9 +63,11 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
 
         private ImageView userImage;
         private TextView userName;
+        private TextView shortName;
+        private View checkedCircle;
 
         private View profileButton;
-        private long userId;
+        private ContactItem item;
 
         public ContactHolder(@NonNull final View itemView) {
             super(itemView);
@@ -62,25 +75,63 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
             userImage = itemView.findViewById(R.id.contact_profile_image);
             userName = itemView.findViewById(R.id.contact_profile_name);
             profileButton = itemView.findViewById(R.id.contact_button_profile);
+            shortName = itemView.findViewById(R.id.short_name_contact_item);
+            checkedCircle = itemView.findViewById(R.id.contact_item_checked_circle);
+
 
             profileButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    listener.onItemClick(itemView, getAdapterPosition());
+                    if (selectOnClick) {
+                        ContactItem itemForAdd = data.get(getAdapterPosition());
+                        if (selectedItems.contains(itemForAdd)) {
+                            selectedItems.remove(itemForAdd);
+                            setChecked(false);
+                        } else {
+                            setChecked(true);
+                            selectedItems.add(itemForAdd);
+                        }
+                    }
+
+                    if (listener != null) {
+                        listener.onItemClick(itemView, getAdapterPosition());
+                    }
                 }
             });
         }
 
+        private void setChecked(boolean checked) {
+            if (checked) {
+                if (listener != null) {
+                    listener.onItemChecked(item);
+                }
+                checkedCircle.setVisibility(View.VISIBLE);
+            } else {
+                if (listener != null) {
+                    listener.onItemUnchecked(item);
+                }
+                checkedCircle.setVisibility(View.INVISIBLE);
+            }
+        }
+
         public void bind(ContactItem item) {
 
+            this.item = item;
             if (item.getImage() != null) {
                 userImage.setImageBitmap(item.getImage());
             }
-            userId = item.getUserId();
+            if (selectedItems.contains(item)) {
+                setChecked(true);
+            } else {
+                setChecked(false);
+            }
+
             userName.setText(item.getName());
+            shortName.setText(item.getFirstName().substring(0, 1) + item.getLastName().substring(0, 1));
         }
 
     }
+
 
     public void setData(List<ContactItem> data) {
         this.data = data;
@@ -90,8 +141,16 @@ public class ContactAdapter extends RecyclerView.Adapter<ContactAdapter.ContactH
         return data;
     }
 
+    public HashSet<ContactItem> getSelectedItems() {
+        return selectedItems;
+    }
+
     public interface OnItemClickListener {
         void onItemClick(View itemView, int position);
+
+        void onItemUnchecked(ContactItem item);
+
+        void onItemChecked(ContactItem item);
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {

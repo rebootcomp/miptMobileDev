@@ -88,7 +88,7 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
         userList.setLayoutManager(new LinearLayoutManager(getActivity()));
         adminList.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        final ContactAdapter userAdapter = new ContactAdapter();
+        final ContactAdapter userAdapter = new ContactAdapter(null, false);
         userAdapter.setData(displayedGroup.getUsers());
 
         userAdapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
@@ -115,6 +115,16 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
                 Long selectedUser = ci.getUserId();
                 User.getInstance().userInfoRequest(selectedUser, responseCallback);
             }
+
+            @Override
+            public void onItemUnchecked(ContactItem item) {
+
+            }
+
+            @Override
+            public void onItemChecked(ContactItem item) {
+
+            }
         });
 
 
@@ -122,7 +132,7 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
         userList.setNestedScrollingEnabled(false);
 
 
-        final ContactAdapter adminAdapter = new ContactAdapter();
+        final ContactAdapter adminAdapter = new ContactAdapter(null, false);
         adminAdapter.setData(displayedGroup.getAdmins());
 
         adminAdapter.setOnItemClickListener(new ContactAdapter.OnItemClickListener() {
@@ -148,6 +158,16 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
 
                 Long selectedUser = ci.getUserId();
                 User.getInstance().userInfoRequest(selectedUser, responseCallback);
+            }
+
+            @Override
+            public void onItemUnchecked(ContactItem item) {
+
+            }
+
+            @Override
+            public void onItemChecked(ContactItem item) {
+
             }
         });
 

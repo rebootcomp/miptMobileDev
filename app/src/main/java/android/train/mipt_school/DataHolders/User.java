@@ -203,6 +203,35 @@ public class User {
         });
     }
 
+    public void updateScheduleRequest(long scheduleId, long start, long end, String comment,
+                                      String title, long roomId, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .updateSchedule("Bearer " + token, scheduleId, start, end, comment, title, roomId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
     public void allRoomsRequest(final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
@@ -283,6 +312,24 @@ public class User {
         return false;
     }
 
+    public long updateAddedSchedule(String data) {
+        allUsers = new ArrayList<>();
+        try {
+            Log.d("schedule_event_log", " response received : " + data);
+            JSONObject jsonObject = new JSONObject(data);
+            if (jsonObject.has("data")) {
+                JSONObject updatedScheduleData = jsonObject.getJSONObject("data");
+                Long scheduleId = updatedScheduleData.getLong("id");
+                return scheduleId;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return -1;
+    }
+
     public void scheduleRequest(final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
@@ -358,10 +405,7 @@ public class User {
                     JSONObject tmp = allUsersData.getJSONObject(i);
                     String firstName = tmp.getString("firstname");
                     String lastName = tmp.getString("lastname");
-                    allUsers.add(
-                            new ContactItem(
-                                    tmp.getLong("id"),
-                                    String.format("%s %s", firstName, lastName)));
+                    allUsers.add(new ContactItem(tmp.getLong("id"), firstName, lastName));
                 }
                 Collections.sort(allUsers, new Comparator<ContactItem>() {
                     @Override
@@ -393,15 +437,16 @@ public class User {
                 int len = users.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = users.getJSONObject(i);
-                    String name =
-                            tmp.getString("firstname") + " " + tmp.getString("lastname");
+                    String firstName = tmp.getString("firstname");
+                    String lastName = tmp.getString("lastname");
                     String appr = tmp.getString("approle");
                     long id = tmp.getLong("id");
                     if (appr.equals("admin"))
-                        group.getAdmins().add(new ContactItem(id, name, 1));
+                        group.getAdmins().add(new ContactItem(id, firstName, lastName, 1));
                     else
-                        group.getUsers().add(new ContactItem(id, name));
+                        group.getUsers().add(new ContactItem(id, firstName, lastName));
                 }
+
                 JSONArray scheduleData = groupData.getJSONArray("schedules");
                 len = scheduleData.length();
                 for (int i = 0; i < len; i++) {
@@ -494,14 +539,14 @@ public class User {
         //для дебага
 
         // Admins
-        ContactItem contactAdmin = new ContactItem(6227, "Админ Иван", 1);
+        ContactItem contactAdmin = new ContactItem(6227, "Админ", "Иван", 1);
         ArrayList<ContactItem> admins = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             admins.add(contactAdmin);
         }
 
         // Users
-        ContactItem contactUser = new ContactItem(228, "Юзер Алеша", 0);
+        ContactItem contactUser = new ContactItem(228, "Юзер", "Алеша", 0);
         ArrayList<ContactItem> users = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
             users.add(contactUser);

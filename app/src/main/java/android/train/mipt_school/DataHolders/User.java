@@ -36,7 +36,7 @@ public class User {
     private String password;
     private String token;
     private String VK;
-    private String phoneNumber;
+    private String phone;
 
     //Для отображения профиля
     private boolean isEmailAvailable = true;
@@ -260,6 +260,35 @@ public class User {
         });
     }
 
+    public void editUserRequest(String phone, String vkId, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .updatePhone("Bearer " + token, userId, phone, vkId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                    rc.onResponse(s);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
     public void deleteScheduleRequest(Long scheduleId, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
@@ -303,6 +332,10 @@ public class User {
                     // есть еще поле schedules но вроде пока бесполезное
                 }
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -373,7 +406,7 @@ public class User {
                 email = userData.getString("email");
                 userId = userData.getLong("id");
                 VK = userData.getString("vk_id");
-                phoneNumber = userData.getString("phone");
+                phone = userData.getString("phone");
                 //groupId = data.getLong("groudid"); не добавлено еще
                 JSONArray groups = userData.getJSONArray("groups_id");
                 allGroups = new ArrayList<>();
@@ -385,6 +418,10 @@ public class User {
                 else
                     approle = 1;
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -414,6 +451,10 @@ public class User {
                     }
                 });
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -468,6 +509,10 @@ public class User {
                             scheduleId));
                 }
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -521,6 +566,10 @@ public class User {
 
                 prepareSchedule();
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -625,9 +674,16 @@ public class User {
         return VK;
     }
 
+    public void setVK(String VK) {
+        this.VK = VK;
+    }
+
     public String getPhoneNumber() {
-        Log.i("PhoneNumber", phoneNumber);
-        return phoneNumber;
+        return phone;
+    }
+
+    public void setPhoneNumber(String phone) {
+        this.phone = phone;
     }
 
     public String getLastName() {

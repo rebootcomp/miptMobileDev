@@ -233,6 +233,7 @@
                     android:background="@drawable/ic_baseline_person_add_24px"
                     android:backgroundTint="@color/secondaryGray" />
 
+
                 <TextView
                     android:id="@+id/add_to_contacts"
                     android:layout_width="match_parent"

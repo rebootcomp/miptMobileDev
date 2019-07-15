@@ -20,7 +20,7 @@
     <string name="question_page_title">Вопрос</string>
     <string name="groupview_page_title">Ваша группа</string>
     <string name="map_page_title">Карты</string>
-    <string name="profile_page_title"></string>
+    <string name="profile_page_title">Пользователь</string>
     <string name="contacts_page_title">Контакты</string>
     <string name="schedule_edit_page_title">Изменение расписания</string>
     <string name="group_edit_page_title">Настройки группы</string>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <color name="colorPrimary">#96261E</color>
-    <color name="colorPrimaryDark">#96261E</color>
+    <color name="colorPrimaryDark">#6b1b15</color>
     <color name="colorAccent">#D81B60</color>
     <color name="darkGray">#424242</color>
     <color name="lightGray">#757575</color>
@@ -14,4 +14,5 @@
     <color name="backgroundGray">#FAFAFA</color>
     <color name="secondaryGray">#9E9E9E</color>
     <color name="webLinkColor">#0645AD</color>
+    <color name="lightGreen">#1fc41f</color>
 </resources>

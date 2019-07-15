@@ -12,10 +12,10 @@ public class DateTools {
     private static DateFormat hourMinute = new SimpleDateFormat("HH:mm", Locale.getDefault());
 
     private static final String[] monthName = new String[]{
-            "января", "февраля", "марта",
-            "апреля", "мая", "июня",
-            "июля", "августа", "сентября",
-            "октября", "ноября", "декабря"};
+            "Января", "Февраля", "Марта",
+            "Апреля", "Мая", "Июня",
+            "Июля", "Августа", "Сентября",
+            "Октября", "Ноября", "Декабря"};
     private static final String[] dayOfWeekName = new String[]{
             "Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Cб"
     };

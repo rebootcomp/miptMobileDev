@@ -139,7 +139,7 @@ public class ScheduleEventEditFragment extends Fragment implements SceneFragment
 
                 TimePickerDialog tpd = new TimePickerDialog(getActivity(),
                         timeSetListener,
-                        calendar.get(Calendar.HOUR),
+                        calendar.get(Calendar.HOUR_OF_DAY),
                         calendar.get(Calendar.MINUTE),
                         true);
                 tpd.show();
@@ -168,7 +168,7 @@ public class ScheduleEventEditFragment extends Fragment implements SceneFragment
 
                 TimePickerDialog tpd = new TimePickerDialog(getActivity(),
                         timeSetListener,
-                        calendar.get(Calendar.HOUR),
+                        calendar.get(Calendar.HOUR_OF_DAY),
                         calendar.get(Calendar.MINUTE),
                         true);
 

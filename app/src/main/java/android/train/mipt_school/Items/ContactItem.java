@@ -8,6 +8,9 @@ public class ContactItem {
     private Bitmap image;
     private String name;
 
+    private String firstName;
+    private String lastName;
+
     public ContactItem(long userId, String name, Bitmap image) {
         this.userId = userId;
         this.name = name;
@@ -15,15 +18,19 @@ public class ContactItem {
         this.approle = 0;
     }
 
-    public ContactItem(long userId, String name) {
+    public ContactItem(long userId, String firstName, String lastName) {
         this.userId = userId;
-        this.name = name;
+        this.name = firstName + " " + lastName;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.approle = 0;
     }
 
-    public ContactItem(long userId, String name, long approle) {
+    public ContactItem(long userId, String firstName, String lastName, long approle) {
         this.userId = userId;
-        this.name = name;
+        this.name = firstName + " " + lastName;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.approle = approle;
     }
 
@@ -37,6 +44,14 @@ public class ContactItem {
 
     public String getName() {
         return name;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
     }
 
 }

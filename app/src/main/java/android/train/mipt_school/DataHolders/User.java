@@ -408,10 +408,14 @@ public class User {
                 VK = userData.getString("vk_id");
                 phone = userData.getString("phone");
                 //groupId = data.getLong("groudid"); не добавлено еще
-                JSONArray groups = userData.getJSONArray("groups_id");
+                JSONArray groups = userData.getJSONArray("groups");
                 allGroups = new ArrayList<>();
-                for (int i = 0; i < groups.length(); i++)
-                    allGroups.add(new GroupItem("default", groups.getLong(i)));
+                for (int i = 0; i < groups.length(); i++) {
+                    long groupId = groups.getJSONObject(i).getLong("id");
+                    String groupName = groups.getJSONObject(i).getString("group_name");
+                    long usersCount = groups.getJSONObject(i).getLong("users_count");
+                    allGroups.add(new GroupItem(groupName, groupId, usersCount));
+                }
                 String ar = userData.getString("approle");
                 if (ar.equals("user"))
                     approle = 0;

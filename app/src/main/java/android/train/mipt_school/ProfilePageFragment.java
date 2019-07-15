@@ -88,8 +88,8 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
                 this.setId(id);
                 this.groupName = groupName;
                 if (user.getApprole() == 1) {
-                    this.setPhone(phoneNumber);
-                    this.setVK(VK);
+                    this.setPhone(phone);
+                    this.setVK(vkId);
                     this.setEmail(email);
                 }
                 else {
@@ -221,16 +221,6 @@ public class ProfilePageFragment extends Fragment implements SceneFragment {
 
             }
         });
-//        addToContacts = view.findViewById(R.id.add_to_contacts);
-//
-//        addToContacts.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                User.getInstance().getFriends().add(new ContactItem(userId, firtsname + " " + lastname));
-//            }
-//        });
-//
-//        addToContacts.setVisibility(vis);
         userStatus.setText(status);
 
         profileName.setText(firtsname + " " + lastname);

@@ -71,6 +71,8 @@ public class Edit_Fragment extends Fragment implements SceneFragment {
                 User.getInstance().setPhoneNumber(Phone.getText().toString());
                 ProfilePageFragment pf = ProfilePageFragment.newInstance();
                 pf.loadUser(User.getInstance());
+                getActivity().getSupportFragmentManager().popBackStack();
+                getActivity().getSupportFragmentManager().popBackStack();
                 ((MainActivity) getActivity()).loadFragment(pf);
             }
         });

@@ -25,6 +25,7 @@ public class Group {
         name = "Default";
         users = new ArrayList<>();
         admins = new ArrayList<>();
+        schedule = new ArrayList<>();
     }
 
     public Group(String name, ArrayList<ContactItem> users, ArrayList<ContactItem> admins) {

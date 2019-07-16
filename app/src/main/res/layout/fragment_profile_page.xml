@@ -309,7 +309,7 @@
                     android:layout_width="22dp"
                     android:layout_height="22dp"
                     android:layout_marginRight="16dp"
-                    android:background="@drawable/ic_baseline_person_add_24px"
+                    android:background="@drawable/ic_edit"
                     android:backgroundTint="@color/secondaryGray" />
 
                 <TextView

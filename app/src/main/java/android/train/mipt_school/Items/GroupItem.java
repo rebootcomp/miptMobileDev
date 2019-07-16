@@ -22,4 +22,16 @@ public class GroupItem {
     public Long getCountOfUsers() {
         return countOfUsers;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setGroupId(Long groupId) {
+        this.groupId = groupId;
+    }
+
+    public void setCountOfUsers(Long countOfUsers) {
+        this.countOfUsers = countOfUsers;
+    }
 }

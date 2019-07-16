@@ -29,7 +29,7 @@ public interface Api {
             @Header("Authorization") String auth
     );
 
-    @POST("allschedules")
+    @POST("allrooms")
     Call<ResponseBody> allRooms(
             @Header("Authorization") String auth
     );
@@ -54,7 +54,6 @@ public interface Api {
     Call<ResponseBody> addSchedule(
             @Header("Authorization") String auth,
             @Path("group_id") long id,
-            @Field("room_id") long room_id,
             @Field("start") long start,
             @Field("end") long end,
             @Field("comment") String comment,
@@ -64,7 +63,7 @@ public interface Api {
     @POST("deleteschedule/{schdedule_id}")
     Call<ResponseBody> deleteSchedule(
             @Header("Authorization") String auth,
-            @Field("schdedule_id") long id
+            @Path("schdedule_id") long id
     );
 
     @FormUrlEncoded
@@ -75,20 +74,7 @@ public interface Api {
             @Field("start") long start,
             @Field("end") long end,
             @Field("comment") String comment,
-            @Field("title") String title,
-            @Field("room_id") long roomId
-    );
-
-    @FormUrlEncoded
-    @POST("updateschedule/{schdedule_id}")
-    Call<ResponseBody> updateSchedule(
-            @Header("Authorization") String auth,
-            @Path("schdedule_id") long id,
-            @Field("start") long start,
-            @Field("end") long end,
-            @Field("comment") String comment,
-            @Field("title") String title,
-            @Field("room_id") long roomId
+            @Field("title") String title
     );
 
     @POST("user/{id}")
@@ -126,6 +112,7 @@ public interface Api {
             @Header("Authorization") String auth,
             @Path("group_id") long id,
             @Field("group_name") String groupName
+    );
 
     @POST("updateuser/{user_id}")
     Call<ResponseBody> updatePhone(

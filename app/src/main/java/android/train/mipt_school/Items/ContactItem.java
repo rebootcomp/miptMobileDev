@@ -54,4 +54,7 @@ public class ContactItem {
         return lastName;
     }
 
+    public long getApprole() {
+        return approle;
+    }
 }

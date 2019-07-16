@@ -20,6 +20,7 @@ import android.train.mipt_school.Adapters.SmallContactAdapter;
 import android.train.mipt_school.DataHolders.Group;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ContactItem;
+import android.train.mipt_school.Items.GroupItem;
 import android.train.mipt_school.Tools.AsyncLoadCallback;
 import android.train.mipt_school.Tools.AsyncLoadingFragment;
 import android.train.mipt_school.Tools.DataSavingFragment;
@@ -45,6 +46,7 @@ public class UsersAddFragment extends Fragment implements
     private boolean dataLoaded = false;
 
     private static final String BUNDLE_LOAD_TYPE = "LOAD_TYPE";
+    private static final String BUNDLE_GROUP_ID = "GROUP_ID";
 
     public static final int ADD_ADMINS = 1;
     public static final int ADD_USERS = 2;
@@ -60,6 +62,8 @@ public class UsersAddFragment extends Fragment implements
     private View clearSearch;
     private EditText searchField;
 
+    private Long groupId;
+
     private ArrayList<ContactItem> itemsForFind = new ArrayList<>();
 
     public static UsersAddFragment newInstance(int loadType, Group groupForEditing) {
@@ -68,6 +72,7 @@ public class UsersAddFragment extends Fragment implements
         instance.setRetainInstance(true);
         Bundle args = new Bundle();
         args.putInt(BUNDLE_LOAD_TYPE, loadType);
+        args.putLong(BUNDLE_GROUP_ID, groupForEditing.getId());
         instance.setArguments(args);
 
         if (loadType == ADD_ADMINS) {
@@ -153,6 +158,9 @@ public class UsersAddFragment extends Fragment implements
         addMembersText = view.findViewById(R.id.add_members_text);
         noDataMessage = view.findViewById(R.id.no_data_message);
         saveDataButton = view.findViewById(R.id.save_changes_button);
+
+        Bundle bundle = getArguments();
+        groupId = bundle.getLong(BUNDLE_GROUP_ID);
 
         ActionBar toolbar = ((MainActivity) getActivity()).getSupportActionBar();
         // setting up actionbar
@@ -293,10 +301,52 @@ public class UsersAddFragment extends Fragment implements
     @Override
     public boolean onSave() {
         ArrayList<Long> selectedUsers = new ArrayList<>();
+        int pos = User.getInstance().getGroupPosById().get(groupId);
+        Group group = User.getInstance().getGroups().get(pos);
+
         for (ContactItem e : allUsersAdapter.getSelectedItems()) {
             selectedUsers.add(e.getUserId());
+            if (e.getApprole() == 1) {
+                int found = 0;
+                for (ContactItem i : group.getAdmins())
+                    if (i.getUserId() == e.getUserId()) {
+                        found = 1;
+                        break;
+                    }
+                if (found == 0)
+                    group.getAdmins().add(e);
+            } else {
+                int found = 0;
+                for (ContactItem i : group.getUsers())
+                    if (i.getUserId() == e.getUserId()) {
+                        found = 1;
+                        break;
+                    }
+                if (found == 0)
+                    group.getUsers().add(e);
+            }
         }
-        // todo сохранять на сервер и обновлять локально
+
+        for (GroupItem i : User.getInstance().getAllGroups())
+            if (i.getGroupId().equals(groupId)) {
+                Integer cnt = group.getAdmins().size() + group.getUsers().size();
+                i.setCountOfUsers(cnt.longValue());
+                break;
+            }
+
+        User.getInstance().addUsersIntoGroupRequest(groupId, selectedUsers, new ResponseCallback() {
+            @Override
+            public void onResponse(String data) {
+                // todo: какая нибудь проверка
+            }
+
+            @Override
+            public void onFailure(String message) {
+                // todo: какая нибудь проверка
+            }
+        });
+
+        getActivity().getSupportFragmentManager().popBackStack();
         return true;
     }
 

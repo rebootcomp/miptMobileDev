@@ -19,6 +19,7 @@ import android.train.mipt_school.Adapters.SmallContactAdapter;
 import android.train.mipt_school.DataHolders.Group;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.ContactItem;
+import android.train.mipt_school.Items.GroupItem;
 import android.train.mipt_school.Tools.AsyncLoadCallback;
 import android.train.mipt_school.Tools.AsyncLoadingFragment;
 import android.train.mipt_school.Tools.DataSavingFragment;
@@ -194,11 +195,32 @@ public class UsersDeleteFragment extends Fragment implements SceneFragment {
                         .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                // todo delete делать сдесь
                                 if (loadType == DELETE_ADMINS) {
+                                    User.getInstance().deleteUserFromGroupRequest(groupForEditing.getId(), groupForEditing.getAdmins().get(position).getUserId(), new ResponseCallback() {
+                                        @Override
+                                        public void onResponse(String data) {
+                                            // todo проверка
+                                        }
+
+                                        @Override
+                                        public void onFailure(String message) {
+                                            // todo проверка
+                                        }
+                                    });
                                     groupForEditing.getAdmins().remove(position);
                                     allUsersAdapter.notifyItemRemoved(position);
                                 } else if (loadType == DELETE_USERS) {
+                                    User.getInstance().deleteUserFromGroupRequest(groupForEditing.getId(), groupForEditing.getUsers().get(position).getUserId(), new ResponseCallback() {
+                                        @Override
+                                        public void onResponse(String data) {
+                                            // todo проверка
+                                        }
+
+                                        @Override
+                                        public void onFailure(String message) {
+                                            // todo проверка
+                                        }
+                                    });
                                     groupForEditing.getUsers().remove(position);
                                     allUsersAdapter.notifyItemRemoved(position);
                                 }
@@ -222,6 +244,12 @@ public class UsersDeleteFragment extends Fragment implements SceneFragment {
 
     @Override
     public void onBackButtonPressed() {
+        for (GroupItem i : User.getInstance().getAllGroups())
+            if (i.getGroupId().equals(groupForEditing.getId())) {
+                Integer cnt = groupForEditing.getAdmins().size() + groupForEditing.getUsers().size();
+                i.setCountOfUsers(cnt.longValue());
+                break;
+            }
         getActivity().getSupportFragmentManager().popBackStack();
     }
 

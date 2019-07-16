@@ -12,6 +12,7 @@ import android.support.v7.app.AlertDialog;
 import android.text.Html;
 import android.train.mipt_school.DataHolders.Group;
 import android.train.mipt_school.DataHolders.User;
+import android.train.mipt_school.Items.GroupItem;
 import android.train.mipt_school.Tools.DataSavingFragment;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.LayoutInflater;
@@ -197,8 +198,25 @@ public class GroupEditFragment extends Fragment implements SceneFragment, DataSa
 
     @Override
     public boolean onSave() {
+        if (!editGroup.getName().equals(groupNameField.getText().toString())) {
+            editGroup.setName(groupNameField.getText().toString());
+            for (GroupItem i : User.getInstance().getAllGroups())
+                if (i.getGroupId().equals(editGroup.getId())) {
+                    i.setName(editGroup.getName());
+                    break;
+                }
+            User.getInstance().renameGroupRequest(editGroup.getId(), groupNameField.getText().toString(), new ResponseCallback() {
+                @Override
+                public void onResponse(String data) {
+                    // todo: сделать проверку и логи
+                }
 
-        editGroup.setName(groupNameField.getText().toString());
+                @Override
+                public void onFailure(String message) {
+
+                }
+            });
+        }
 
         // TODO обновлять название группы на сервере
 

@@ -116,10 +116,10 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
         ArrayList<UpdatableScheduleItem> forUpdate = new ArrayList<>();
 
         for (ScheduleItem item : changedItems) {
-            ScheduleItem originalItem = user.getScheduleById().get(item.getScheduleId());
+            /*ScheduleItem originalItem = user.getScheduleById().get(item.getScheduleId());
             int pos = user.getSchedule().indexOf(originalItem);
             user.getSchedule().set(pos, item);
-            user.updateScheduleRequest(item.getScheduleId(), item.getStartDate().getTime(), item.getEndDate().getTime(), item.getComment(), item.getName(), 1, new ResponseCallback() {
+            user.updateScheduleRequest(item.getScheduleId(), item.getStartDate().getTime() / 1000L, item.getEndDate().getTime() / 1000L, item.getPlace(), item.getName(), new ResponseCallback() {
                 @Override
                 public void onResponse(String data) {
                     // todo: сделать какую-нибудь проверку
@@ -129,37 +129,20 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
                 public void onFailure(String message) {
                     // todo: сделать какую-нибудь проверку
                 }
-            });
+            });*/
+            forUpdate.add(new UpdatableScheduleItem(item, UpdatableScheduleItem.CHANGE));
         }
 
         for (ScheduleItem item : deletedItems) {
             ScheduleItem originalItem = user.getScheduleById().get(item.getScheduleId());
-            /*int pos = user.getSchedule().indexOf(originalItem);
-            user.getSchedule().remove(pos);
-            user.getScheduleById().remove(item.getScheduleId());*/
+//            int pos = user.getSchedule().indexOf(originalItem);
+//            user.getSchedule().remove(pos);
+//            user.getScheduleById().remove(item.getScheduleId());
 
             forUpdate.add(new UpdatableScheduleItem(originalItem, UpdatableScheduleItem.DELETE));
         }
 
         for (final ScheduleItem item : addedItems) {
-            user.addScheduleRequest(1, 3, item.getStartDate().getTime(), item.getEndDate().getTime(), item.getComment(), item.getName(), new ResponseCallback() {
-                @Override
-                public void onResponse(String data) {
-                    Long scheduleId = User.getInstance().updateAddedSchedule(data);
-                    if (scheduleId != -1) {
-                        ScheduleItem tmpItem = new ScheduleItem(item);
-                        tmpItem.setScheduleId(scheduleId);
-                        User.getInstance().getScheduleById().put(scheduleId, tmpItem);
-                        User.getInstance().getSchedule().add(tmpItem);
-                    }
-                }
-
-                @Override
-                public void onFailure(String message) {
-                    // а че поделаешь
-                }
-            });
-
             // для дебага
             /*long scheduleId = new Random().nextLong();
             item.setScheduleId(scheduleId);

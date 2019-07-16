@@ -69,9 +69,7 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     } else
                         Toast.makeText(LoginActivity.this,
-                                data, Toast.LENGTH_LONG).show();
-//                        Toast.makeText(LoginActivity.this,
-//                                "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                                "Что-то пошло не так", Toast.LENGTH_LONG).show();
                 }
 
                 @Override
@@ -86,9 +84,7 @@ public class LoginActivity extends AppCompatActivity {
                         User.getInstance().scheduleRequest(initCallback);
                     } else
                         Toast.makeText(LoginActivity.this,
-                                data, Toast.LENGTH_LONG).show();
-//                        Toast.makeText(LoginActivity.this,
-//                                "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                                "Что-то пошло не так", Toast.LENGTH_LONG).show();
                 }
 
                 @Override

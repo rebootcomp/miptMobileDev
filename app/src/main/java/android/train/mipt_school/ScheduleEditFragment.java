@@ -119,6 +119,17 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
             ScheduleItem originalItem = user.getScheduleById().get(item.getScheduleId());
             int pos = user.getSchedule().indexOf(originalItem);
             user.getSchedule().set(pos, item);
+            user.updateScheduleRequest(item.getScheduleId(), item.getStartDate().getTime(), item.getEndDate().getTime(), item.getComment(), item.getName(), 1, new ResponseCallback() {
+                @Override
+                public void onResponse(String data) {
+                    // todo: сделать какую-нибудь проверку
+                }
+
+                @Override
+                public void onFailure(String message) {
+                    // todo: сделать какую-нибудь проверку
+                }
+            });
         }
 
         for (ScheduleItem item : deletedItems) {
@@ -130,8 +141,24 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
             forUpdate.add(new UpdatableScheduleItem(originalItem, UpdatableScheduleItem.DELETE));
         }
 
-        for (ScheduleItem item : addedItems) {
+        for (final ScheduleItem item : addedItems) {
+            user.addScheduleRequest(1, 3, item.getStartDate().getTime(), item.getEndDate().getTime(), item.getComment(), item.getName(), new ResponseCallback() {
+                @Override
+                public void onResponse(String data) {
+                    Long scheduleId = User.getInstance().updateAddedSchedule(data);
+                    if (scheduleId != -1) {
+                        ScheduleItem tmpItem = new ScheduleItem(item);
+                        tmpItem.setScheduleId(scheduleId);
+                        User.getInstance().getScheduleById().put(scheduleId, tmpItem);
+                        User.getInstance().getSchedule().add(tmpItem);
+                    }
+                }
 
+                @Override
+                public void onFailure(String message) {
+                    // а че поделаешь
+                }
+            });
 
             // для дебага
             /*long scheduleId = new Random().nextLong();
@@ -143,7 +170,6 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
             forUpdate.add(new UpdatableScheduleItem(item, UpdatableScheduleItem.ADD));
             //user.getSchedule().add(item);
 
-            // todo добавлять scheduleId и в User.scheduleById добавлять пару
         }
 
         GroupData.updateGroupSchedule(0, forUpdate, new GroupData.AsyncResponseCallback() {

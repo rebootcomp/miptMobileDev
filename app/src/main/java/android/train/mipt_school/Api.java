@@ -54,18 +54,29 @@ public interface Api {
     Call<ResponseBody> addSchedule(
             @Header("Authorization") String auth,
             @Path("group_id") long id,
-            @Field("room_id") long userId,
+            @Field("room_id") long room_id,
             @Field("start") long start,
             @Field("end") long end,
             @Field("comment") String comment,
             @Field("title") String title
     );
 
-    @FormUrlEncoded
     @POST("deleteschedule/{schdedule_id}")
     Call<ResponseBody> deleteSchedule(
             @Header("Authorization") String auth,
             @Field("schdedule_id") long id
+    );
+
+    @FormUrlEncoded
+    @POST("updateschedule/{schdedule_id}")
+    Call<ResponseBody> updateSchedule(
+            @Header("Authorization") String auth,
+            @Path("schdedule_id") long id,
+            @Field("start") long start,
+            @Field("end") long end,
+            @Field("comment") String comment,
+            @Field("title") String title,
+            @Field("room_id") long roomId
     );
 
     @FormUrlEncoded
@@ -93,6 +104,29 @@ public interface Api {
     );
 
     @FormUrlEncoded
+
+    @POST("adduserintogroup/{group_id}")
+    Call<ResponseBody> addUserIntoGroup(
+            @Header("Authorization") String auth,
+            @Path("group_id") long id,
+            @Field("users") String users
+    );
+
+    @FormUrlEncoded
+    @POST("deleteuserfromgroup/{group_id}")
+    Call<ResponseBody> deleteUserFromGroup(
+            @Header("Authorization") String auth,
+            @Path("group_id") long id,
+            @Field("users") String users
+    );
+
+    @FormUrlEncoded
+    @POST("setgroupname/{group_id}")
+    Call<ResponseBody> renameGroup(
+            @Header("Authorization") String auth,
+            @Path("group_id") long id,
+            @Field("group_name") String groupName
+
     @POST("updateuser/{user_id}")
     Call<ResponseBody> updatePhone(
             @Header("Authorization") String auth,

@@ -206,7 +206,7 @@ public class User {
     }
 
     public void updateScheduleRequest(long scheduleId, long start, long end, String comment,
-                                      String title, long roomId, final ResponseCallback rc) {
+                                   String title, long roomId, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
@@ -262,11 +262,41 @@ public class User {
         });
     }
 
+    public void deleteUserFromGroupRequest(Long groupId, Long userId, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .deleteUserFromGroup("Bearer " + token, groupId, userId.toString());
+         call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                    rc.onResponse(s);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                rc.onFailure(s);
+            }
+        });
+    }
+  
     public void editUserRequest(String phone, String vkId, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
                 .updatePhone("Bearer " + token, userId, phone, vkId);
+
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -281,6 +311,67 @@ public class User {
                     s = "{\"error\":\"Ошибка сервера\"}";
                     rc.onResponse(s);
                 }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                rc.onFailure(s);
+            }
+        });
+    }
+
+    public void addUsersIntoGroupRequest(Long groupId, ArrayList<Long> usersId, final ResponseCallback rc) {
+        String users = "";
+        for (Long i : usersId) {
+            users += i.toString() + ",";
+        }
+        users.substring(0, users.length() - 2);
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .addUserIntoGroup("Bearer " + token, groupId, users);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                rc.onFailure(s);
+            }
+        });
+    }
+
+    public void renameGroupRequest(Long groupId, String newName, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .renameGroup("Bearer " + token, groupId, newName);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
             }
 
             @Override

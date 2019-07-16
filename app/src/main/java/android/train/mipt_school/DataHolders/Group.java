@@ -21,13 +21,13 @@ public class Group {
         return schedule;
     }
 
-    Group() {
+    public Group() {
         name = "Default";
         users = new ArrayList<>();
         admins = new ArrayList<>();
     }
 
-    Group(String name, ArrayList<ContactItem> users, ArrayList<ContactItem> admins) {
+    public Group(String name, ArrayList<ContactItem> users, ArrayList<ContactItem> admins) {
         this.name = name;
         this.users = users;
         this.admins = admins;

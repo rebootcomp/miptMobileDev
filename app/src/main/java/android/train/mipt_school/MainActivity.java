@@ -227,7 +227,7 @@ public class MainActivity
             case R.id.navigation_info:
                 return loadFragment(RestInfoPageFragment.newInstance());
             case R.id.navigation_group:
-                return loadFragment(GroupViewFragment.newInstance(0));
+                return loadFragment(GroupListFragment.newInstance());
         }
 
         return false;

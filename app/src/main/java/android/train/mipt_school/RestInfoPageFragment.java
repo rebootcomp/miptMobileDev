@@ -4,9 +4,11 @@ package android.train.mipt_school;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
+import android.text.Html;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Tools.SceneFragment;
 import android.view.LayoutInflater;
@@ -27,6 +29,8 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
 
     private ImageView profileImage;
     private TextView profileName;
+    SharedPreferences mSP;
+    SharedPreferences msp;
 
     private ResponseCallback responseCallback;
 
@@ -103,12 +107,18 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
             @Override
             public void onClick(View v) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-                builder.setTitle("Подтвердите действие")
+                builder.setTitle(Html.fromHtml("</b>Подтвердите действие</b>").toString())
                         .setMessage("Вы точно хотите выйти?")
                         .setCancelable(false)
                         .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
+                                mSP = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor ed  = mSP.edit();
+                                ed.putString("signed", "");
+                                ed.putString("login", "");
+                                ed.putString("pass", "");
+                                ed.commit();
                                 User.logOut();
                                 startActivity(new Intent(getContext(), LoginActivity.class));
                                 getActivity().finish();

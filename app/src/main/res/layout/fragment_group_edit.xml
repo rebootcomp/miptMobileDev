@@ -18,7 +18,7 @@
         <android.support.design.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:backgroundTint="@color/colorPrimaryDark"
+            android:backgroundTint="@color/colorPrimary"
             app:cardCornerRadius="0dp"
             app:cardElevation="0dp">
 
@@ -96,6 +96,7 @@
                 android:orientation="vertical">
 
                 <LinearLayout
+                    android:id="@+id/admins_edit_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"
@@ -119,6 +120,7 @@
                 </LinearLayout>
 
                 <LinearLayout
+                    android:id="@+id/users_edit_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="?attr/selectableItemBackground"

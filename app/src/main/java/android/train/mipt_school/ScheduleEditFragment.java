@@ -15,9 +15,11 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.train.mipt_school.Adapters.ScheduleAdapter;
+import android.train.mipt_school.DataHolders.GroupData;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.DailyScheduleItem;
 import android.train.mipt_school.Items.ScheduleItem;
+import android.train.mipt_school.Items.UpdatableScheduleItem;
 import android.train.mipt_school.Tools.DataSavingFragment;
 import android.train.mipt_school.Tools.DateTools;
 import android.train.mipt_school.Tools.SceneFragment;
@@ -110,7 +112,8 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
             }
         }
 
-        User user = User.getInstance();
+        final User user = User.getInstance();
+        ArrayList<UpdatableScheduleItem> forUpdate = new ArrayList<>();
 
         for (ScheduleItem item : changedItems) {
             ScheduleItem originalItem = user.getScheduleById().get(item.getScheduleId());
@@ -131,21 +134,11 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
 
         for (ScheduleItem item : deletedItems) {
             ScheduleItem originalItem = user.getScheduleById().get(item.getScheduleId());
-            int pos = user.getSchedule().indexOf(originalItem);
-            Long scheduleId = user.getSchedule().get(pos).getScheduleId();
-            user.deleteScheduleRequest(scheduleId, new ResponseCallback() {
-                @Override
-                public void onResponse(String data) {
-                    // todo: сделать какую-нибудь проверку
-                }
-
-                @Override
-                public void onFailure(String message) {
-                    // todo: сделать какую-нибудь проверку
-                }
-            });
+            /*int pos = user.getSchedule().indexOf(originalItem);
             user.getSchedule().remove(pos);
-            user.getScheduleById().remove(item.getScheduleId());
+            user.getScheduleById().remove(item.getScheduleId());*/
+
+            forUpdate.add(new UpdatableScheduleItem(originalItem, UpdatableScheduleItem.DELETE));
         }
 
         for (final ScheduleItem item : addedItems) {
@@ -168,19 +161,24 @@ public class ScheduleEditFragment extends Fragment implements SceneFragment, Dat
             });
 
             // для дебага
-//            long scheduleId = new Random().nextLong();
-//            item.setScheduleId(scheduleId);
-//            user.getScheduleById().put(scheduleId, item);
+            /*long scheduleId = new Random().nextLong();
+            item.setScheduleId(scheduleId);
+            user.getScheduleById().put(scheduleId, item);*/
             // для дебага
 
 
-//            user.getSchedule().add(item);
+            forUpdate.add(new UpdatableScheduleItem(item, UpdatableScheduleItem.ADD));
+            //user.getSchedule().add(item);
 
         }
 
-        user.prepareSchedule();
-
-        getActivity().getSupportFragmentManager().popBackStack();
+        GroupData.updateGroupSchedule(0, forUpdate, new GroupData.AsyncResponseCallback() {
+            @Override
+            public void onLoadingFinished() {
+                user.prepareSchedule();
+                getActivity().getSupportFragmentManager().popBackStack();
+            }
+        });
 
         /*
                  todo в onSave нужен callback который будет уведомлять о том что изменения загружены на сервер,

@@ -11,6 +11,7 @@ import android.support.design.button.MaterialButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.train.mipt_school.Adapters.NewsAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.NewsItem;
@@ -143,11 +144,9 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
                         if (!link.contains("reply")) {
                             Element mainContent = e.getElementsByClass("wall_post_text").first();
                             System.out.println(mainContent.toString());
-                            String text = textEditor(mainContent.toString());
-                            newsItems.add(
-                                new NewsItem("Олимпиадные школы МФТИ",text , date, link  ));
+                            String text = translateFromHtml(mainContent.toString());
+                            newsItems.add(new NewsItem(text, date, link));
                         }
-
                     }
 
                 } catch (IOException e) {
@@ -169,24 +168,12 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         }.execute(NEWS_WEBSITE);
     }
 
-    public String textEditor(String string) {
-        String string1 = string.replace("\n", "");
-        char[] res = string1.replace("<br>", "\n").toCharArray();
-        string = "";
-        boolean delete = false;
-        for (int i = 0; i < res.length; i++) {
-            if (res[i] == '<') {
-                delete = true;
-            }
-            if (!delete) {
-                string+=res[i];
-            }
-            if (res[i] == '>') {
-                delete = false;
-            }
-        }
-        String result = string.replace("Показать полностью…","\n");
-        return result;
+    private String translateFromHtml(String s) {
+        // <img class="emoji" src="/emoji/e/f09f8f86.png" alt="&#x1f3c6;">
+        s = s.replaceAll("<img class=\"emoji\"[^<>]*alt=\"([^<>]*)\">", "$1");
+        s = s.replaceAll("<a class=\"wall_post_more\".*</a>", "");
+
+        return Html.fromHtml(s).toString();
     }
 
 

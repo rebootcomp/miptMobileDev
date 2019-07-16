@@ -27,6 +27,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:layout_marginBottom="16dp"
+            android:backgroundTint="#556080"
             android:transitionName="profile_image_card"
             app:cardCornerRadius="20dp"
             app:cardElevation="0dp"
@@ -40,7 +41,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/ic_user"
-                android:transitionName="profile_image" />
+                android:transitionName="profile_image"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/short_name_contact_item"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="АИ"
+                android:textAllCaps="true"
+                android:textColor="@android:color/white"
+                android:textStyle="bold" />
         </android.support.v7.widget.CardView>
 
         <TextView
@@ -58,6 +70,17 @@
             app:layout_constraintStart_toEndOf="@+id/contact_profile_image_card"
             app:layout_constraintTop_toTopOf="@+id/contact_profile_image_card" />
 
+        <View
+            android:id="@+id/contact_item_checked_circle"
+            android:layout_width="18dp"
+            android:layout_height="18dp"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="28dp"
+            android:background="@drawable/ic_baseline_check_circle_24px"
+            android:backgroundTint="@color/lightGreen"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="@+id/contact_profile_image_card"
+            app:layout_constraintTop_toTopOf="@+id/contact_profile_image_card" />
 
         <!--TODO: когда-нибудь сделать нормальный divider-->
         <!--<View

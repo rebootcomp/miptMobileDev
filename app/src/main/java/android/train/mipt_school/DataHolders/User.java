@@ -36,7 +36,7 @@ public class User {
     private String password;
     private String token;
     private String VK;
-    private String phoneNumber;
+    private String phone;
 
     //Для отображения профиля
     private boolean isEmailAvailable = true;
@@ -52,6 +52,8 @@ public class User {
     private ArrayList<ContactItem> allUsers; // пользователи
     // вроде лишнее allgroups хватает
     private ArrayList<Group> groups; // все группы пользователя
+
+    private HashMap<Long, Integer> groupPosById;
 
     private ArrayList<ScheduleItem> schedule; // расписание пользователя
 
@@ -265,6 +267,36 @@ public class User {
                 .getInstance()
                 .getApi()
                 .deleteUserFromGroup("Bearer " + token, groupId, userId.toString());
+         call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                    rc.onResponse(s);
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                rc.onFailure(s);
+            }
+        });
+    }
+  
+    public void editUserRequest(String phone, String vkId, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .updatePhone("Bearer " + token, userId, phone, vkId);
+
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -275,9 +307,10 @@ public class User {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else
+                } else {
                     s = "{\"error\":\"Ошибка сервера\"}";
-                rc.onResponse(s);
+                    rc.onResponse(s);
+                }
             }
 
             @Override
@@ -343,7 +376,7 @@ public class User {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                String s = "Проверьте соединение с интернетом";
                 rc.onFailure(s);
             }
         });
@@ -392,6 +425,10 @@ public class User {
                     // есть еще поле schedules но вроде пока бесполезное
                 }
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -404,6 +441,7 @@ public class User {
     public long updateAddedSchedule(String data) {
         allUsers = new ArrayList<>();
         try {
+            Log.d("schedule_event_log", " response received : " + data);
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
                 JSONObject updatedScheduleData = jsonObject.getJSONObject("data");
@@ -461,18 +499,26 @@ public class User {
                 email = userData.getString("email");
                 userId = userData.getLong("id");
                 VK = userData.getString("vk_id");
-                phoneNumber = userData.getString("phone");
+                phone = userData.getString("phone");
                 //groupId = data.getLong("groudid"); не добавлено еще
-                JSONArray groups = userData.getJSONArray("groups_id");
+                JSONArray groups = userData.getJSONArray("groups");
                 allGroups = new ArrayList<>();
-                for (int i = 0; i < groups.length(); i++)
-                    allGroups.add(new GroupItem("default", groups.getLong(i)));
+                for (int i = 0; i < groups.length(); i++) {
+                    long groupId = groups.getJSONObject(i).getLong("id");
+                    String groupName = groups.getJSONObject(i).getString("group_name");
+                    long usersCount = groups.getJSONObject(i).getLong("users_count");
+                    allGroups.add(new GroupItem(groupName, groupId, usersCount));
+                }
                 String ar = userData.getString("approle");
                 if (ar.equals("user"))
                     approle = 0;
                 else
                     approle = 1;
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -493,10 +539,7 @@ public class User {
                     JSONObject tmp = allUsersData.getJSONObject(i);
                     String firstName = tmp.getString("firstname");
                     String lastName = tmp.getString("lastname");
-                    allUsers.add(
-                            new ContactItem(
-                                    tmp.getLong("id"),
-                                    String.format("%s %s", firstName, lastName)));
+                    allUsers.add(new ContactItem(tmp.getLong("id"), firstName, lastName));
                 }
                 Collections.sort(allUsers, new Comparator<ContactItem>() {
                     @Override
@@ -505,6 +548,10 @@ public class User {
                     }
                 });
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -514,29 +561,30 @@ public class User {
         return false;
     }
 
-    public boolean updateGroupInfo(String data, Group group) {
+    public Group updateGroupInfo(String data) {
         try {
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
                 JSONObject groupData = jsonObject.getJSONObject("data");
-                //Group group = new Group();
+                Group group = new Group();
                 group.setName(groupData.getString("group_name"));
                 group.setId(groupData.getLong("id"));
-                group.setEvent(groupData.getString("event"));
+                group.setEvent(groupData.getString("event_name"));
                 group.setDirection(groupData.getString("direction"));
                 JSONArray users = groupData.getJSONArray("users");
                 int len = users.length();
                 for (int i = 0; i < len; i++) {
                     JSONObject tmp = users.getJSONObject(i);
-                    String name =
-                            tmp.getString("firstname") + " " + tmp.getString("lastname");
+                    String firstName = tmp.getString("firstname");
+                    String lastName = tmp.getString("lastname");
                     String appr = tmp.getString("approle");
                     long id = tmp.getLong("id");
                     if (appr.equals("admin"))
-                        group.getAdmins().add(new ContactItem(id, name, 1));
+                        group.getAdmins().add(new ContactItem(id, firstName, lastName, 1));
                     else
-                        group.getUsers().add(new ContactItem(id, name));
+                        group.getUsers().add(new ContactItem(id, firstName, lastName));
                 }
+
                 JSONArray scheduleData = groupData.getJSONArray("schedules");
                 len = scheduleData.length();
                 for (int i = 0; i < len; i++) {
@@ -557,14 +605,18 @@ public class User {
                             groupId,
                             scheduleId));
                 }
-                return true;
+                return group;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return null;
             }
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     public boolean init(String data) {
@@ -611,6 +663,10 @@ public class User {
 
                 prepareSchedule();
                 return true;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return false;
             }
         } catch (JSONException e) {
             e.printStackTrace();
@@ -625,18 +681,19 @@ public class User {
         this.password = password;
         this.schedule = new ArrayList<>();
         this.groups = new ArrayList<>();
+        this.groupPosById = new HashMap<>();
 
         //для дебага
 
         // Admins
-        ContactItem contactAdmin = new ContactItem(6227, "Админ Иван", 1);
+        /*ContactItem contactAdmin = new ContactItem(6227, "Админ", "Иван", 1);
         ArrayList<ContactItem> admins = new ArrayList<>();
         for (int i = 0; i < 5; i++) {
             admins.add(contactAdmin);
         }
 
         // Users
-        ContactItem contactUser = new ContactItem(228, "Юзер Алеша", 0);
+        ContactItem contactUser = new ContactItem(228, "Юзер", "Алеша", 0);
         ArrayList<ContactItem> users = new ArrayList<>();
         for (int i = 0; i < 25; i++) {
             users.add(contactUser);
@@ -645,7 +702,7 @@ public class User {
         Group group = new Group("Отряд 123", users, admins);
         group.setId(1L);
         this.groups = new ArrayList<>();
-        groups.add(group);
+        groups.add(group);*/
 
         // для дебага
 
@@ -715,9 +772,16 @@ public class User {
         return VK;
     }
 
+    public void setVK(String VK) {
+        this.VK = VK;
+    }
+
     public String getPhoneNumber() {
-        Log.i("PhoneNumber", phoneNumber);
-        return phoneNumber;
+        return phone;
+    }
+
+    public void setPhoneNumber(String phone) {
+        this.phone = phone;
     }
 
     public String getLastName() {
@@ -788,8 +852,13 @@ public class User {
         return allGroups;
     }
 
+
     public HashMap<Long, ScheduleItem> getScheduleById() {
         return scheduleById;
+    }
+
+    public HashMap<Long, Integer> getGroupPosById() {
+        return groupPosById;
     }
 
 }

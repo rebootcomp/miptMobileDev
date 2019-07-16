@@ -1,7 +1,6 @@
 package android.train.mipt_school;
 
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,7 +24,6 @@ import android.widget.DatePicker;
 import android.widget.EditText;
 
 import java.util.Calendar;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 public class GroupEditFragment extends Fragment implements SceneFragment, DataSavingFragment {
@@ -35,6 +33,9 @@ public class GroupEditFragment extends Fragment implements SceneFragment, DataSa
     private Group editGroup;
 
     private View scheduleEditButton;
+    private View adminsEditButton;
+    private View usersEditButon;
+
     private EditText groupNameField;
 
     private String groupName;
@@ -72,7 +73,8 @@ public class GroupEditFragment extends Fragment implements SceneFragment, DataSa
         groupNameField = view.findViewById(R.id.group_name_edit_field);
 
         scheduleEditButton = view.findViewById(R.id.schedule_edit_button);
-
+        adminsEditButton = view.findViewById(R.id.admins_edit_button);
+        usersEditButon = view.findViewById(R.id.users_edit_button);
 
         return view;
     }
@@ -111,6 +113,56 @@ public class GroupEditFragment extends Fragment implements SceneFragment, DataSa
             @Override
             public void onClick(View v) {
                 tpd.show();
+            }
+        });
+
+        adminsEditButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] choices = new String[]{"Добавить", "Удалить"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(Html.fromHtml("<b>Выберите действие</b>"))
+                        .setItems(choices, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which == 0) {
+                                    ((MainActivity) getActivity()).loadFragment(UsersAddFragment
+                                            .newInstance(UsersAddFragment.ADD_ADMINS,
+                                                    editGroup));
+                                } else {
+                                    ((MainActivity) getActivity()).loadFragment(UsersDeleteFragment
+                                            .newInstance(UsersDeleteFragment.DELETE_ADMINS,
+                                                    editGroup));
+                                }
+                            }
+                        });
+
+                builder.show();
+            }
+        });
+
+        usersEditButon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String[] choices = new String[]{"Добавить", "Удалить"};
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+                builder.setTitle(Html.fromHtml("<b>Выберите действие</b>"))
+                        .setItems(choices, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                if (which == 0) {
+                                    ((MainActivity) getActivity()).loadFragment(UsersAddFragment
+                                            .newInstance(UsersAddFragment.ADD_USERS,
+                                                    editGroup));
+                                } else {
+                                    ((MainActivity) getActivity()).loadFragment(UsersDeleteFragment
+                                            .newInstance(UsersDeleteFragment.DELETE_USERS,
+                                                    editGroup));
+                                }
+                            }
+                        });
+
+                builder.show();
             }
         });
     }
@@ -175,6 +227,14 @@ public class GroupEditFragment extends Fragment implements SceneFragment, DataSa
     public void onAttach(Context context) {
         super.onAttach(context);
         title = context.getString(R.string.group_edit_page_title);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowTitleEnabled(true);
+        ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);
+        ((MainActivity) getActivity()).getSupportActionBar().setDisplayShowCustomEnabled(false);
     }
 
     @Override

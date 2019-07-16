@@ -12,8 +12,8 @@ public class Group {
     private String event;
     private String direction;
     private Long id;
-    private List<ContactItem> users;
-    private List<ContactItem> admins;
+    private ArrayList<ContactItem> users;
+    private ArrayList<ContactItem> admins;
     private ArrayList<ScheduleItem> schedule; // расписание группы
 
 
@@ -21,13 +21,14 @@ public class Group {
         return schedule;
     }
 
-    Group() {
+    public Group() {
         name = "Default";
         users = new ArrayList<>();
         admins = new ArrayList<>();
+        schedule = new ArrayList<>();
     }
 
-    Group(String name, List<ContactItem> users, List<ContactItem> admins) {
+    public Group(String name, ArrayList<ContactItem> users, ArrayList<ContactItem> admins) {
         this.name = name;
         this.users = users;
         this.admins = admins;
@@ -51,11 +52,11 @@ public class Group {
         return this.name;
     }
 
-    public List<ContactItem> getUsers() {
+    public ArrayList<ContactItem> getUsers() {
         return this.users;
     }
 
-    public List<ContactItem> getAdmins() {
+    public ArrayList<ContactItem> getAdmins() {
         return this.admins;
     }
 
@@ -63,11 +64,11 @@ public class Group {
         this.name = name;
     }
 
-    public void setUsers(List<ContactItem> users) {
+    public void setUsers(ArrayList<ContactItem> users) {
         this.users = users;
     }
 
-    public void setAdmins(List<ContactItem> admins) {
+    public void setAdmins(ArrayList<ContactItem> admins) {
         this.admins = admins;
     }
 

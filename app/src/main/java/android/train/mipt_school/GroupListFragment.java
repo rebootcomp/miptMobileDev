@@ -69,9 +69,11 @@ public class GroupListFragment extends Fragment implements SceneFragment {
                     User.getInstance().groupInfoRequest(item.getGroupId(), new ResponseCallback() {
                         @Override
                         public void onResponse(String data) {
-                            Group group = new Group();
+                            Group group;
                             User user = User.getInstance();
-                            user.updateGroupInfo(data, group);
+                            group = user.updateGroupInfo(data);
+
+                            //Toast.makeText(getActivity(), group.getEvent(), Toast.LENGTH_LONG).show();
                             user.getGroups().add(group);
                             int groupPosition = user.getGroups().size() - 1;
                             user.getGroupPosById().put(group.getId(), groupPosition);

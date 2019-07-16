@@ -470,15 +470,15 @@ public class User {
         return false;
     }
 
-    public boolean updateGroupInfo(String data, Group group) {
+    public Group updateGroupInfo(String data) {
         try {
             JSONObject jsonObject = new JSONObject(data);
             if (jsonObject.has("data")) {
                 JSONObject groupData = jsonObject.getJSONObject("data");
-                //Group group = new Group();
+                Group group = new Group();
                 group.setName(groupData.getString("group_name"));
                 group.setId(groupData.getLong("id"));
-                group.setEvent(groupData.getString("event"));
+                group.setEvent(groupData.getString("event_name"));
                 group.setDirection(groupData.getString("direction"));
                 JSONArray users = groupData.getJSONArray("users");
                 int len = users.length();
@@ -514,18 +514,18 @@ public class User {
                             groupId,
                             scheduleId));
                 }
-                return true;
+                return group;
             } else if (jsonObject.has("new_token")) {
                 String newToken = jsonObject.getString("new_token");
                 token = newToken;
-                return false;
+                return null;
             }
         } catch (JSONException e) {
             e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     public boolean init(String data) {

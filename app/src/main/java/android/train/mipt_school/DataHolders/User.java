@@ -176,12 +176,12 @@ public class User {
         });
     }
 
-    public void addScheduleRequest(long groupId, long roomId, long start, long end, String comment,
+    public void addScheduleRequest(long groupId, long start, long end, String comment,
                                    String title, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .addSchedule("Bearer " + token, groupId, roomId, start, end, comment, title);
+                .addSchedule("Bearer " + token, groupId, start, end, comment, title);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -206,11 +206,11 @@ public class User {
     }
 
     public void updateScheduleRequest(long scheduleId, long start, long end, String comment,
-                                   String title, long roomId, final ResponseCallback rc) {
+                                   String title, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .updateSchedule("Bearer " + token, scheduleId, start, end, comment, title, roomId);
+                .updateSchedule("Bearer " + token, scheduleId, start, end, comment, title);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -256,7 +256,7 @@ public class User {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                String s = "Проверьте соединение с интернетом";
                 rc.onFailure(s);
             }
         });
@@ -285,7 +285,7 @@ public class User {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                String s = "Проверьте соединение с интернетом";
                 rc.onFailure(s);
             }
         });
@@ -315,7 +315,7 @@ public class User {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                String s = "Проверьте соединение с интернетом";
                 rc.onFailure(s);
             }
         });
@@ -348,7 +348,7 @@ public class User {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                String s = "Проверьте соединение с интернетом";
                 rc.onFailure(s);
             }
         });
@@ -404,7 +404,7 @@ public class User {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                String s = "Проверьте соединение с интернетом";
                 rc.onFailure(s);
             }
         });
@@ -478,7 +478,7 @@ public class User {
 
             @Override
             public void onFailure(Call<ResponseBody> call, Throwable t) {
-                String s = "{\"bad_request\":\"Проверьте соединение с интернетом\"}";
+                String s = "Проверьте соединение с интернетом";
                 rc.onFailure(s);
             }
         });
@@ -539,7 +539,11 @@ public class User {
                     JSONObject tmp = allUsersData.getJSONObject(i);
                     String firstName = tmp.getString("firstname");
                     String lastName = tmp.getString("lastname");
-                    allUsers.add(new ContactItem(tmp.getLong("id"), firstName, lastName));
+                    String approle = tmp.getString("approle");
+                    int apr = 0;
+                    if (approle.equals("admin"))
+                        apr = 1;
+                    allUsers.add(new ContactItem(tmp.getLong("id"), firstName, lastName, apr));
                 }
                 Collections.sort(allUsers, new Comparator<ContactItem>() {
                     @Override
@@ -591,9 +595,10 @@ public class User {
                     JSONObject tmp = scheduleData.getJSONObject(i);
                     Long start = tmp.getLong("start") * 1000L;
                     Long end = tmp.getLong("end") * 1000L;
-                    String room = tmp.getString("room");
+//                    String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
+                    String room = comment;
                     Long groupId = tmp.getLong("group_id");
                     Long scheduleId = tmp.getLong("id");
                     group.getSchedule().add(new ScheduleItem(
@@ -633,9 +638,10 @@ public class User {
                     JSONObject tmp = scheduleData.getJSONObject(i);
                     Long start = tmp.getLong("start") * 1000L;
                     Long end = tmp.getLong("end") * 1000L;
-                    String room = tmp.getString("room");
+//                    String room = tmp.getString("room");
                     String name = tmp.getString("title");
                     String comment = tmp.getString("comment");
+                    String room = comment;
                     Long groupId = tmp.getLong("group_id");
                     Long scheduleId = tmp.getLong("id");
                     boolean isGroupMember = false;

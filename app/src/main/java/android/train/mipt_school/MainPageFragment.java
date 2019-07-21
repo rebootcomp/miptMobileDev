@@ -23,6 +23,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -81,6 +87,22 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
         newsList.setLayoutManager(new LinearLayoutManager(getActivity()));
         newsList.setAdapter(adapter);
         Log.d("fragload", "loaded");
+
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("smth", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+
+                        Log.d("result_token", token);
+                    }
+                });
 
         return view;
     }

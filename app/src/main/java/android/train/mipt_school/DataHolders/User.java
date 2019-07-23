@@ -37,6 +37,7 @@ public class User {
     private String token;
     private String VK;
     private String phone;
+    private ArrayList<String> notificationTokens; // токены для пушей
 
     //Для отображения профиля
     private boolean isEmailAvailable = true;
@@ -64,11 +65,11 @@ public class User {
 
     private static volatile User instance;
 
-    private void userRequest(String username, String password, final ResponseCallback rc) {
+    private void userRequest(String username, String password, String deviceToken, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .authenticateUser(username, password);
+                .authenticateUser(username, password, deviceToken);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -500,6 +501,8 @@ public class User {
                 userId = userData.getLong("id");
                 VK = userData.getString("vk_id");
                 phone = userData.getString("phone");
+                String notificationTokens = userData.getString("device_tokens");
+                this.notificationTokens = toArray(notificationTokens);
                 //groupId = data.getLong("groudid"); не добавлено еще
                 JSONArray groups = userData.getJSONArray("groups");
                 allGroups = new ArrayList<>();
@@ -682,7 +685,7 @@ public class User {
         return false;
     }
 
-    public void logIn(String userName, String password, final ResponseCallback responseCallback) {
+    public void logIn(String userName, String password, String deviceToken, final ResponseCallback responseCallback) {
         this.userName = userName;
         this.password = password;
         this.schedule = new ArrayList<>();
@@ -712,7 +715,7 @@ public class User {
 
         // для дебага
 
-        userRequest(userName, password, responseCallback);
+        userRequest(userName, password, deviceToken, responseCallback);
     }
 
     public static void logOut() {
@@ -867,4 +870,24 @@ public class User {
         return groupPosById;
     }
 
+    public ArrayList<String> getNotificationTokens () {
+        return notificationTokens;
+    }
+
+    private ArrayList<String> toArray(String notificationTokens) {
+        ArrayList<String> tokens = new ArrayList<>();
+        char[] a = notificationTokens.toCharArray();
+        String s = "";
+        for (int i = 1; i < a.length-1; i++) {
+            if (a[i] == ',') {
+                tokens.add(s);
+                s = "";
+            }
+            else if (a[i]!='\"'){
+                s+=a[i];
+            }
+        }
+        tokens.add(s);
+        return tokens;
+    }
 }

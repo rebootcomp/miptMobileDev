@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.button.MaterialButton;
 import android.support.v7.app.AppCompatActivity;
@@ -13,11 +14,17 @@ import android.text.method.HideReturnsTransformationMethod;
 import android.text.method.PasswordTransformationMethod;
 import android.train.mipt_school.DataHolders.User;
 import android.util.JsonReader;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,6 +48,7 @@ public class LoginActivity extends AppCompatActivity {
     private ImageButton showPassword;
     private String userName = null;
     private String password = null;
+    private String deviceToken = "";
 
     private boolean passwordShow = false;
 
@@ -53,6 +61,21 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("smth", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        String token = task.getResult().getToken();
+                        deviceToken = token;
+                        Log.d("result_token", token);
+                    }
+                });
 
         mSP = getSharedPreferences("settings", Context.MODE_PRIVATE);
         String logInCondition = mSP.getString("signed", "");
@@ -69,7 +92,7 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     } else
                         Toast.makeText(LoginActivity.this,
-                                "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                                "Что-то пошло не так 1", Toast.LENGTH_LONG).show();
                 }
 
                 @Override
@@ -84,7 +107,7 @@ public class LoginActivity extends AppCompatActivity {
                         User.getInstance().scheduleRequest(initCallback);
                     } else
                         Toast.makeText(LoginActivity.this,
-                                "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                                "Что-то пошло не так 2", Toast.LENGTH_LONG).show();
                 }
 
                 @Override
@@ -92,7 +115,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                 }
             };
-            User.getInstance().logIn(userName, password, responseCallback);
+            User.getInstance().logIn(userName, password, deviceToken, responseCallback);
 
 //            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
@@ -161,7 +184,7 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                     }
                 };
-                User.getInstance().logIn(userName, password, responseCallback);
+                User.getInstance().logIn(userName, password, deviceToken, responseCallback);
             }
         });
 

@@ -16,7 +16,8 @@ public interface Api {
     @POST("authenticateuser")
     Call<ResponseBody> authenticateUser(
             @Field("username") String username,
-            @Field("password") String passsword
+            @Field("password") String passsword,
+            @Field("device_token") String device_token
     );
 
     @FormUrlEncoded

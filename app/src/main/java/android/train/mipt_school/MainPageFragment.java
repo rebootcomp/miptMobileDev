@@ -81,6 +81,9 @@ public class MainPageFragment extends Fragment implements SceneFragment, AsyncLo
             }
         });
 
+        Toast toast = Toast.makeText(getContext(), User.getInstance().getNotificationTokens().get(0), Toast.LENGTH_SHORT);
+        toast.show();
+
         NewsAdapter adapter = new NewsAdapter();
         adapter.setData(newsItems);
         adapter.setMainActivity((MainActivity) getActivity());

@@ -1,5 +1,6 @@
 package android.train.mipt_school.DataHolders;
 
+import android.support.annotation.NonNull;
 import android.train.mipt_school.Items.ContactItem;
 import android.train.mipt_school.Items.DailyScheduleItem;
 import android.train.mipt_school.Items.GroupItem;
@@ -9,6 +10,11 @@ import android.train.mipt_school.ResponseCallback;
 import android.train.mipt_school.RetrofitClient;
 import android.train.mipt_school.Tools.DateTools;
 import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,7 +43,7 @@ public class User {
     private String token;
     private String VK;
     private String phone;
-    private ArrayList<String> notificationTokens; // токены для пушей
+    private String deviceToken;
 
     //Для отображения профиля
     private boolean isEmailAvailable = true;
@@ -70,6 +76,50 @@ public class User {
                 .getInstance()
                 .getApi()
                 .authenticateUser(username, password, deviceToken);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
+    public void logOut(final ResponseCallback rc) {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("smth", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        deviceToken = task.getResult().getToken();
+                        Log.d("result_token", deviceToken);
+                    }
+                });
+
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .logOut(userId, deviceToken);
+
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -501,8 +551,6 @@ public class User {
                 userId = userData.getLong("id");
                 VK = userData.getString("vk_id");
                 phone = userData.getString("phone");
-                String notificationTokens = userData.getString("device_tokens");
-                this.notificationTokens = toArray(notificationTokens);
                 //groupId = data.getLong("groudid"); не добавлено еще
                 JSONArray groups = userData.getJSONArray("groups");
                 allGroups = new ArrayList<>();
@@ -718,9 +766,7 @@ public class User {
         userRequest(userName, password, deviceToken, responseCallback);
     }
 
-    public static void logOut() {
-        instance = null;
-    }
+
 
     public static User getInstance() {
         User localInstance = instance;
@@ -870,24 +916,8 @@ public class User {
         return groupPosById;
     }
 
-    public ArrayList<String> getNotificationTokens () {
-        return notificationTokens;
+    public void setNullInstance() {
+        instance = null;
     }
 
-    private ArrayList<String> toArray(String notificationTokens) {
-        ArrayList<String> tokens = new ArrayList<>();
-        char[] a = notificationTokens.toCharArray();
-        String s = "";
-        for (int i = 1; i < a.length-1; i++) {
-            if (a[i] == ',') {
-                tokens.add(s);
-                s = "";
-            }
-            else if (a[i]!='\"'){
-                s+=a[i];
-            }
-        }
-        tokens.add(s);
-        return tokens;
-    }
 }

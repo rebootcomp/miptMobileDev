@@ -21,6 +21,13 @@ public interface Api {
     );
 
     @FormUrlEncoded
+    @POST("unauthenticateuser/{user_id}")
+    Call<ResponseBody> logOut(
+            @Path("user_id") long userId,
+            @Field("device_token") String device_token
+    );
+
+    @FormUrlEncoded
     @POST("allevents")
     Call<ResponseBody> alleEents();
 

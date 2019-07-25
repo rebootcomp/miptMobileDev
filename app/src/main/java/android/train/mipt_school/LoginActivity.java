@@ -100,6 +100,8 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                 }
             };
+
+            //ошибка здесь
             responseCallback = new ResponseCallback() {
                 @Override
                 public void onResponse(String data) {
@@ -161,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
                             finish();
                         } else
                             Toast.makeText(LoginActivity.this,
-                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                                    "Что-то пошло не так init", Toast.LENGTH_LONG).show();
                     }
 
                     @Override
@@ -176,7 +178,7 @@ public class LoginActivity extends AppCompatActivity {
                             User.getInstance().scheduleRequest(initCallback);
                         } else
                             Toast.makeText(LoginActivity.this,
-                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                                    "Что-то пошло не так response", Toast.LENGTH_LONG).show();
                     }
 
                     @Override

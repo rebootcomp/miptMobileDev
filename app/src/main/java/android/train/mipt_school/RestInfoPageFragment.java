@@ -113,15 +113,32 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
                         .setPositiveButton("Да", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                mSP = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
-                                SharedPreferences.Editor ed  = mSP.edit();
-                                ed.putString("signed", "");
-                                ed.putString("login", "");
-                                ed.putString("pass", "");
-                                ed.commit();
-                                User.logOut();
-                                startActivity(new Intent(getContext(), LoginActivity.class));
-                                getActivity().finish();
+
+                                responseCallback = new ResponseCallback() {
+                                    @Override
+                                    public void onResponse(String data) {
+
+                                        mSP = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
+                                        SharedPreferences.Editor ed  = mSP.edit();
+                                        ed.putString("signed", "");
+                                        ed.putString("login", "");
+                                        ed.putString("pass", "");
+                                        ed.commit();
+                                        startActivity(new Intent(getContext(), LoginActivity.class));
+                                        getActivity().finish();
+                                        Toast.makeText(getActivity(), data, Toast.LENGTH_LONG).show();
+                                        User.getInstance().setNullInstance();
+                                    }
+
+                                    @Override
+                                    public void onFailure(String message) {
+                                        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+                                    }
+                                };
+
+                                User.getInstance().logOut(responseCallback);
+
+
                             }
                         })
                         .setNegativeButton("Нет", null);

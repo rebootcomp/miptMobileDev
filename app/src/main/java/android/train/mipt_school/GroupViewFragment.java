@@ -1,11 +1,13 @@
 package android.train.mipt_school;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -36,6 +38,7 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
     private TextView groupInfo;
     private TextView groupDirection;
     private TextView groupEvent;
+    private FloatingActionButton fab;
 
     private int groupPosition; // позиция группы в списке групп
 
@@ -54,6 +57,7 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
         return fragment;
     }
 
+    @SuppressLint("RestrictedApi")
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -72,6 +76,21 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
         groupName = view.findViewById(R.id.group_view_group_name);
         groupDirection = view.findViewById(R.id.group_view_direction);
         groupEvent = view.findViewById(R.id.group_view_event);
+        fab = view.findViewById(R.id.fab);
+
+        if (User.getInstance().getApprole() == 1) {
+            fab.setVisibility(View.VISIBLE);
+        }
+        else {
+            fab.setVisibility(View.INVISIBLE);
+        }
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ((MainActivity) getActivity()).loadFragment(SendMessageFragment.newInstance());
+            }
+        });
 
         return view;
     }

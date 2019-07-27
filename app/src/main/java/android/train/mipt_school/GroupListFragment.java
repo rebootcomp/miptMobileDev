@@ -1,6 +1,7 @@
 package android.train.mipt_school;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -40,6 +41,7 @@ public class GroupListFragment extends Fragment implements SceneFragment {
         return fragment;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,11 +60,17 @@ public class GroupListFragment extends Fragment implements SceneFragment {
             }
         });
 
+        if (User.getInstance().getApprole() == 1) {
+            fab.setVisibility(View.VISIBLE);
+        }
+        else {
+            fab.setVisibility(View.INVISIBLE);
+        }
+
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
-                //TODO:: Переход к новому фрагменту
                 ((MainActivity) getActivity()).loadFragment(CreateGroupFragment.newInstance());
 
 

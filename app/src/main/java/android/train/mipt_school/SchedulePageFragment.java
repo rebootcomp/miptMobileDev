@@ -27,7 +27,6 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
 
 
     private String title;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayList<DailyScheduleFragment> schedule;
 
 
@@ -51,17 +50,6 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
 
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
 
-        swipeRefreshLayout = view.findViewById(R.id.refresh);
-
-        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-
-                //TODO: обновление расписания
-
-                swipeRefreshLayout.setRefreshing(false);
-            }
-        });
 
         // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);

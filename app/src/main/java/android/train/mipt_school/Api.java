@@ -23,8 +23,18 @@ public interface Api {
     @FormUrlEncoded
     @POST("unauthenticateuser/{user_id}")
     Call<ResponseBody> logOut(
+            @Header("Authorization") String auth,
             @Path("user_id") long userId,
             @Field("device_token") String device_token
+    );
+
+    @FormUrlEncoded
+    @POST("sendnotification")
+    Call<ResponseBody> sendMessage(
+            @Field("title") String title,
+            @Field("body") String body,
+            @Field("target") String target, // topic || target - ничего больше
+            @Field("target_name") String target_name
     );
 
     @FormUrlEncoded
@@ -98,7 +108,6 @@ public interface Api {
     );
 
     @FormUrlEncoded
-
     @POST("adduserintogroup/{group_id}")
     Call<ResponseBody> addUserIntoGroup(
             @Header("Authorization") String auth,
@@ -122,6 +131,7 @@ public interface Api {
             @Field("group_name") String groupName
     );
 
+    @FormUrlEncoded
     @POST("updateuser/{user_id}")
     Call<ResponseBody> updatePhone(
             @Header("Authorization") String auth,

@@ -118,8 +118,36 @@ public class User {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .logOut(userId, deviceToken);
+                .logOut("Bearer " + token,userId, deviceToken);
 
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error \":\"Ошибка сервера\"}" + response.code();
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
+    public void sendMessage (String title, String body, String target, String target_name, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .sendMessage(title,body,target,target_name);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -352,6 +380,7 @@ public class User {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String s = null;
+
                 if (response.code() == 200) {
                     try {
                         s = response.body().string();
@@ -918,6 +947,10 @@ public class User {
 
     public void setNullInstance() {
         instance = null;
+    }
+
+    public String groupID(){
+        return allGroups.get(0).getGroupId() + "";
     }
 
 }

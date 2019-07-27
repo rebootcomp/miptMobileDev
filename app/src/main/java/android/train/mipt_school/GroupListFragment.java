@@ -8,7 +8,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -28,7 +30,9 @@ import android.widget.Toast;
 public class GroupListFragment extends Fragment implements SceneFragment {
 
     private String title;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView groupList;
+    private FloatingActionButton fab;
 
     public static GroupListFragment newInstance() {
         GroupListFragment fragment = new GroupListFragment();
@@ -42,6 +46,28 @@ public class GroupListFragment extends Fragment implements SceneFragment {
 
         final View view = inflater.inflate(R.layout.fragment_group_list, container, false);
 
+        swipeRefreshLayout = view.findViewById(R.id.refresh);
+        fab = view.findViewById(R.id.fab);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //TODO:: обновление групп!!!!
+
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                //TODO:: Переход к новому фрагменту
+                ((MainActivity) getActivity()).loadFragment(CreateGroupFragment.newInstance());
+
+
+            }
+        });
 
         // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);

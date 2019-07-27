@@ -57,10 +57,13 @@ public class LoginActivity extends AppCompatActivity {
     public ResponseCallback groupCallback;
     public ResponseCallback allusersCallback;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
                     @Override
@@ -83,6 +86,7 @@ public class LoginActivity extends AppCompatActivity {
 
             userName = mSP.getString("login","");
             password = mSP.getString("pass","");
+            deviceToken = mSP.getString("token", "");
             initCallback = new ResponseCallback() {
 
                 @Override
@@ -109,7 +113,7 @@ public class LoginActivity extends AppCompatActivity {
                         User.getInstance().scheduleRequest(initCallback);
                     } else
                         Toast.makeText(LoginActivity.this,
-                                "Что-то пошло не так 2", Toast.LENGTH_LONG).show();
+                               "Что-то пошло не так 2", Toast.LENGTH_LONG).show();
                 }
 
                 @Override
@@ -117,6 +121,7 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                 }
             };
+            Log.d("DATA_DEBUG", userName+ " " + password + " " +deviceToken);
             User.getInstance().logIn(userName, password, deviceToken, responseCallback);
 
 //            startActivity(new Intent(getApplicationContext(), MainActivity.class));
@@ -158,6 +163,7 @@ public class LoginActivity extends AppCompatActivity {
                             ed.putString("signed","true");
                             ed.putString("login",userName);
                             ed.putString("pass",password);
+                            ed.putString("token", deviceToken);
                             ed.commit();
                             startActivity(new Intent(getApplicationContext(), MainActivity.class));
                             finish();

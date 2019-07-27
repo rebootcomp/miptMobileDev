@@ -92,7 +92,8 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         mapsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).loadFragment(MapsPageFragment.newInstance());
+                test();
+                //((MainActivity) getActivity()).loadFragment(MapsPageFragment.newInstance());
             }
         });
 
@@ -123,6 +124,7 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
                                         ed.putString("signed", "");
                                         ed.putString("login", "");
                                         ed.putString("pass", "");
+                                        ed.putString("token", "");
                                         ed.commit();
                                         startActivity(new Intent(getContext(), LoginActivity.class));
                                         getActivity().finish();
@@ -171,5 +173,22 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
     @Override
     public String getTitle() {
         return title;
+    }
+
+    public void test() {
+        responseCallback = new ResponseCallback() {
+            @Override
+            public void onResponse(String data) {
+                ((MainActivity) getActivity()).loadFragment(MapsPageFragment.newInstance());
+            }
+
+            @Override
+            public void onFailure(String message) {
+                Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+            }
+        };
+
+        User.getInstance().sendMessage("Проверка", "Рассылка по группам", "topic",
+                "group_"+User.getInstance().groupID() , responseCallback);
     }
 }

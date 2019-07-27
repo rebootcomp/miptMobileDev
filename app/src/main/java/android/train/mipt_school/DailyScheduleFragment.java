@@ -23,7 +23,6 @@ public class DailyScheduleFragment extends Fragment {
     private Date date;
     private int position;
     private RecyclerView scheduleList;
-
     public static final String BUNLDE_DATE = "DATE";
     public static final String BUNDLE_POS = "POSITION";
 

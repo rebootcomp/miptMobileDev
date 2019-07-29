@@ -9,6 +9,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.train.mipt_school.Adapters.ScheduleTabsAdapter;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.DailyScheduleItem;
@@ -48,6 +49,7 @@ public class SchedulePageFragment extends Fragment implements SceneFragment {
         ((MainActivity) getActivity()).setLoadingScreenState(true);
 
         View view = inflater.inflate(R.layout.fragment_schedule, container, false);
+
 
         // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setTitle(title);

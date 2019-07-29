@@ -53,7 +53,7 @@ public class NotificationService extends FirebaseMessagingService {
         String NOTIFICATION_CHANNEL_ID = "test";
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
 
-            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,"Notification",NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,"Notification",NotificationManager.IMPORTANCE_HIGH);
 
             notificationChannel.setDescription("EDMT channel");
             notificationChannel.enableLights(true);
@@ -67,11 +67,11 @@ public class NotificationService extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_noti_default)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(body)
+                .setPriority(1)
                 .setContentInfo("Info");
-
         notificationManager.notify(new Random().nextInt(),notificationBuilder.build());
 
 
@@ -83,7 +83,7 @@ public class NotificationService extends FirebaseMessagingService {
         String NOTIFICATION_CHANNEL_ID = "test";
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.O){
 
-            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,"Notification",NotificationManager.IMPORTANCE_DEFAULT);
+            NotificationChannel notificationChannel = new NotificationChannel(NOTIFICATION_CHANNEL_ID,"Notification",NotificationManager.IMPORTANCE_HIGH);
 
             notificationChannel.setDescription("EDMT channel");
             notificationChannel.enableLights(true);
@@ -97,7 +97,7 @@ public class NotificationService extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setDefaults(Notification.DEFAULT_ALL)
                 .setWhen(System.currentTimeMillis())
-                .setSmallIcon(R.drawable.ic_noti_default)
+                .setSmallIcon(R.drawable.ic_notification)
                 .setContentTitle(title)
                 .setContentText(body)
                 .setContentInfo("Info");
@@ -118,6 +118,6 @@ public class NotificationService extends FirebaseMessagingService {
         // If you want to send messages to this application instance or
         // manage this apps subscriptions on the server side, send the
         // Instance ID token to your app server.
-       // sendRegistrationToServer(token);
+        //sendRegistrationToServer(token);
     }
 }

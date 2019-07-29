@@ -1,6 +1,7 @@
 package android.train.mipt_school;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -8,7 +9,9 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,6 +21,7 @@ import android.train.mipt_school.DataHolders.Group;
 import android.train.mipt_school.DataHolders.User;
 import android.train.mipt_school.Items.GroupItem;
 import android.train.mipt_school.Tools.SceneFragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,7 +32,12 @@ import android.widget.Toast;
 public class GroupListFragment extends Fragment implements SceneFragment {
 
     private String title;
+    private SwipeRefreshLayout swipeRefreshLayout;
     private RecyclerView groupList;
+    private FloatingActionButton fab;
+
+    private ResponseCallback initCallback;
+    private ResponseCallback responseCallback;
 
     public static GroupListFragment newInstance() {
         GroupListFragment fragment = new GroupListFragment();
@@ -36,12 +45,81 @@ public class GroupListFragment extends Fragment implements SceneFragment {
         return fragment;
     }
 
+    @SuppressLint("RestrictedApi")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
         final View view = inflater.inflate(R.layout.fragment_group_list, container, false);
 
+        swipeRefreshLayout = view.findViewById(R.id.refresh);
+        fab = view.findViewById(R.id.fab);
+
+        swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                //TODO:: обновление групп!!!!
+                initCallback = new ResponseCallback() {
+
+                    @Override
+                    public void onResponse(String data) {
+                        if (User.getInstance().init(data)) {
+                            Toast.makeText(getContext(), "updated", Toast.LENGTH_LONG).show();
+                            RecyclerView.Adapter adapter = groupList.getAdapter();
+                            adapter.notifyDataSetChanged();
+                        } else
+                            Toast.makeText(getContext(),
+                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                };
+
+                responseCallback = new ResponseCallback() {
+                    @Override
+                    public void onResponse(String data) {
+                        if (User.getInstance().updateToken(data)) {
+                            User.getInstance().scheduleRequest(initCallback);
+                        } else
+                            Toast.makeText(getContext(),
+                                    "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                    }
+
+                    @Override
+                    public void onFailure(String message) {
+                        Toast.makeText(getContext(), message, Toast.LENGTH_LONG).show();
+                    }
+                };
+                User user = User.getInstance();
+                String userName = user.getUserName();
+                String password = user.getPassword();
+                String deviceToken = user.getDeviceToken();
+                Log.d("DATA_DEBUG", userName+ " " + password + " " + deviceToken);
+                User.getInstance().logIn(userName, password, deviceToken, responseCallback);
+                Toast.makeText(getContext(), "Подождите пожалуйста", Toast.LENGTH_SHORT).show();
+                swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+
+        if (User.getInstance().getApprole() == 1) {
+            fab.setVisibility(View.VISIBLE);
+        }
+        else {
+            fab.setVisibility(View.INVISIBLE);
+        }
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                ((MainActivity) getActivity()).loadFragment(CreateGroupFragment.newInstance());
+
+
+            }
+        });
 
         // setting up actionbar
         ((MainActivity) getActivity()).getSupportActionBar().setDisplayHomeAsUpEnabled(false);

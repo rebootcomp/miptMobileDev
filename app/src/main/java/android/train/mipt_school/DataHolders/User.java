@@ -1,5 +1,6 @@
 package android.train.mipt_school.DataHolders;
 
+import android.support.annotation.NonNull;
 import android.train.mipt_school.Items.ContactItem;
 import android.train.mipt_school.Items.DailyScheduleItem;
 import android.train.mipt_school.Items.GroupItem;
@@ -9,6 +10,11 @@ import android.train.mipt_school.ResponseCallback;
 import android.train.mipt_school.RetrofitClient;
 import android.train.mipt_school.Tools.DateTools;
 import android.util.Log;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -37,6 +43,7 @@ public class User {
     private String token;
     private String VK;
     private String phone;
+    private String deviceToken;
 
     //Для отображения профиля
     private boolean isEmailAvailable = true;
@@ -64,11 +71,86 @@ public class User {
 
     private static volatile User instance;
 
-    private void userRequest(String username, String password, final ResponseCallback rc) {
+    private void userRequest(String username, String password, String deviceToken, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
-                .authenticateUser(username, password);
+                .authenticateUser(username, password, deviceToken);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    Integer a = response.code();
+                    s = a.toString();
+                }
+//                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
+    public void logOut(final ResponseCallback rc) {
+        FirebaseInstanceId.getInstance().getInstanceId()
+                .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                        if (!task.isSuccessful()) {
+                            Log.w("smth", "getInstanceId failed", task.getException());
+                            return;
+                        }
+
+                        // Get new Instance ID token
+                        deviceToken = task.getResult().getToken();
+                        Log.d("result_token", deviceToken);
+                    }
+                });
+
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .logOut("Bearer " + token,userId, deviceToken);
+
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error \":\"Ошибка сервера\"}" + response.code();
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
+    public void sendMessage(String title, String body, String target, String target_name, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .sendMessage(title,body,target,target_name);
         call.enqueue(new Callback<ResponseBody>() {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
@@ -148,6 +230,34 @@ public class User {
         });
     }
 
+    public void addGroupRequest(String groupName, Long directionId, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .addGroup("Bearer " + token, groupName, directionId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
     public void allUsersRequest(final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
@@ -186,7 +296,7 @@ public class User {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String s = null;
-                if (response.code() == 200) {
+                if (response.code() == 200 || response.code() == 201) {
                     try {
                         s = response.body().string();
                     } catch (IOException e) {
@@ -301,6 +411,7 @@ public class User {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String s = null;
+
                 if (response.code() == 200) {
                     try {
                         s = response.body().string();
@@ -624,6 +735,25 @@ public class User {
         return null;
     }
 
+    public Long getAddedGroupId(String data) {
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            if (jsonObject.has("success")) {
+                Long id = jsonObject.getLong("success");
+                return id;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return 0L;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0L;
+    }
+
     public boolean init(String data) {
         try {
             allUsers = new ArrayList<>();
@@ -682,7 +812,7 @@ public class User {
         return false;
     }
 
-    public void logIn(String userName, String password, final ResponseCallback responseCallback) {
+    public void logIn(String userName, String password, String deviceToken, final ResponseCallback responseCallback) {
         this.userName = userName;
         this.password = password;
         this.schedule = new ArrayList<>();
@@ -712,12 +842,10 @@ public class User {
 
         // для дебага
 
-        userRequest(userName, password, responseCallback);
+        userRequest(userName, password, deviceToken, responseCallback);
     }
 
-    public static void logOut() {
-        instance = null;
-    }
+
 
     public static User getInstance() {
         User localInstance = instance;
@@ -867,4 +995,23 @@ public class User {
         return groupPosById;
     }
 
+    public void setNullInstance() {
+        instance = null;
+    }
+
+    public String groupID(){
+        return allGroups.get(0).getGroupId() + "";
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
 }

@@ -18,6 +18,9 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class RestInfoPageFragment extends Fragment implements SceneFragment {
 
     private View questionButton;
@@ -118,7 +121,6 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
                                 responseCallback = new ResponseCallback() {
                                     @Override
                                     public void onResponse(String data) {
-
                                         mSP = getActivity().getSharedPreferences("settings", Context.MODE_PRIVATE);
                                         SharedPreferences.Editor ed  = mSP.edit();
                                         ed.putString("signed", "");
@@ -128,6 +130,15 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
                                         ed.commit();
                                         startActivity(new Intent(getContext(), LoginActivity.class));
                                         getActivity().finish();
+                                        try {
+                                            JSONObject jsonObject = new JSONObject(data);
+                                            if (jsonObject.has("success"))
+                                                Toast.makeText(getContext(), jsonObject.getString("success"), Toast.LENGTH_LONG).show();
+                                            else
+                                                Toast.makeText(getContext(), "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                                        } catch (JSONException e) {
+                                            Toast.makeText(getContext(), "Что-то пошло не так", Toast.LENGTH_LONG).show();
+                                        }
                                         Toast.makeText(getActivity(), data, Toast.LENGTH_LONG).show();
                                         User.getInstance().setNullInstance();
                                     }

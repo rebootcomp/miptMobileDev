@@ -24,6 +24,12 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
         this.data = data;
     }
 
+    public void refresh() {
+        data.clear();
+        data = User.getInstance().getAllGroups();
+        notifyDataSetChanged();
+    }
+
 
     @NonNull
     @Override
@@ -47,6 +53,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
 
     class GroupHolder extends RecyclerView.ViewHolder {
         private TextView groupName;
+        private TextView eventName;
         private TextView countOfUsers;
         private long groupId;
         private View groupViewButton;
@@ -54,6 +61,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
         public GroupHolder(@NonNull View itemView) {
             super(itemView);
             groupName = itemView.findViewById(R.id.group_name);
+            eventName = itemView.findViewById(R.id.event_name);
             countOfUsers = itemView.findViewById(R.id.count_of_users);
             groupViewButton = itemView.findViewById(R.id.group_view_button);
         }
@@ -61,7 +69,7 @@ public class GroupListAdapter extends RecyclerView.Adapter<GroupListAdapter.Grou
         public void bind(final GroupItem item) {
             groupId = item.getGroupId();
             groupName.setText(item.getName());
-
+            eventName.setText(item.getEventName());
 
             long members = item.getCountOfUsers();
 

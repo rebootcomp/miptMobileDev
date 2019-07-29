@@ -88,7 +88,7 @@ public class GroupViewFragment extends Fragment implements SceneFragment {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ((MainActivity) getActivity()).loadFragment(SendMessageFragment.newInstance());
+                ((MainActivity) getActivity()).loadFragment(SendMessageFragment.newInstance(displayedGroup));
             }
         });
 

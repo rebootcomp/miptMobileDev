@@ -86,8 +86,11 @@ public class User {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
-                } else
-                    s = "{\"error\":\"Ошибка сервера\"}";
+                } else {
+                    Integer a = response.code();
+                    s = a.toString();
+                }
+//                    s = "{\"error\":\"Ошибка сервера\"}";
                 rc.onResponse(s);
             }
 
@@ -143,7 +146,7 @@ public class User {
         });
     }
 
-    public void sendMessage (String title, String body, String target, String target_name, final ResponseCallback rc) {
+    public void sendMessage(String title, String body, String target, String target_name, final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
                 .getApi()
@@ -227,6 +230,34 @@ public class User {
         });
     }
 
+    public void addGroupRequest(String groupName, Long directionId, final ResponseCallback rc) {
+        Call<ResponseBody> call = RetrofitClient
+                .getInstance()
+                .getApi()
+                .addGroup("Bearer " + token, groupName, directionId);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                String s = null;
+                if (response.code() == 200) {
+                    try {
+                        s = response.body().string();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                } else
+                    s = "{\"error\":\"Ошибка сервера\"}";
+                rc.onResponse(s);
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+                String s = "Проверьте соединение с интернетом";
+                rc.onFailure(s);
+            }
+        });
+    }
+
     public void allUsersRequest(final ResponseCallback rc) {
         Call<ResponseBody> call = RetrofitClient
                 .getInstance()
@@ -265,7 +296,7 @@ public class User {
             @Override
             public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
                 String s = null;
-                if (response.code() == 200) {
+                if (response.code() == 200 || response.code() == 201) {
                     try {
                         s = response.body().string();
                     } catch (IOException e) {
@@ -704,6 +735,25 @@ public class User {
         return null;
     }
 
+    public Long getAddedGroupId(String data) {
+        try {
+            JSONObject jsonObject = new JSONObject(data);
+            if (jsonObject.has("success")) {
+                Long id = jsonObject.getLong("success");
+                return id;
+            } else if (jsonObject.has("new_token")) {
+                String newToken = jsonObject.getString("new_token");
+                token = newToken;
+                return 0L;
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return 0L;
+    }
+
     public boolean init(String data) {
         try {
             allUsers = new ArrayList<>();
@@ -953,4 +1003,15 @@ public class User {
         return allGroups.get(0).getGroupId() + "";
     }
 
+    public String getPhone() {
+        return phone;
+    }
+
+    public String getDeviceToken() {
+        return deviceToken;
+    }
+
+    public void setDeviceToken(String deviceToken) {
+        this.deviceToken = deviceToken;
+    }
 }

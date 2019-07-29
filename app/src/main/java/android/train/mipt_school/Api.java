@@ -140,4 +140,12 @@ public interface Api {
             @Field("vk_id") String vk
     );
 
+    @FormUrlEncoded
+    @POST("addgroup")
+    Call<ResponseBody> addGroup(
+            @Header("Authorization") String auth,
+            @Field("group_name") String groupName,
+            @Field("direction_id") long directionId
+    );
+
 }

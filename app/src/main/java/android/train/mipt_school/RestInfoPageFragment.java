@@ -92,8 +92,8 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         mapsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                test();
-                //((MainActivity) getActivity()).loadFragment(MapsPageFragment.newInstance());
+//                test();
+                ((MainActivity) getActivity()).loadFragment(MapsPageFragment.newInstance());
             }
         });
 
@@ -189,6 +189,6 @@ public class RestInfoPageFragment extends Fragment implements SceneFragment {
         };
 
         User.getInstance().sendMessage("Проверка", "Рассылка по группам", "topic",
-                "group_"+User.getInstance().groupID() , responseCallback);
+                "group_" + User.getInstance().groupID() , responseCallback);
     }
 }

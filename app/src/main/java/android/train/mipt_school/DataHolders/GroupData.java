@@ -18,7 +18,7 @@ import retrofit2.Response;
 public class GroupData {
     public static void updateGroupSchedule(final int pos, final ArrayList<UpdatableScheduleItem> forUpdate,
                                            final AsyncResponseCallback callback) {
-        if (pos == forUpdate.size()) {
+        if (pos >= forUpdate.size()) {
             callback.onLoadingFinished();
             return;
         }

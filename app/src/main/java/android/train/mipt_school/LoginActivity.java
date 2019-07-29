@@ -76,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                         // Get new Instance ID token
                         String token = task.getResult().getToken();
                         deviceToken = token;
+                        User.getInstance().setDeviceToken(deviceToken);
                         Log.d("result_token", token);
                     }
                 });
@@ -113,7 +114,7 @@ public class LoginActivity extends AppCompatActivity {
                         User.getInstance().scheduleRequest(initCallback);
                     } else
                         Toast.makeText(LoginActivity.this,
-                               "Что-то пошло не так 2", Toast.LENGTH_LONG).show();
+                               "Что-то пошло не так", Toast.LENGTH_LONG).show();
                 }
 
                 @Override

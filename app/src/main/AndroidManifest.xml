@@ -20,6 +20,7 @@
             android:resource="@drawable/ic_notification" />
 
         <activity
+            android:theme="@style/SplashTheme"
             android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

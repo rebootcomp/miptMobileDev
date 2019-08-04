@@ -4,10 +4,10 @@
     <item
         android:drawable="@color/backgroundGray"/>
 
-    <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/mipt_school_logo"/>
-    </item>
+    <item
+        android:width="250dp"
+        android:height="370dp"
+        android:drawable="@drawable/mipt_school_logo"
+        android:gravity="center" />
 
 </layer-list>

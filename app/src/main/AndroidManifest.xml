@@ -19,16 +19,20 @@
             android:name="com.google.firebase.messaging.default_notification_icon"
             android:resource="@drawable/ic_notification" />
 
-
         <activity
-            android:name=".LoginActivity"
-            android:theme="@style/LoginTheme"
-            android:windowSoftInputMode="adjustResize">
+            android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".LoginActivity"
+            android:theme="@style/LoginTheme"
+            android:windowSoftInputMode="adjustResize">
+
         </activity>
         <activity
             android:name=".MainActivity"

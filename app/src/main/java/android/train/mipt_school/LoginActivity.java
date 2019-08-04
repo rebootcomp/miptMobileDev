@@ -54,8 +54,6 @@ public class LoginActivity extends AppCompatActivity {
 
     public ResponseCallback responseCallback;
     public ResponseCallback initCallback;
-    public ResponseCallback groupCallback;
-    public ResponseCallback allusersCallback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -110,7 +108,7 @@ public class LoginActivity extends AppCompatActivity {
                 }
             };
 
-            //ошибка здесь
+
             responseCallback = new ResponseCallback() {
                 @Override
                 public void onResponse(String data) {
@@ -130,8 +128,6 @@ public class LoginActivity extends AppCompatActivity {
             loginField.setText(userName);
             passwordField.setText(password);
             User.getInstance().logIn(userName, password, deviceToken, responseCallback);
-
-//            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
 
         showPassword.setOnClickListener(new View.OnClickListener() {

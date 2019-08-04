@@ -57,12 +57,16 @@ public class LoginActivity extends AppCompatActivity {
     public ResponseCallback groupCallback;
     public ResponseCallback allusersCallback;
 
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        logInButton = findViewById(R.id.log_in_button);
+        registerButton = findViewById(R.id.register_button);
+        loginField = findViewById(R.id.login_field);
+        passwordField = findViewById(R.id.password_field);
+        showPassword = findViewById(R.id.showPassword);
 
         FirebaseInstanceId.getInstance().getInstanceId()
                 .addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
@@ -97,7 +101,7 @@ public class LoginActivity extends AppCompatActivity {
                         finish();
                     } else
                         Toast.makeText(LoginActivity.this,
-                                "Что-то пошло не так 1", Toast.LENGTH_LONG).show();
+                                "Что-то пошло не так", Toast.LENGTH_LONG).show();
                 }
 
                 @Override
@@ -122,18 +126,13 @@ public class LoginActivity extends AppCompatActivity {
                     Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
                 }
             };
-            Log.d("DATA_DEBUG", userName+ " " + password + " " +deviceToken);
+            Log.d("DATA_DEBUG", userName + " " + password + " " + deviceToken);
+            loginField.setText(userName);
+            passwordField.setText(password);
             User.getInstance().logIn(userName, password, deviceToken, responseCallback);
 
 //            startActivity(new Intent(getApplicationContext(), MainActivity.class));
         }
-
-        logInButton = findViewById(R.id.log_in_button);
-        registerButton = findViewById(R.id.register_button);
-        loginField = findViewById(R.id.login_field);
-        passwordField = findViewById(R.id.password_field);
-        showPassword = findViewById(R.id.showPassword);
-
 
         showPassword.setOnClickListener(new View.OnClickListener() {
             @Override

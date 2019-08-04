@@ -65,8 +65,8 @@ public class GroupListFragment extends Fragment implements SceneFragment {
                     public void onResponse(String data) {
                         if (User.getInstance().init(data)) {
                             Toast.makeText(getContext(), "updated", Toast.LENGTH_LONG).show();
-                            RecyclerView.Adapter adapter = groupList.getAdapter();
-                            adapter.notifyDataSetChanged();
+                            GroupListAdapter adapter = (GroupListAdapter) groupList.getAdapter();
+                            adapter.refresh();
                         } else
                             Toast.makeText(getContext(),
                                     "Что-то пошло не так", Toast.LENGTH_LONG).show();

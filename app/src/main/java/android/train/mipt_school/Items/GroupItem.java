@@ -4,11 +4,21 @@ public class GroupItem {
     private String name;
     private Long groupId;
     private Long countOfUsers;
+    private String eventName;
 
-    public GroupItem(String name, Long groupId, Long countOfUsers) {
+    public GroupItem(String name, Long groupId, Long countOfUsers, String eventName) {
         this.name = name;
         this.groupId = groupId;
         this.countOfUsers = countOfUsers;
+        this.eventName = eventName;
+    }
+
+    public String getEventName() {
+        return eventName;
+    }
+
+    public void setEventName(String eventName) {
+        this.eventName = eventName;
     }
 
     public String getName() {

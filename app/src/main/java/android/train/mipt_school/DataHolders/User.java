@@ -618,7 +618,8 @@ public class User {
                     long groupId = groups.getJSONObject(i).getLong("id");
                     String groupName = groups.getJSONObject(i).getString("group_name");
                     long usersCount = groups.getJSONObject(i).getLong("users_count");
-                    allGroups.add(new GroupItem(groupName, groupId, usersCount));
+                    String eventName = groups.getJSONObject(i).getString("event_name");
+                    allGroups.add(new GroupItem(groupName, groupId, usersCount, eventName));
                 }
                 String ar = userData.getString("approle");
                 if (ar.equals("user"))
